@@ -10,7 +10,8 @@ from backend.permissions import IsAdminUser, IsAdminOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view,permission_classes
 from .forms import ProfileUpdateForm
-
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate, login
 
 ########### register here ##################################### 
 def register(request):
@@ -27,10 +28,6 @@ def register(request):
     
     return render(request, 'user/register.html', {'form': form, 'title': 'Register Here'})
 
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate, login
-from django.http import JsonResponse
-
 def Login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -39,20 +36,14 @@ def Login(request):
 
         if user is not None:
             login(request, user)
-
-            # Get or create token
+            # Create token if you want (optional)
             token, created = Token.objects.get_or_create(user=user)
+            request.session['auth_token'] = token.key
 
-            # Store the token in the session
-            request.session['auth_token'] = token.key  # Storing token in session
-
-            # Debugging - Print session and token
-            print("Session after login:", request.session)
-            print("Stored Token:", request.session.get('auth_token'))
-         
-            return JsonResponse({'token': token.key})
+            messages.success(request, f"Welcome back, {user.username}!")
+            return redirect('index')  # Redirect to your home/dashboard page
         else:
-            return JsonResponse({'error': 'Invalid username or password'}, status=400)
+            messages.error(request, "Invalid username or password")
 
     form = AuthenticationForm()
     return render(request, 'user/login.html', {'form': form, 'title': 'Log In'})

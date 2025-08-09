@@ -12,13 +12,6 @@ class UserRegisterForm(UserCreationForm):
     terms_agree = forms.BooleanField(required=True, label="I Agree to Terms and Conditions")
     remember_me = forms.BooleanField(required=False, label="Remember Me")
     
-    # Add user_type field to choose the role
-    user_type = forms.ChoiceField(
-        choices=CustomUser.USER_TYPE_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=False,  # Make it required only for admins
-        label="Select User Type"
-    )
     
     class Meta:
         model = CustomUser  # Make sure to point to your custom user model
@@ -52,9 +45,6 @@ class UserRegisterForm(UserCreationForm):
             Row(
                 Column(Field('terms_agree'), css_class='col-md-6'),
                 Column(Field('remember_me'), css_class='col-md-6'),
-            ),
-            Row(
-                Column(Field('user_type'), css_class='col-md-12'),
             ),
 
             Submit('submit', 'Continue', css_class='btn btn-primary w-100')
