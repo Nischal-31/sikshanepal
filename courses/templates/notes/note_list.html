@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chapters for {{ subject.name }}{% endblock %}
+
+{% block content %}
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">Subject List /</h2>
+  </div>
+</section>
+  <div class="container py-4">
+    <h1 class="mb-4">Notes</h1>
+
+    {% if notes %}
+      <ul class="list-group">
+        {% for note in notes %}
+          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+              <h5 class="mb-1">{{ note.title }}</h5>
+              <small class="text-muted">
+                Chapter: {{ note.chapter.title }} | File: <a href="{{ note.file.url }}" target="_blank">Download</a>
+              </small>
+              <p class="mb-0">{{ note.description }}</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center mt-2 mt-md-0">
+              <a href="{% url 'note-detail' note.id %}" class="btn btn-sm btn-primary">Details</a>
+              {% if user.is_authenticated and user.user_type == 'admin' %}
+              <a href="{% url 'note-update' note.id %}" class="btn btn-sm btn-primary">Edit</a>
+              <form action="{% url 'note-delete' note.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this note?');" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+        <div class="mt-4">
+          <a href="{% url 'note-create' chapter_id %}" class="btn btn-success">Create New Note</a>
+        </div>
+      {% endif %}
+    {% else %}
+      <p>No notes found for this chapter.</p>
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+        <a href="{% url 'note-create' chapter_id %}" class="btn btn-success">Create New Note</a>
+      {% endif %}
+    {% endif %}
+  </div>
+
+{% endblock %}

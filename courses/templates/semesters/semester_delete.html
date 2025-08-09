@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Semester Detail Header -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2>Explore Semester {{ semester.number }} Details /</h2>
+  </div>
+</section>
+  <div class="container py-4">
+    <h2>Delete Semester</h2>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% elif semester %}
+      <p>Are you sure you want to delete <strong>Semester {{ semester.number }}</strong>?</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'semester-list' course_id %}" class="btn btn-secondary">Cancel</a>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}

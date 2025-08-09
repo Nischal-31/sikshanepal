@@ -1,0 +1,57 @@
+{% load crispy_forms_tags %}
+{% load socialaccount %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/signup.css">
+</head>
+<body> 
+    <section class="wrapper">
+        <div class="container">
+            <div class="col-sm-8 offset-sm-2 col-lg-6 offset-lg-3 col-xl-6 offset-xl-3 text-center">
+                <div class="logo">
+                    <img decoding="async" src="/static/images/fe1.png" class="img-fluid" alt="logo">
+                </div>
+                <form class="rounded bg-white shadow p-5" method="post">
+                    {% csrf_token %}
+                    <h3 class="text-dark fw-bolder fs-4 mb-2">Create an Account</h3>
+
+                    <div class="fw-normal text-muted mb-2">
+                        Already have an account? 
+                        <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">Log in here</a>
+                    </div>
+
+                    <div class="text-center text-muted text-uppercase mb-2">or</div>
+
+                    <!-- Google Sign-In -->
+                    <a href="{% provider_login_url 'google' %}" class="btn btn-light login_with w-100 mb-4">
+                        <img decoding="async" src="/static/images/google.png" class="img-fluid me-3">
+                        Sign in with Google
+                    </a>
+
+                    <!-- Render the Form Using Crispy Forms -->
+                    {% crispy form %}
+
+
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+{% endblock content %}
+
+

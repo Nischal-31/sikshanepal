@@ -1,0 +1,63 @@
+{% load static %}
+<nav>
+	<img src="/static/images/sikshanepal.png" alt="sikshanepal">
+	<div class="navigation">
+		<ul>
+			<i id="menu-close" class="fas fa-times"></i>
+
+			<li class="{% if request.path == '/' %} active {% endif %}">
+				<a href="{% url 'index' %}">Home</a>
+			</li>
+			<li class="{% if '/about/' in request.path %} active {% endif %}">
+				<a href="{% url 'about' %}">About</a>
+			</li>
+			<li class="{% if '/blog/' in request.path %} active {% endif %}">
+				<a href="{% url 'blog_list' %}">Blog</a>
+			</li>
+			<li class="{% if '/course/' in request.path %} active {% endif %}">
+				<a href="{% url 'course-list' %}">Courses</a>
+			</li>
+			<li class="{% if '/contact/' in request.path %} active {% endif %}">
+				<a href="{% url 'contact' %}">Contact</a>
+			</li>
+			<li class="{% if '/subscription/' in request.path %} active {% endif %}">
+				<a href="{% url 'subscription' %}">Subscription</a>
+			</li>
+			
+            
+
+
+{% if user.is_authenticated %}
+  <li><a href="{% url 'logout' %}">LogOut</a></li>
+  
+  <li class="nav-item">
+    <a class="nav-link d-flex align-items-center" href="{% url 'user-profile' %}" style="gap: 0.5rem;">
+      {% if user.profile_picture %}
+        <img 
+          src="{{ user.profile_picture.url }}" 
+          alt="Profile Picture" 
+          style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1px solid #ccc;"
+          loading="lazy"
+        >
+      {% else %}
+        <img 
+          src="{% static 'images/default_profile.jpg' %}" 
+          alt="Default Profile Picture" 
+          style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1px solid #ccc;"
+          loading="lazy"
+        >
+      {% endif %}
+    </a>
+  </li>
+{% else %}
+  <li><a href="{% url 'login' %}">Login</a></li>
+  <li><a href="{% url 'register' %}">Sign Up</a></li>
+{% endif %}
+
+
+
+		</ul>
+		<img id="menu-btn" src="/static/images/menu.png" alt="">
+	</div>
+</nav>
+

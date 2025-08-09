@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chapters for {{ subject.name }}{% endblock %}
+
+{% block content %}
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">Subject List /</h2>
+  </div>
+</section>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Chapters</h1>
+    {% if user.is_authenticated and user.user_type == 'admin' %}
+      <a href="{% url 'chapter-create' subject_id %}" class="btn btn-success">Create New Chapter</a>
+    {% endif %}
+  </div>
+
+  {% if chapters %}
+    <ul class="list-group">
+      {% for chapter in chapters %}
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+          <div>
+            <h5 class="mb-1">{{ chapter.order }} — {{ chapter.title }}</h5>
+            {% if chapter.description %}
+              <small class="text-muted">{{ chapter.description }}</small>
+            {% endif %}
+          </div>
+          <div class="d-flex gap-2">
+            <!-- Notes button for each chapter -->
+            <a href="{% url 'note-list' chapter.id %}" class="btn btn-sm btn-info">
+              <i class="bi bi-journal-text"></i> Notes
+            </a>
+
+            {% if user.is_authenticated and user.user_type == 'admin' %}
+              <a href="{% url 'chapter-update' chapter.id %}" class="btn btn-sm btn-primary">Edit</a>
+              <form action="{% url 'chapter-delete' chapter.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this chapter?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No chapters found for this subject.</p>
+  {% endif %}
+</div>
+{% endblock %}

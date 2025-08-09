@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Past Questions - {{ subject.name }}{% endblock %}
+
+{% block content %}
+<section class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">Past Questions / {{ subject.name }}</h2>
+  </div>
+</section>
+
+<div class="container py-4">
+  <h1 class="mb-4">Past Questions</h1>
+
+  {% if pastQuestions %}
+    <div class="list-group">
+      {% for pq in pastQuestions %}
+        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+          <div class="flex-grow-1">
+            <h5>
+              <a href="{% url 'pastQuestion-detail' pq.id %}" class="text-decoration-none text-primary">
+                {{ pq.title }} <small class="text-muted">({{ pq.year }})</small>
+              </a>
+            </h5>
+            {% if pq.description %}
+              <p class="mb-1 text-secondary small">{{ pq.description }}</p>
+            {% endif %}
+          </div>
+
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            {% if pq.file %}
+              <a href="{{ pq.file }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-file-download me-1"></i> Download
+              </a>
+            {% else %}
+              <span class="text-muted small">No file uploaded</span>
+            {% endif %}
+
+            {% if user.is_authenticated and user.user_type == 'admin' %}
+              <a href="{% url 'pastQuestion-update' pq.id %}" class="btn btn-sm btn-primary" title="Edit">
+                <i class="fas fa-edit"></i>
+              </a>
+              <form action="{% url 'pastQuestion-delete' pq.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this past question?');" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if user.is_authenticated and user.user_type == 'admin' %}
+      <div class="mt-4 text-end">
+        <a href="{% url 'pastQuestion-create' subject.id %}" class="btn btn-success">
+          <i class="fas fa-plus me-1"></i> Add New Past Question
+        </a>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="alert alert-info" role="alert">
+      No past questions found for this subject.
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+        <a href="{% url 'pastQuestion-create' subject.id %}" class="btn btn-sm btn-success ms-2">
+          <i class="fas fa-plus me-1"></i> Add New Past Question
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<!-- FontAwesome CDN for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+
+<style>
+  .list-group-item {
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    transition: box-shadow 0.2s ease;
+  }
+  .list-group-item:hover {
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  }
+  h5 a:hover {
+    text-decoration: underline;
+  }
+  form.m-0 button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Semester{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">Semesters / Create</h2>
+  </div>
+</section>
+
+<!-- Form section -->
+<section id="create-semester" class="py-5">
+  <div class="container">
+    <h1 class="mb-4 text-center">Create a New Semester</h1>
+
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow rounded-4">
+          <div class="card-body p-4">
+            <form method="POST">
+              {% csrf_token %}
+              
+              <div class="mb-3">
+                <label for="number" class="form-label">Semester Number</label>
+                <input type="number" class="form-control" id="number" name="number" required placeholder="Enter semester number">
+              </div>
+
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter description"></textarea>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg">Create Semester</button>
+              </div>
+            </form>
+
+            {% if user.is_authenticated and user.user_type == 'admin' %}
+            <div class="mt-3 text-center">
+              <a href="{% url 'semester-list' course_id %}" class="btn btn-outline-secondary">Back to Semester List</a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

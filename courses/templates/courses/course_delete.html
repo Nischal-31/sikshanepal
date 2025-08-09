@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Delete Course{% endblock %}
+
+{% block content %}
+<!-- Section Header -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">Courses / Delete</h2>
+  </div>
+</section>
+
+<!-- Delete Confirmation Section -->
+<section id="delete-course" class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow rounded-4 border-danger">
+          <div class="card-body p-4">
+            <h3 class="text-center text-danger mb-4">Delete Course</h3>
+            <p class="text-center fs-5">Are you sure you want to delete this course?</p>
+            
+            <div class="mb-3">
+              <strong>Name:</strong> {{ course.name }}
+            </div>
+            <div class="mb-4">
+              <strong>Description:</strong> {{ course.description }}
+            </div>
+
+
+            <form method="POST" class="d-flex justify-content-between">
+              {% csrf_token %}
+              <a href="{% url 'course-list' %}" class="btn btn-secondary">Cancel</a>
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Update Subject: {{ subject.name }}{% endblock %}
+
+{% block content %}
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">Subject List / Update Subject</h2>
+  </div>
+</section>
+
+<div class="container py-4">
+  <div class="card shadow rounded">
+    <div class="card-body">
+      <h3 class="mb-4">Update Subject</h3>
+      <form method="POST" action="{% url 'subject-update' subject.id %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label for="name" class="form-label">Subject Name</label>
+          <input type="text" class="form-control" id="name" name="name" value="{{ subject.name }}" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="code" class="form-label">Subject Code</label>
+          <input type="text" class="form-control" id="code" name="code" value="{{ subject.code }}" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="semester" class="form-label">Semester</label>
+          <input type="number" class="form-control" id="semester" name="semester" value="{{ subject.semester }}" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="credits" class="form-label">Credits</label>
+          <input type="number" class="form-control" id="credits" name="credits" value="{{ subject.credits }}" required>
+        </div>
+        <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="description" required placeholder="Enter description">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Subject</button>
+        <a href="{% url 'subject-list' semester_id %}" class="btn btn-secondary ms-2">Back to Subject List</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Blog{% endblock %}
+
+{% block content %}
+
+        <!-- Home -->
+        
+        <section id="blog-container">
+            <div class="blogs blogpost">
+                <div class="post">
+                    <!-- Display image if available -->
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    {% endif %}
+                    
+                    <!-- Display blog title -->
+                    <h3>{{ post.title }}</h3>
+        
+                    <!-- Display the content of the post -->
+                    <p>{{ post.content }}</p>
+                    
+                    <!-- Add a link to the next blog post (you can modify this logic as needed) -->
+                    {% if next_post %}
+                        <a href="{% url 'blog_detail' slug=next_post.slug %}">Read Next ?</a>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        
+{% endblock %}

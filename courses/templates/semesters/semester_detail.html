@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Semester {{ semester.number }}{% endblock %}
+
+{% block content %}
+
+<!-- Semester Detail Header -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2>Explore Semester {{ semester.number }} Details /</h2>
+  </div>
+</section>
+
+<!-- Semester Detail Section -->
+<section id="semester-inner" class="container my-5 d-flex flex-wrap gap-4">
+  <!-- Semester Overview -->
+  <div class="overview flex-grow-1" style="max-width: 700px;">
+    <img class="course-img img-fluid rounded mb-4" src="{% static 'images/bg.jpg' %}" alt="Semester Image">
+
+    <div class="semester-head mb-3">
+      <h2>Semester {{ semester.number }}</h2>
+      <p class="text-muted">{{ semester.description }}</p>
+    </div>
+
+    <hr>
+    <h3>Subjects for this Semester</h3>
+    <p>This semester offers a range of exciting subjects to boost your academic journey.</p>
+
+    <div class="mt-4 d-flex gap-3">
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+      <a href="{% url 'semester-update' semester_id=semester.id %}" class="btn btn-sm btn-warning">Update</a>
+      <a href="{% url 'semester-delete' semester_id=semester.id %}" class="btn btn-sm btn-danger">Delete</a>
+      {% endif %}
+      <a href="{% url 'semester-list' course_id %}" class="btn btn-sm btn-secondary">Back to List</a>
+    </div>
+  </div>
+
+  <!-- Info Box -->
+  <div class="enroll p-4 border rounded" style="min-width: 280px;">
+    <h3>Semester Highlights:</h3>
+    <p><i class="far fa-book me-2"></i> Advanced topics</p>
+    <p><i class="far fa-user-graduate me-2"></i> Expert instructors</p>
+    <p><i class="far fa-calendar-check me-2"></i> Assignments & Projects</p>
+    <p><i class="far fa-file-alt me-2"></i> Notes & Resources</p>
+    <p><i class="far fa-certificate me-2"></i> Certification-ready</p>
+
+    <div class="enroll-btn mt-4 text-center">
+      <a class="btn btn-primary" href="{% url 'subject-list' semester.id %}">View Subjects</a>
+    </div>
+  </div>
+</section>
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+
+<style>
+  #semester-inner {
+    gap: 2rem;
+  }
+  .course-img {
+    max-height: 350px;
+    object-fit: cover;
+    width: 100%;
+  }
+  .enroll p i {
+    font-size: 1.2rem;
+  }
+</style>
+
+{% endblock %}

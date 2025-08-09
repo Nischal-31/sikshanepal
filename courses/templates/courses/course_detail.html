@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ course.name }}{% endblock %}
+
+{% block content %}
+<!-- Course Detail Header -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2>Enroll Our Popular Courses And Skill Up /</h2>
+  </div>
+</section>
+
+<!-- Main Course Detail Section -->
+<section id="course-inner" class="container my-5 d-flex flex-wrap gap-4">
+  <!-- Course Overview -->
+  <div class="overview flex-grow-1" style="max-width: 700px;">
+    <img class="course-img img-fluid rounded mb-4" src="{{ course.image }}" alt="{{ course.name }}">
+
+    <div class="course-head d-flex justify-content-between align-items-center mb-3">
+      <div class="c-name">
+        <h2>{{ course.name }}</h2>
+        <div class="star text-warning mb-2">
+          {% for i in "12345" %}
+          <i class="fas fa-star"></i>
+          {% endfor %}
+        </div>
+        <p>{{ course.description }}</p>
+      </div>
+      <span class="fs-4 fw-bold text-primary">${{ course.price|default:"49.99" }}</span>
+    </div>
+
+    <h3>Instructor</h3>
+    <div class="tutor d-flex align-items-center mb-4">
+      <img src="{{ course.instructor.image|default:'/static/images/c4.jpg' }}" alt="{{ course.instructor.name }}" class="rounded-circle me-3" style="width:70px; height:70px; object-fit:cover;">
+      <div class="tutor-det">
+        <h5>{{ course.instructor.name|default:"Nischal Moktan" }}</h5>
+        <p class="text-muted">{{ course.instructor.title|default:"Web Developer At Google" }}</p>
+      </div>
+    </div>
+
+    <hr>
+    <h3>Course Overview</h3>
+    <p>{{ course.overview|default:"Lorem ipsum dolor sit amet consectetur adipisicing elit..." }}</p>
+
+    <hr>
+    <h3>What you'll learn</h3>
+    <div class="learn">
+      {% for item in course.learning_points %}
+        <p><i class="far fa-check-circle text-success me-2"></i> {{ item }}</p>
+      {% empty %}
+        <p><i class="far fa-check-circle text-success me-2"></i> Javascript from scratch - beginner to advanced</p>
+        <p><i class="far fa-check-circle text-success me-2"></i> Modern best practices and techniques</p>
+        <p><i class="far fa-check-circle text-success me-2"></i> Real-world project development</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Enrollment Info -->
+  <div class="enroll p-4 border rounded" style="min-width: 280px;">
+    <h3>This course includes:</h3>
+    <p><i class="far fa-video me-2"></i> 52 hours video</p>
+    <p><i class="far fa-newspaper me-2"></i> 75 articles</p>
+    <p><i class="far fa-cloud-download me-2"></i> Downloadable resources</p>
+    <p><i class="far fa-infinity me-2"></i> Full lifetime access</p>
+    <p><i class="far fa-mobile-alt me-2"></i> Access on mobile and TV</p>
+    <p><i class="far fa-paperclip me-2"></i> Assignments</p>
+    <p><i class="far fa-trophy-alt me-2"></i> Certificate of completion</p>
+
+    <div class="enroll-btn mt-4 text-center">
+      <a class="btn btn-primary btn-lg" href="#">Enroll Courses</a>
+    </div>
+  </div>
+</section>
+
+<!-- FontAwesome CDN for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+
+<style>
+  #course-inner {
+    gap: 2rem;
+  }
+  .course-img {
+    max-height: 350px;
+    object-fit: cover;
+    width: 100%;
+  }
+  .star i {
+    margin-right: 4px;
+  }
+  .learn p {
+    margin-bottom: 0.5rem;
+  }
+  .enroll p i {
+    font-size: 1.25rem;
+  }
+</style>
+
+{% endblock %}
