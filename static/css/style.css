@@ -86,8 +86,8 @@ nav .navigation ul li.active a,nav .navigation ul li a:hover{
 
 /* Home */
 
-#home{
-  background-image: linear-gradient(rgba(9, 5, 54, 0.3) , rgba(5,4,46,0.7)), url("/static/images/back.jpg");
+#home {
+  background-image: linear-gradient(rgba(9, 5, 54, 0.3), rgba(5, 4, 46, 0.7)), url("/static/images/college.jpg");
   width: 100%;
   height: 100vh;
   background-size: cover;
@@ -97,184 +97,147 @@ nav .navigation ul li.active a,nav .navigation ul li a:hover{
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding-top: 40px;
+  padding: 40px 20px 0; /* added horizontal padding for small screens */
+  box-sizing: border-box;
 }
 
-#home h2{
+#home h2 {
   color: white;
   font-size: 2.2rem;
   letter-spacing: 1px;
+  margin-bottom: 15px; /* space under heading */
+  max-width: 800px; /* prevent super long lines */
 }
 
-#home p{
+#home p {
   width: 50%;
+  max-width: 600px; /* limit width on larger screens */
   color: white;
-  font-size: 0.9rem;
-  line-height:  25px;
+  font-size: 0.95rem;
+  line-height: 1.6; /* 25px is fine, 1.6 is more scalable */
+  margin: 0 auto 30px;
 }
 
-#home .btn{
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+  #home p {
+    width: 90%;
+    font-size: 0.9rem;
+  }
+
+  #home h2 {
+    font-size: 1.7rem;
+  }
+}
+
+#home .btn {
   margin-top: 30px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-#home a{
+#home a {
   text-decoration: none;
   font-size: 0.9rem;
   padding: 13px 35px;
-  background-color: #fff;
   font-weight: 600;
   border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  min-width: 120px;
+  text-align: center;
+  display: inline-block;
 }
 
-#home a.blue{
+#home a.blue {
   color: #fff;
   background-color: rgb(21, 21, 100);
-  transition: 0.3s ease;
 }
 
-#home a.blue:hover{
-  color:  rgb(21, 21, 100);
-  background-color:#fff;
+#home a.blue:hover {
+  color: rgb(21, 21, 100);
+  background-color: #fff;
 }
 
-#home a.yellow{
+#home a.yellow {
   color: #fff;
   background-color: #FDC93B;
-  transition: 0.3s ease;
 }
 
-#home a.yellow:hover{
-  color:  rgb(21, 21, 100);
-  background-color:#fff;
+#home a.yellow:hover {
+  color: rgb(21, 21, 100);
+  background-color: #fff;
 }
+
 
 /* course */
-
-#course{
-  padding: 8vw 8vw 8vw 8vw;
+#course {
+  padding: 8vw;
   text-align: center;
 }
 
-#course .course-box{
+#course .course-box {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  grid-gap:1rem;
+  gap: 1.5rem; /* grid-gap is deprecated, use gap */
   margin-top: 50px;
 }
 
-#course .courses{
+#course .courses {
   text-align: start;
   background: #F9F9FF;
   height: 100%;
   position: relative;
+  border-radius: 12px;       /* add rounding */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08); /* subtle shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  overflow: hidden; /* contain the image and border radius */
 }
-#course .courses img{
+
+#course .courses:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+#course .courses img {
   width: 100%;
-  height: 60%;
-  background-size: cover;
+  height: 200px; /* fix to px for consistent look */
+  object-fit: cover; /* better than background-size on img */
   background-position: center;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  display: block;
 }
 
-#course .courses .details{
-  padding: 15px 15px 0 15px;
-
-}
-#course .courses .details i{
- color: #FDC93B;
- font-size: .9rem;
+#course .courses .details {
+  padding: 15px;
 }
 
-#course .courses .cost{
- background-color: rgb(74, 74, 136);
- color: #fff;
- line-height: 70px;
- width: 70px;
- height: 70px;
- text-align: center;
- border-radius: 50%;
- position: absolute;
- right: 15px;
- bottom: 100px;
-
-}
-/* registration */
-
-#registration{
-  padding: 6vw 8vw 6vw 8vw;
-  background-image: linear-gradient(rgba(99,112,168,0.5),rgba(81,91,233,0.5)),url("/static/images/signup.jpg");
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+#course .courses .details i {
+  color: #FDC93B;
+  font-size: 1rem; /* slightly bigger for visibility */
 }
 
-#registration .reminder{
+#course .courses .cost {
+  background-color: rgb(74, 74, 136);
   color: #fff;
-}
-
-#registration .reminder h1{
-  color: #fff;
-}
-#registration .reminder .time{
-  display: flex;
-  margin-top: 40px;
-}
-
-#registration .reminder .time .date{
+  line-height: 70px;
+  width: 70px;
+  height: 70px;
   text-align: center;
-  padding: 13px 33px;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border-radius: 10px;
-  margin: 0 5px 10px 5px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  font-weight: 600;
-  font-size: 1.1rem;
+  border-radius: 50%;
+  position: absolute;
+  right: 15px;
+  bottom: 100px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  user-select: none;
 }
 
-#registration .form{
-  background-color: #fff;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  padding: 40px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 
-}
-#registration .form input{
-  margin: 15px 0;
-  padding: 15px 10px;
-  border: 1px solid rgb(84,40,241);
-  outline: none;
-}
-#registration .form input::placeholder{
-  color: #413c3c;
-  font-weight: 500;
-  font-size: 0.8rem;
-}
-#registration .form .btn{
-  margin-top: 20px;
-}
-#registration .form a.yellow{
-  text-decoration: none;
-  font-size: 0.9rem;
-  padding: 13px 35px;
-  background-color: #fff;
-  font-weight: 600;
-  border-radius: 5px;
-  color: #fff;
-  background-color: #FDC93B;
-  transition: 0.3s ease;
-}
-
-#registration .form a.yellow:hover{
-  color:  rgb(21, 21, 100);
-  background-color:#fff;
-}
 /* experts */
 
 #experts {
@@ -288,26 +251,76 @@ nav .navigation ul li.active a,nav .navigation ul li a:hover{
   grid-gap:1rem;
   margin-top: 50px;
 }
-#experts .expert-box .profile{
-  background: #fafaf1;
-  padding: 30px 10px;
+#experts .expert-box .profile {
+    background: #fafaf1;
+    padding: 30px 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.pro-links{
-  margin-top: 10px;
 
+#experts .expert-box .profile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
-.pro-links i{
-  padding: 10px 13px;
-  border: 1px solid rgb(21, 21, 100);
-  cursor: pointer;
-  transition: 0.3s ease;
+
+#experts .expert-box .profile img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
 }
-.pro-links i:hover{
-  color: #fff;
-  background: rgb(21, 21, 100);
-  border: 1px solid rgb(21, 21, 100);
-  cursor: pointer;
+
+#experts .expert-box .profile img:hover {
+    transform: scale(1.05);
 }
+
+#experts .expert-box .profile h6 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: rgb(21, 21, 100);
+}
+
+#experts .expert-box .profile p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+
+.pro-links {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* space between icons */
+}
+
+.pro-links a {
+    display: inline-flex; /* makes the whole square clickable */
+    align-items: center;
+    justify-content: center;
+    padding: 10px 13px;
+    border: 1px solid rgb(21, 21, 100);
+    color: rgb(21, 21, 100);
+    text-decoration: none; /* remove underline */
+    border-radius: 6px; /* optional, softer look */
+    transition: 0.3s ease;
+}
+
+.pro-links a:hover {
+    color: #fff;
+    background: rgb(21, 21, 100);
+    border-color: rgb(21, 21, 100);
+}
+
+.pro-links i {
+    font-size: 1rem; /* control icon size */
+}
+
 
 /* footer */
 

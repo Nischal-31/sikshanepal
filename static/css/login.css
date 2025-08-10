@@ -1,50 +1,92 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
 
-body{
-    font-family: 'Poppins', sans-serif;
-    background: #ececec;
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #ececec;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /*------------ Login container ------------*/
-
-.box-area{
-    width: 930px;
+.box-area {
+  width: 500px;
+  max-width: 100%;
+  margin: 0 auto; /* Center horizontally */
+  box-sizing: border-box;
+  background-color: #fff; /* Subtle background for contrast */
+  border-radius: 30px; /* Consistent with .rounded-5 */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Clip child elements */
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /*------------ Right box ------------*/
-
-.right-box{
-    padding: 40px 30px 40px 40px;
+.right-box {
+  flex: 1 1 50%;
+  padding: 40px;
+  box-sizing: border-box;
 }
 
-/*------------ Custom Placeholder ------------*/
-
-::placeholder{
-    font-size: 16px;
+/*------------ Custom Placeholder Styling ------------*/
+::placeholder {
+  font-size: 16px;
+  opacity: 0.7;
+  font-weight: 400;
 }
 
-.rounded-4{
-    border-radius: 20px;
-}
-.rounded-5{
-    border-radius: 30px;
+/*------------ Rounded Corners Utility Classes ------------*/
+.rounded-4 {
+  border-radius: 20px;
 }
 
+.rounded-5 {
+  border-radius: 30px;
+}
 
-/*------------ For small screens------------*/
+/*------------ "Or" Separator Styling ------------*/
+.or-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  color: #666;
+  font-weight: 500;
+  font-size: 1rem;
+}
 
-@media only screen and (max-width: 768px){
+.or-separator::before,
+.or-separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+  margin: 0 10px;
+}
 
-     .box-area{
-        margin: 0 10px;
+/*------------ Button Hover Effects ------------*/
+.btn-primary:hover {
+  background-color: #0056b3; /* Darker shade for hover */
+}
 
-     }
-     .left-box{
-        height: 100px;
-        overflow: hidden;
-     }
-     .right-box{
-        padding: 20px;
-     }
+.btn-light:hover {
+  background-color: #f8f9fa; /* Lighten on hover */
+}
 
+.btn-dark:hover {
+  background-color: #343a40; /* Darker shade for hover */
+}
+
+/*------------ Responsive Adjustments ------------*/
+@media only screen and (max-width: 768px) {
+  .box-area {
+    width: 100%;
+    margin: 20px 10px;
+    flex-direction: column;
+  }
+
+  .right-box {
+    padding: 20px;
+  }
 }
