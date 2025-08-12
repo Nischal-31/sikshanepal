@@ -29,7 +29,7 @@ def course_list_view(request):
     print(f"Sending request with headers: {headers}")  # Debugging
     
     # Make the API request with the token
-    api_url = 'http://127.0.0.1:8000/syllabus_api/course-list/'
+    api_url = 'http://127.0.0.1:8000/backend/course-list/'
     response = requests.get(api_url, headers=headers)
 
     if response.status_code == 200:
@@ -52,11 +52,11 @@ def course_detail_view(request, course_id):
         'Authorization': f'Token {token}',
     }
 
-    course_api_url = f"http://127.0.0.1:8000/syllabus_api/course-detail/{course_id}/"
+    course_api_url = f"http://127.0.0.1:8000/backend/course-detail/{course_id}/"
     course_response = requests.get(course_api_url, headers=headers)
     course = course_response.json() if course_response.status_code == 200 else None
 
-    semester_api_url = "http://127.0.0.1:8000/syllabus_api/semester-list/"
+    semester_api_url = "http://127.0.0.1:8000/backend/semester-list/"
     semester_response = requests.get(semester_api_url, headers=headers)
     semesters = semester_response.json() if semester_response.status_code == 200 else []
     filtered_semesters = [s for s in semesters if s['course'] == course_id]
@@ -86,7 +86,7 @@ def course_create_view(request):
             'image': request.FILES.get('image')
         } if 'image' in request.FILES else {}
 
-        api_url = "http://127.0.0.1:8000/syllabus_api/course-create/"
+        api_url = "http://127.0.0.1:8000/backend/course-create/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, data=data, files=files, headers=headers)
 
@@ -105,7 +105,7 @@ def course_update_view(request, course_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     # Get current course data
-    api_url = f"http://127.0.0.1:8000/syllabus_api/course-detail/{course_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/course-detail/{course_id}/"
     response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
 
     if response.status_code == 200:
@@ -126,7 +126,7 @@ def course_update_view(request, course_id):
             files["image"] = (image_file.name, image_file, image_file.content_type)
 
         # Send multipart/form-data request
-        update_url = f"http://127.0.0.1:8000/syllabus_api/course-update/{course_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/course-update/{course_id}/"
         update_response = requests.post(update_url, data=data, files=files, headers={'Authorization': f'Token {token}'})
 
         if update_response.status_code == 200:
@@ -148,7 +148,7 @@ def course_delete_view(request, course_id):
     if not token:
         return HttpResponseForbidden("Authentication token missing.")
     # Get the course to be deleted
-    api_url = f"http://127.0.0.1:8000/syllabus_api/course-detail/{course_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/course-detail/{course_id}/"
     response = requests.get(api_url,headers={'Authorization': f'Token {token}'})
 
     if response.status_code == 200:
@@ -158,7 +158,7 @@ def course_delete_view(request, course_id):
 
     if request.method == "POST":
         # Send DELETE request to delete the course
-        delete_url = f"http://127.0.0.1:8000/syllabus_api/course-delete/{course_id}/"
+        delete_url = f"http://127.0.0.1:8000/backend/course-delete/{course_id}/"
         delete_response = requests.delete(delete_url, headers={'Authorization': f'Token {token}'})
 
         if delete_response.status_code == 204:
@@ -186,7 +186,7 @@ def semester_list_view(request, course_id):
 
     print(f"Sending request with headers: {headers}")  # Debugging
     # Fetch semesters only for the selected course
-    semester_api_url = f"http://127.0.0.1:8000/syllabus_api/semester-list/{course_id}"
+    semester_api_url = f"http://127.0.0.1:8000/backend/semester-list/{course_id}"
     response = requests.get(semester_api_url, headers=headers)
     # Check the response status
     if response.status_code == 200:
@@ -208,7 +208,7 @@ def semester_detail_view(request, semester_id):
     headers = {
         'Authorization': f'Token {token}',
     }
-    url = f"http://127.0.0.1:8000/syllabus_api/semester-detail/{semester_id}/"
+    url = f"http://127.0.0.1:8000/backend/semester-detail/{semester_id}/"
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
@@ -237,7 +237,7 @@ def semester_create_view(request, course_id):
             "description": request.POST.get("description"),
             "course": course_id  # include course id in data if API requires it
         }
-        api_url = f"http://127.0.0.1:8000/syllabus_api/semester-create/{course_id}/"
+        api_url = f"http://127.0.0.1:8000/backend/semester-create/{course_id}/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, json=data, headers=headers)
 
@@ -261,7 +261,7 @@ def semester_update_view(request, semester_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/syllabus_api/semester-detail/{semester_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/semester-detail/{semester_id}/"
     response = requests.get(api_url, headers=headers)
 
     if response.status_code == 200:
@@ -276,7 +276,7 @@ def semester_update_view(request, semester_id):
             "description": request.POST.get("description"),
         }
 
-        update_url = f"http://127.0.0.1:8000/syllabus_api/semester-update/{semester_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/semester-update/{semester_id}/"
         update_response = requests.post(update_url, json=data, headers=headers)
 
         if update_response.status_code == 200:
@@ -305,7 +305,7 @@ def semester_delete_view(request, semester_id):
     headers = {'Authorization': f'Token {token}'}
 
     # Fetch semester data
-    url = f"http://127.0.0.1:8000/syllabus_api/semester-detail/{semester_id}/"
+    url = f"http://127.0.0.1:8000/backend/semester-detail/{semester_id}/"
     response = requests.get(url, headers=headers)
 
     if response.status_code != 200:
@@ -319,7 +319,7 @@ def semester_delete_view(request, semester_id):
 
     if request.method == 'POST':
         # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/syllabus_api/semester-delete/{semester_id}/"
+        delete_url = f"http://127.0.0.1:8000/backend/semester-delete/{semester_id}/"
         delete_response = requests.delete(delete_url, headers=headers)
 
         if delete_response.status_code in [200, 204]:
@@ -353,7 +353,7 @@ def subject_list_view(request,semester_id):
     }
     print(f"Sending request with headers: {headers}")  # Debugging
 
-    api_url = f'http://127.0.0.1:8000/syllabus_api/subject-list/{semester_id}/'  # Adjust the URL as per your API endpoint
+    api_url = f'http://127.0.0.1:8000/backend/subject-list/{semester_id}/'  # Adjust the URL as per your API endpoint
     # Make the API request with the token
     response = requests.get(api_url,headers=headers)
 
@@ -388,10 +388,10 @@ def subject_detail_view(request, subject_id):
     print(f"Sending request with headers: {headers}")  # Debugging
 
     # Adjust the API URL for the subject
-    subject_url = f"http://127.0.0.1:8000/syllabus_api/subject-detail/{subject_id}/"  # Adjust as per your API endpoint
-    notes_url = f"http://127.0.0.1:8000/syllabus_api/note-list/{subject_id}"  # API for notes
-    past_questions_url = f"http://127.0.0.1:8000/syllabus_api/pastQuestion-list/{subject_id}"  # API for past questions
-    syllabus_url = f"http://127.0.0.1:8000/syllabus_api/syllabus-detail-by-subject/{subject_id}/" #API for Syllabus
+    subject_url = f"http://127.0.0.1:8000/backend/subject-detail/{subject_id}/"  # Adjust as per your API endpoint
+    notes_url = f"http://127.0.0.1:8000/backend/note-list/{subject_id}"  # API for notes
+    past_questions_url = f"http://127.0.0.1:8000/backend/pastQuestion-list/{subject_id}"  # API for past questions
+    syllabus_url = f"http://127.0.0.1:8000/backend/syllabus-detail-by-subject/{subject_id}/" #API for Syllabus
 
     # Fetch subject details
     subject_response = requests.get(subject_url, headers=headers)
@@ -449,7 +449,7 @@ def subject_create_view(request, semester_id):
             "code": request.POST.get("code"),
         }
 
-        api_url = f"http://127.0.0.1:8000/syllabus_api/subject-create/{semester_id}/"  # Adjust if needed
+        api_url = f"http://127.0.0.1:8000/backend/subject-create/{semester_id}/"  # Adjust if needed
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, json=data, headers=headers)
 
@@ -470,7 +470,7 @@ def subject_update_view(request, subject_id):
     if not token:
         return HttpResponseForbidden("Authentication token missing.")
     
-    api_url = f"http://127.0.0.1:8000/syllabus_api/subject-detail/{subject_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/subject-detail/{subject_id}/"
     response = requests.get(api_url,headers={'Authorization': f'Token {token}'})
     subject = response.json() if response.status_code == 200 else {}
 
@@ -485,7 +485,7 @@ def subject_update_view(request, subject_id):
             "description": request.POST.get("description"),
             "semester": semester_id
         }
-        update_url = f"http://127.0.0.1:8000/syllabus_api/subject-update/{subject_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/subject-update/{subject_id}/"
         response = requests.post(update_url, json=data,headers={'Authorization': f'Token {token}'})
 
         if response.status_code == 200:
@@ -502,7 +502,7 @@ def subject_delete_view(request, subject_id):
     if not token:
         return HttpResponseForbidden("Authentication token missing.")
 
-    api_url = f"http://127.0.0.1:8000/syllabus_api/subject-detail/{subject_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/subject-detail/{subject_id}/"
     response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
     subject = response.json() if response.status_code == 200 else {}
     
@@ -512,7 +512,7 @@ def subject_delete_view(request, subject_id):
     semester_id = subject.get('semester')  # ✅ Get semester_id before deletion
 
     if request.method == "POST":
-        delete_url = f"http://127.0.0.1:8000/syllabus_api/subject-delete/{subject_id}/"
+        delete_url = f"http://127.0.0.1:8000/backend/subject-delete/{subject_id}/"
         response = requests.delete(delete_url, headers={'Authorization': f'Token {token}'})
 
         if response.status_code == 204:
@@ -535,7 +535,7 @@ def pastQuestion_list_view(request, subject_id):
 
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")  # Debugging
-    api_url = f'http://127.0.0.1:8000/syllabus_api/pastQuestion-list/{subject_id}/'  # Adjust the URL as per your API endpoint
+    api_url = f'http://127.0.0.1:8000/backend/pastQuestion-list/{subject_id}/'  # Adjust the URL as per your API endpoint
      # Make the API request with the token
     response = requests.get(api_url,headers=headers)
 
@@ -564,7 +564,7 @@ def pastQuestion_detail_view(request, pastQuestion_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/syllabus_api/pastQuestion-detail/{pastQuestion_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/pastQuestion-detail/{pastQuestion_id}/"
 
     response = requests.get(api_url, headers=headers)
     if response.status_code == 200:
@@ -600,7 +600,7 @@ def pastQuestion_create_view(request, subject_id):
             'file': request.FILES.get('file')
         } if 'file' in request.FILES else {}
 
-        api_url = f"http://127.0.0.1:8000/syllabus_api/oldQuestion-create/{subject_id}/"
+        api_url = f"http://127.0.0.1:8000/backend/oldQuestion-create/{subject_id}/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, data=data, files=files, headers=headers)
 
@@ -621,7 +621,7 @@ def pastQuestion_update_view(request, pastQuestion_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/syllabus_api/oldQuestion-create/{pastQuestion_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/oldQuestion-create/{pastQuestion_id}/"
     response = requests.get(api_url, headers=headers)
     pastQuestion = response.json() if response.status_code == 200 else {}
 
@@ -640,7 +640,7 @@ def pastQuestion_update_view(request, pastQuestion_id):
         if file_upload:
             files["file"] = (file_upload.name, file_upload, file_upload.content_type)
 
-        update_url = f"http://127.0.0.1:8000/syllabus_api/pastQuestion-update/{pastQuestion_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/pastQuestion-update/{pastQuestion_id}/"
         update_response = requests.post(update_url, data=data, files=files, headers=headers)
 
         if update_response.status_code == 200:
@@ -668,7 +668,7 @@ def pastQuestion_delete_view(request, pastQuestion_id):
     headers = {'Authorization': f'Token {token}'}
 
     # Fetch past question data
-    url = f"http://127.0.0.1:8000/syllabus_api/pastQuestion-delete/{pastQuestion_id}/"
+    url = f"http://127.0.0.1:8000/backend/pastQuestion-delete/{pastQuestion_id}/"
     response = requests.get(url, headers=headers)
     pastQuestion = response.json() if response.status_code == 200 else {}
 
@@ -679,7 +679,7 @@ def pastQuestion_delete_view(request, pastQuestion_id):
 
     if request.method == 'POST':
         # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/syllabus_api/pastQuestion-delete/{pastQuestion_id}/"
+        delete_url = f"http://127.0.0.1:8000/backend/pastQuestion-delete/{pastQuestion_id}/"
         delete_response = requests.delete(delete_url, headers=headers)
 
         if delete_response.status_code in [200, 204]:
@@ -704,7 +704,7 @@ def syllabus_list_view(request, subject_id):
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")
 
-    api_url = f"http://127.0.0.1:8000/syllabus_api/syllabus-list/{subject_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/syllabus-list/{subject_id}/"
     # Make the API request with the token
     response = requests.get(api_url, headers=headers)
 
@@ -737,7 +737,7 @@ def syllabus_detail_view(request, syllabus_id):
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")
 
-    syllabus_url = f"http://127.0.0.1:8000/syllabus_api/syllabus-detail/{syllabus_id}/"
+    syllabus_url = f"http://127.0.0.1:8000/backend/syllabus-detail/{syllabus_id}/"
 
     response = requests.get(syllabus_url, headers=headers)
     if response.status_code == 200:
@@ -772,7 +772,7 @@ def syllabus_create_view(request, subject_id):
             'file': request.FILES.get('file')
         } if 'file' in request.FILES else {}
 
-        api_url = f"http://127.0.0.1:8000/syllabus_api/syllabus-create/{subject_id}/"
+        api_url = f"http://127.0.0.1:8000/backend/syllabus-create/{subject_id}/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, data=data, files=files, headers=headers)
 
@@ -793,7 +793,7 @@ def syllabus_update_view(request, syllabus_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/syllabus_api/syllabus-update/{syllabus_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/syllabus-update/{syllabus_id}/"
     response = requests.get(api_url, headers=headers)
     syllabus = response.json() if response.status_code == 200 else {}
 
@@ -811,7 +811,7 @@ def syllabus_update_view(request, syllabus_id):
         if file_upload:
             files["file"] = (file_upload.name, file_upload, file_upload.content_type)
 
-        update_url = f"http://127.0.0.1:8000/syllabus_api/syllabus-update/{subject_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/syllabus-update/{subject_id}/"
         update_response = requests.post(update_url, data=data, files=files, headers=headers)
         if update_response.status_code == 200:
             return redirect("syllabus-list", subject_id=subject_id)
@@ -833,7 +833,7 @@ def syllabus_delete_view(request, syllabus_id):
     headers = {'Authorization': f'Token {token}'}
 
     # Fetch syllabus data
-    url = f"http://127.0.0.1:8000/syllabus_api/syllabus-delete/{syllabus_id}/"
+    url = f"http://127.0.0.1:8000/backend/syllabus-delete/{syllabus_id}/"
     response = requests.get(url, headers=headers)
     syllabus = response.json() if response.status_code == 200 else {}
 
@@ -842,7 +842,7 @@ def syllabus_delete_view(request, syllabus_id):
     subject_id = syllabus.get('subject')  # ✅ Get subject_id before deletion
     if request.method == 'POST':
         # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/syllabus_api/syllabus-delete/{subject_id}/"
+        delete_url = f"http://127.0.0.1:8000/backend/syllabus-delete/{subject_id}/"
         delete_response = requests.delete(delete_url, headers=headers)
 
         if delete_response.status_code in [200, 204]:
@@ -864,7 +864,7 @@ def chapter_list_view(request, subject_id):
 
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")
-    api_url = f"http://127.0.0.1:8000/syllabus_api/chapter-list/{subject_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/chapter-list/{subject_id}/"
     # Make the API request with the token
     response = requests.get(api_url, headers=headers)
 
@@ -895,7 +895,7 @@ def chapter_detail_view(request, chapter_id):
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")
 
-    chapter_url = f"http://127.0.0.1:8000/syllabus_api/chapter-update/{chapter_id}/"
+    chapter_url = f"http://127.0.0.1:8000/backend/chapter-update/{chapter_id}/"
     response = requests.get(chapter_url, headers=headers)
     if response.status_code == 200:
         chapter = response.json()
@@ -926,7 +926,7 @@ def chapter_create_view(request, subject_id):
             "subject": subject_id,  # include subject id in data if API requires it
             "order": request.POST.get("order", 0)  # Optional order field
         }
-        api_url = f"http://127.0.0.1:8000/syllabus_api/chapter-update/{subject_id}/"
+        api_url = f"http://127.0.0.1:8000/backend/chapter-update/{subject_id}/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, json=data, headers=headers)   
 
@@ -947,7 +947,7 @@ def chapter_update_view(request, chapter_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/syllabus_api/chapter-update/{chapter_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/chapter-update/{chapter_id}/"
     response = requests.get(api_url, headers=headers)
     chapter = response.json() if response.status_code == 200 else {}
 
@@ -960,7 +960,7 @@ def chapter_update_view(request, chapter_id):
             "order": request.POST.get("order", 0)  # Optional order field
         }
 
-        update_url = f"http://127.0.0.1:8000/syllabus_api/chapter-update/{subject_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/chapter-update/{subject_id}/"
         update_response = requests.post(update_url, json=data, headers=headers)
 
         if update_response.status_code == 200:
@@ -984,7 +984,7 @@ def chapter_delete_view(request, chapter_id):
     headers = {'Authorization': f'Token {token}'}
 
     # Fetch chapter data
-    url = f"http://127.0.0.1:8000/syllabus_api/chapter-delete/{chapter_id}/"
+    url = f"http://127.0.0.1:8000/backend/chapter-delete/{chapter_id}/"
     response = requests.get(url, headers=headers)
     chapter = response.json() if response.status_code == 200 else {}
 
@@ -994,7 +994,7 @@ def chapter_delete_view(request, chapter_id):
 
     if request.method == 'POST':
         # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/syllabus_api/chapter-update/{subject_id}/"
+        delete_url = f"http://127.0.0.1:8000/backend/chapter-update/{subject_id}/"
 
         delete_response = requests.delete(delete_url, headers=headers)
 
@@ -1017,7 +1017,7 @@ def note_list_view(request, chapter_id):
 
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")  # Debugging
-    api_url = f'http://127.0.0.1:8000/syllabus_api/note-list/{chapter_id}/'  # Adjust the URL as per your API endpoint
+    api_url = f'http://127.0.0.1:8000/backend/note-list/{chapter_id}/'  # Adjust the URL as per your API endpoint
      # Make the API request with the token
     response = requests.get(api_url,headers=headers)
 
@@ -1047,7 +1047,7 @@ def note_detail_view(request, note_id):
 
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")
-    note_url = f"http://127.0.0.1:8000/syllabus_api/note-detail/{note_id}/"
+    note_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
 
     response = requests.get(note_url, headers=headers)
     if response.status_code == 200:
@@ -1083,7 +1083,7 @@ def note_create_view(request, chapter_id):
             'file': request.FILES.get('file')
         } if 'file' in request.FILES else {}
 
-        api_url = f"http://127.0.0.1:8000/syllabus_api/note-update/{chapter_id}/"
+        api_url = f"http://127.0.0.1:8000/backend/note-update/{chapter_id}/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, data=data, files=files, headers=headers)
         if response.status_code == 201:
@@ -1102,7 +1102,7 @@ def note_update_view(request, note_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/syllabus_api/note-update/{note_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/note-update/{note_id}/"
     response = requests.get(api_url, headers=headers)
     note = response.json() if response.status_code == 200 else {}
     chapter_id = note.get('chapter')  # ✅ Extract chapter_id from API
@@ -1118,7 +1118,7 @@ def note_update_view(request, note_id):
         if file_upload:
             files["file"] = (file_upload.name, file_upload, file_upload.content_type)
 
-        update_url = f"http://127.0.0.1:8000/syllabus_api/note-update/{note_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/note-update/{note_id}/"
 
         update_response = requests.post(update_url, data=data, files=files, headers=headers)
         if update_response.status_code == 200:
@@ -1140,7 +1140,7 @@ def note_delete_view(request, note_id):
     headers = {'Authorization': f'Token {token}'}
 
     # Fetch note data
-    url = f"http://127.0.0.1:8000/syllabus_api/chapter-delete/{note_id}/"
+    url = f"http://127.0.0.1:8000/backend/chapter-delete/{note_id}/"
     response = requests.get(url, headers=headers)
     note = response.json() if response.status_code == 200 else {}
 
@@ -1150,7 +1150,7 @@ def note_delete_view(request, note_id):
     # ✅ Get chapter_id before deletion
     if request.method == 'POST':
         # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/syllabus_api/chapter-delete/{note_id}/"
+        delete_url = f"http://127.0.0.1:8000/backend/chapter-delete/{note_id}/"
         delete_response = requests.delete(delete_url, headers=headers)
         
         if delete_response.status_code in [200, 204]:

@@ -57,9 +57,14 @@ INSTALLED_APPS = [
     'courses',
     'blog',
     'contactenquiry',
+    'subscription',
     
     'backend',
+
 ]
+
+ESEWA_MERCHANT_ID = "EPAYTEST"  # or your merchant code
+ESEWA_SECRET_KEY = "8gBm/:&EnhH.1/q"  # UAT secret key example
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

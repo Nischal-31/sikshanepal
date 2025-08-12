@@ -16,19 +16,19 @@ urlpatterns = [
     path('subscription/', views.subscription_view, name='subscription'),
     path('checkout/', views.checkout_view, name='checkout'),
 
-
-    
     path('api-token-auth/', auth_views.obtain_auth_token),
 
     path('accounts/', include('allauth.urls')),
     path('courses/', include('courses.urls')),
     path('blog/', include('blog.urls')),
     path('contactenquiry/', include('contactenquiry.urls')),
+    path('subscription/', include('subscription.urls')),
     
     
 	##### user related path########################## 
 	path('user/', include('user.urls')),
     path('backend/', include('backend.urls')),
+
     #path('user_api/', include('user_api.urls')),  # Separate user API
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

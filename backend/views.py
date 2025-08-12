@@ -1,9 +1,13 @@
+import uuid
 from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
+import requests
 from rest_framework import generics,status,permissions
+
+from sikshanepal import settings
 from .models import Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
 from rest_framework.decorators import api_view,permission_classes,authentication_classes
 from rest_framework.response import Response
@@ -783,4 +787,3 @@ def noteDelete(request,pk):
     note = Note.objects.get(id=pk)
     note.delete()
     return Response('Note successfully Deleted!')
-

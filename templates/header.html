@@ -1,6 +1,11 @@
 {% load static %}
 <nav>
-	<img src="/static/images/sikshanepal.png" alt="sikshanepal">
+	<li class="{% if request.path == '/' %} active {% endif %}" style="list-style: none;">
+				<a href="{% url 'index' %}">
+					<img src="/static/images/sikshanepal.png" alt="sikshanepal">
+				</a>
+	</li>
+	
 	<div class="navigation">
 		<ul>
 			<i id="menu-close" class="fas fa-times"></i>
@@ -21,7 +26,7 @@
 				<a href="{% url 'contact' %}">Contact</a>
 			</li>
 			<li class="{% if '/subscription/' in request.path %} active {% endif %}">
-				<a href="{% url 'subscription' %}">Subscription</a>
+				<a href="{% url 'subscription:plans_list' %}">Subscription</a>
 			</li>
 			
             

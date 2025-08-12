@@ -11,3 +11,4 @@ cryptography
 Pillow
 Psycopg2-binary
 django-widget-tweaks
+pycryptodome

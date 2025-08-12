@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<section id="about-home" class="py-4 bg-light">
+  <div class="container text-center">
+    <h2 class="mb-0">Checkout /</h2>
+  </div>
+</section>
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row g-5 justify-content-center">
+      <!-- Billing Form -->
+      <div class="col-md-7 col-lg-6">
+        <h3 class="mb-4">Billing Information</h3>
+        <!-- You can add billing inputs here if needed -->
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-md-5 col-lg-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h4 class="card-title mb-4">Order Summary</h4>
+
+            <ul class="list-unstyled mb-3">
+              <li class="d-flex justify-content-between">
+                <span class="fw-semibold">Plan:</span>
+                <span class="text-capitalize">{{ plan.name }}</span>
+              </li>
+              <li class="d-flex justify-content-between">
+                <span class="fw-semibold">Access Duration:</span>
+                <span>
+                  {{ plan.duration_days|divisibleby:30|yesno:"Monthly,Quarterly,Yearly" }}
+                  <!-- Or customize based on your model -->
+                </span>
+              </li>
+              <li class="d-flex justify-content-between mb-3">
+                <span class="fw-semibold">Price:</span>
+                <span>Rs. {{ plan.price }}</span>
+              </li>
+            </ul>
+
+            <div class="border-top pt-3 d-flex justify-content-between">
+              <strong>Total</strong>
+              <strong>Rs. {{ plan.price }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- eSewa Payment Form -->
+      <div class="col-12 mt-4">
+        <form id="esewa_form" action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+    <input type="hidden" name="amount" value="{{ amount }}">
+    <input type="hidden" name="tax_amount" value="{{ tax_amount }}">
+    <input type="hidden" name="total_amount" value="{{ total_amount }}">
+    <input type="hidden" name="transaction_uuid" value="{{ transaction_uuid }}">
+    <input type="hidden" name="product_code" value="{{ product_code }}">
+    <input type="hidden" name="product_service_charge" value="{{ product_service_charge }}">
+    <input type="hidden" name="product_delivery_charge" value="{{ product_delivery_charge }}">
+    <input type="hidden" name="success_url" value="{{ success_url }}">
+    <input type="hidden" name="failure_url" value="{{ failure_url }}">
+    <input type="hidden" name="signed_field_names" value="total_amount,transaction_uuid,product_code">
+    <input type="hidden" name="signature" value="{{ signature }}">
+    <button type="submit" class="btn btn-primary w-100">Pay with eSewa</button>
+</form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Animation & UI Styling -->
+<style>
+  input,
+  select {
+    transition: all 0.2s ease-in-out;
+  }
+
+  input:focus,
+  select:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+  }
+
+  .card {
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover {
+    transform: scale(1.02);
+  }
+</style>
+{% endblock %}
