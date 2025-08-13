@@ -41,6 +41,11 @@
     {% if user.is_authenticated and user.user_type == 'admin' %}
       <div class="mt-4">
         <a href="{% url 'note-create' chapter_id %}" class="btn btn-success">Create New Note</a>
+      </div>
+    {% endif %}
+    
+    {% if user.is_authenticated and user.user_type == 'normal' %}
+      <div class="mt-4">
         <a href="{% url 'chapter-list' subject_id %}" class="btn btn-outline-secondary">← Back to Chapters</a>
       </div>
     {% endif %}
