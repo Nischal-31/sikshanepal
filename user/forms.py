@@ -15,7 +15,7 @@ class UserRegisterForm(UserCreationForm):
     
     class Meta:
         model = CustomUser  # Make sure to point to your custom user model
-        fields = ['username', 'email', 'phone_no', 'first_name', 'last_name', 'password1', 'password2','user_type']
+        fields = ['username', 'email', 'phone_no', 'first_name', 'last_name', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

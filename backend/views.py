@@ -34,7 +34,9 @@ def apiOverview(request):
             "Detail View": request.build_absolute_uri(reverse('user-detail-api', args=['<id>'])),
             "Create": request.build_absolute_uri(reverse('user-create-api')),
             "Update": request.build_absolute_uri(reverse('user-update-api', args=['<id>'])),
-            "Delete": request.build_absolute_uri(reverse('user-delete-api', args=['<id>']))
+            "Delete": request.build_absolute_uri(reverse('user-delete-api', args=['<id>'])),
+            "Profile": request.build_absolute_uri(reverse('user-profile-api')),
+            "Token Authentication": request.build_absolute_uri(reverse('api_token_auth'))
         },
         "Courses": {
             "List": request.build_absolute_uri(reverse('course-list-api')),
