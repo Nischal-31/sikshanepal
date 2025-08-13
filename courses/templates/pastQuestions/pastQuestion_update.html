@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Update Past Question{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">{{ subject.name }} / Past Questions / Update</h2>
+  </div>
+</section>
+
+<!-- Form section -->
+<section id="update-pastQuestion" class="py-5">
+  <div class="container">
+    <h1 class="mb-4 text-center">Update Past Question</h1>
+
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow rounded-4">
+          <div class="card-body p-4">
+            <form method="POST" action="{% url 'pastQuestion-update' pastQuestion.id %}" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ pastQuestion.title }}" required placeholder="Enter title">
+              </div>
+
+              <div class="mb-3">
+                <label for="year" class="form-label">Year</label>
+                <input type="number" class="form-control" id="year" name="year" value="{{ pastQuestion.year }}" required placeholder="Enter year">
+              </div>
+
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter description (optional)">{{ pastQuestion.description }}</textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="file" class="form-label">Upload File</label>
+                <input type="file" class="form-control" id="file" name="file">
+
+                {% if pastQuestion.file %}
+                  <p class="mt-2">
+                    Current file:
+                    <a href="{{ pastQuestion.file }}" target="_blank" class="btn btn-outline-primary btn-sm">View / Download</a>
+                  </p>
+                {% endif %}
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Update Past Question</button>
+              </div>
+
+            </form>
+
+            <div class="mt-3 text-center">
+              <a href="{% url 'pastQuestion-list' subject_id %}" class="btn btn-outline-secondary">Back to Past Questions</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

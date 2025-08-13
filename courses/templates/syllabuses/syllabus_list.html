@@ -4,9 +4,9 @@
 {% block title %}Syllabus - {{ subject.name }}{% endblock %}
 
 {% block content %}
-<section class="py-4 bg-light">
+<section id="about-home" class="py-4 bg-light">
   <div class="container">
-    <h2 class="mb-0">Syllabus / {{ subject.name }}</h2>
+    <h2 class="mb-0">Syllabus List / {{ subject.name }}</h2>
   </div>
 </section>
 
@@ -23,13 +23,12 @@
           {% endif %}
 
           {% if syllabus.file %}
-  <a href="{% url 'syllabus-detail' syllabus.id %}" class="btn btn-outline-secondary btn-sm">
-    <i class="fas fa-file-download me-1"></i> View/Download
-  </a>
-{% else %}
-  <span class="text-muted small">No syllabus file uploaded.</span>
-{% endif %}
-
+            <a href="{% url 'syllabus-detail' syllabus.id %}" class="btn btn-outline-secondary btn-sm" target="_blank">
+              <i class="fas fa-file-download me-1"></i> View/Download
+            </a>
+          {% else %}
+            <span class="text-muted small">No syllabus file uploaded.</span>
+          {% endif %}
         </div>
 
         {% if user.is_authenticated and user.user_type == 'admin' %}
@@ -47,17 +46,21 @@
         {% endif %}
       </div>
     </div>
-
   {% else %}
     <div class="alert alert-info" role="alert">
       No syllabus available for this subject.
-      {% if user.is_authenticated and user.user_type == 'admin' %}
-        <a href="{% url 'syllabus-create' subject.id %}" class="btn btn-sm btn-success ms-2">
-          <i class="fas fa-plus me-1"></i> Create Syllabus
-        </a>
-      {% endif %}
     </div>
   {% endif %}
+
+  <!-- Buttons at the bottom -->
+  <div class="mt-4 d-flex gap-2">
+    <a href="{% url 'subject-detail' subject.id %}" class="btn btn-outline-secondary btn-sm">← Back to Subject</a>
+    {% if user.is_authenticated and user.user_type == 'admin' %}
+      <a href="{% url 'syllabus-create' subject.id %}" class="btn btn-success btn-sm">
+        <i class="fas fa-plus me-1"></i> Create Syllabus
+      </a>
+    {% endif %}
+  </div>
 </div>
 
 <!-- FontAwesome CDN for icons -->

@@ -579,55 +579,22 @@ def pastQuestion_detail_view(request, pastQuestion_id):
         'is_pdf': is_pdf,
     })
 
-
 @login_required
 def pastQuestion_create_view(request, subject_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to create past questions.")
 
+    # ✅ Fetch the subject for template context
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
     if request.method == "POST":
         token = request.session.get('auth_token')
         if not token:
             return HttpResponseForbidden("Authentication token missing.")
-        
-        data = {
-            "title": request.POST.get("title"),
-            "year": request.POST.get("year"),
-            "description": request.POST.get("description"),
-            "subject": subject_id,  # include subject id in data if API requires it
-        }
-        files = {
-            'file': request.FILES.get('file')
-        } if 'file' in request.FILES else {}
 
-        api_url = f"http://127.0.0.1:8000/backend/oldQuestion-create/{subject_id}/"
-        headers = {'Authorization': f'Token {token}'}
-        response = requests.post(api_url, data=data, files=files, headers=headers)
-
-        if response.status_code == 201:
-            return redirect("pastQuestion-list", subject_id=subject_id)
-        
-    return render(request, "pastQuestions/pastQuestion_create.html", {
-        "subject_id": subject_id,
-    })
-
-@login_required
-def pastQuestion_update_view(request, pastQuestion_id):
-    if not is_admin(request):
-        return HttpResponseForbidden("You do not have permission to update past questions.")
-    
-    token = request.session.get('auth_token')
-    if not token:
-        return HttpResponseForbidden("Authentication token missing.")
-
-    headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/backend/oldQuestion-create/{pastQuestion_id}/"
-    response = requests.get(api_url, headers=headers)
-    pastQuestion = response.json() if response.status_code == 200 else {}
-
-    subject_id = pastQuestion.get('subject')  # ✅ Extract subject_id from API
-
-    if request.method == "POST":
         data = {
             "title": request.POST.get("title"),
             "year": request.POST.get("year"),
@@ -638,7 +605,69 @@ def pastQuestion_update_view(request, pastQuestion_id):
         files = {}
         file_upload = request.FILES.get("file")
         if file_upload:
-            files["file"] = (file_upload.name, file_upload, file_upload.content_type)
+            files['file'] = file_upload
+
+        api_url = f"http://127.0.0.1:8000/backend/pastQuestion-create/{subject_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, data=data, files=files, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("pastQuestion-list", subject_id=subject_id)
+        else:
+            # ✅ Optional: handle API errors
+            error_message = "Failed to create past question. Please try again."
+            return render(request, "pastQuestions/pastQuestion_create.html", {
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": error_message
+            })
+
+    return render(request, "pastQuestions/pastQuestion_create.html", {
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+
+@login_required
+def pastQuestion_update_view(request, pastQuestion_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update past questions.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+
+    # ✅ Fetch past question details
+    api_url = f"http://127.0.0.1:8000/backend/pastQuestion-detail/{pastQuestion_id}/"
+    response = requests.get(api_url, headers=headers)
+    pastQuestion = response.json() if response.status_code == 200 else {}
+
+    if not pastQuestion:
+        return HttpResponseNotFound("Past Question not found")
+
+    subject_id = pastQuestion.get('subject')
+
+    # ✅ Fetch subject for template breadcrumbs
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
+
+    if request.method == "POST":
+        data = {
+            "title": request.POST.get("title"),
+            "year": request.POST.get("year"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,
+        }
+
+        # Handle optional file upload
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files['file'] = file_upload
 
         update_url = f"http://127.0.0.1:8000/backend/pastQuestion-update/{pastQuestion_id}/"
         update_response = requests.post(update_url, data=data, files=files, headers=headers)
@@ -648,13 +677,17 @@ def pastQuestion_update_view(request, pastQuestion_id):
         else:
             return render(request, "pastQuestions/pastQuestion_update.html", {
                 "pastQuestion": pastQuestion,
+                "subject": subject,
                 "subject_id": subject_id,
-                "error": "Failed to update past question."
+                "error": "Failed to update past question. Please try again."
             })
+
     return render(request, "pastQuestions/pastQuestion_update.html", {
         "pastQuestion": pastQuestion,
+        "subject": subject,
         "subject_id": subject_id
     })
+
 
 @login_required
 def pastQuestion_delete_view(request, pastQuestion_id):
@@ -667,34 +700,47 @@ def pastQuestion_delete_view(request, pastQuestion_id):
 
     headers = {'Authorization': f'Token {token}'}
 
-    # Fetch past question data
-    url = f"http://127.0.0.1:8000/backend/pastQuestion-delete/{pastQuestion_id}/"
+    # ✅ Fetch past question details
+    url = f"http://127.0.0.1:8000/backend/pastQuestion-detail/{pastQuestion_id}/"
     response = requests.get(url, headers=headers)
     pastQuestion = response.json() if response.status_code == 200 else {}
 
     if not pastQuestion:
         return HttpResponseNotFound("Past Question not found")
-    
-    subject_id = pastQuestion.get('subject')  # ✅ Get subject_id before deletion
+
+    subject_id = pastQuestion.get('subject')  # For redirect/back link
+
+    # ✅ Fetch subject for template breadcrumbs
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
 
     if request.method == 'POST':
-        # DELETE request with headers
         delete_url = f"http://127.0.0.1:8000/backend/pastQuestion-delete/{pastQuestion_id}/"
         delete_response = requests.delete(delete_url, headers=headers)
 
         if delete_response.status_code in [200, 204]:
             return redirect('pastQuestion-list', subject_id=subject_id)
-        
+        else:
+            error_message = "Failed to delete past question. Please try again."
+            return render(request, 'pastQuestions/pastQuestion_delete.html', {
+                'pastQuestion': pastQuestion,
+                'subject': subject,
+                'subject_id': subject_id,
+                'error': error_message
+            })
+
     return render(request, 'pastQuestions/pastQuestion_delete.html', {
-            'error': 'Failed to delete past question.',
-            'pastQuestion': pastQuestion,
-            'subject_id': subject_id
+        'pastQuestion': pastQuestion,
+        'subject': subject,
+        'subject_id': subject_id
     })
+
    
 #-------------------------------------------------------------------------------------------------------------------
 #                       SYLLABUS VIEWS 
 #-------------------------------------------------------------------------------------------------------------------
-
 @login_required
 def syllabus_list_view(request, subject_id):
     token = request.session.get('auth_token')
@@ -702,30 +748,31 @@ def syllabus_list_view(request, subject_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    print(f"Sending request with headers: {headers}")
-
-    api_url = f"http://127.0.0.1:8000/backend/syllabus-list/{subject_id}/"
-    # Make the API request with the token
+    api_url = f'http://127.0.0.1:8000/backend/syllabus-list/{subject_id}/'  # list endpoint
     response = requests.get(api_url, headers=headers)
 
     if response.status_code == 200:
-        syllabus = response.json()
-        # If syllabus is a list (empty or not), convert to None
-        if isinstance(syllabus, list):
-            syllabus = syllabus[0] if syllabus else None
-    elif response.status_code == 401:
-        print("Unauthorized access, check your token.")
-        syllabus = []
+        result = response.json()
+        # If API returns a list, grab first element or None
+        syllabus = result[0] if isinstance(result, list) and result else None
+        print("API Response:", result)
     else:
-        print(f"Error fetching syllabus: {response.status_code}, {response.text}")
-        syllabus = []
-    # ✅ Proper way to get subject_id
+        syllabus = None
+
+    # Fetch subject for template breadcrumbs
     try:
         subject = Subject.objects.get(id=subject_id)
         semester_id = subject.semester_id
     except Subject.DoesNotExist:
-        semester_id = None  # fallback
-    return render(request, 'syllabuses/syllabus_list.html', {'syllabus': syllabus, 'semester_id': semester_id, 'subject_id': subject_id})
+        subject = None
+        semester_id = None
+
+    return render(request, 'syllabuses/syllabus_list.html', {
+        'syllabus': syllabus,
+        'subject': subject,
+        'semester_id': semester_id,
+        'subject_id': subject_id
+    })
 
 
 @login_required
@@ -735,8 +782,6 @@ def syllabus_detail_view(request, syllabus_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    print(f"Sending request with headers: {headers}")
-
     syllabus_url = f"http://127.0.0.1:8000/backend/syllabus-detail/{syllabus_id}/"
 
     response = requests.get(syllabus_url, headers=headers)
@@ -744,33 +789,53 @@ def syllabus_detail_view(request, syllabus_id):
         syllabus = response.json()
     else:
         return HttpResponseNotFound("Syllabus not found")
-    # ✅ Get subject_id from syllabus data
-    subject_id = syllabus.get('subject')    
+
+    # Get subject_id for back button / breadcrumbs
+    subject_id = syllabus.get('subject')
     if not subject_id:
         return HttpResponseNotFound("Subject not found for this syllabus")
+
+    # Determine if the uploaded file is a PDF
+    file_url = syllabus.get('file', '')
+    is_pdf = file_url.lower().endswith('.pdf') if file_url else False
+
     return render(request, 'syllabuses/syllabus_detail.html', {
         'syllabus': syllabus,
         'subject_id': subject_id,
+        'is_pdf': is_pdf,
     })
+
 
 @login_required
 def syllabus_create_view(request, subject_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to create syllabus.")
 
+    # ✅ Fetch subject for template breadcrumbs
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
+    # ✅ Check if syllabus already exists
+    if hasattr(subject, "syllabus"):
+        return redirect("syllabus-update", syllabus_id=subject.syllabus.id)
+
     if request.method == "POST":
         token = request.session.get('auth_token')
         if not token:
             return HttpResponseForbidden("Authentication token missing.")
-        
+
         data = {
-            "title": request.POST.get("title"),
-            "description": request.POST.get("description"),
-            "subject": subject_id,  # include subject id in data if API requires it
+            "objectives": request.POST.get("objectives"),
+            "subject": subject_id,
         }
-        files = {
-            'file': request.FILES.get('file')
-        } if 'file' in request.FILES else {}
+
+        # ✅ Handle optional file upload
+        files = {}
+        file_upload = request.FILES.get('file')
+        if file_upload:
+            files['file'] = file_upload
 
         api_url = f"http://127.0.0.1:8000/backend/syllabus-create/{subject_id}/"
         headers = {'Authorization': f'Token {token}'}
@@ -778,9 +843,17 @@ def syllabus_create_view(request, subject_id):
 
         if response.status_code == 201:
             return redirect("syllabus-list", subject_id=subject_id)
-        
+        else:
+            error_message = "Failed to create syllabus. Please try again."
+            return render(request, "syllabuses/syllabus_create.html", {
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": error_message
+            })
+
     return render(request, "syllabuses/syllabus_create.html", {
-        "subject_id": subject_id,
+        "subject": subject,
+        "subject_id": subject_id
     })
 
 @login_required
@@ -793,17 +866,21 @@ def syllabus_update_view(request, syllabus_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/backend/syllabus-update/{syllabus_id}/"
+    
+    # Fetch existing syllabus data
+    api_url = f"http://127.0.0.1:8000/backend/syllabus-detail/{syllabus_id}/"
     response = requests.get(api_url, headers=headers)
     syllabus = response.json() if response.status_code == 200 else {}
 
-    subject_id = syllabus.get('subject')  # ✅ Extract subject_id from API
+    if not syllabus:
+        return HttpResponseNotFound("Syllabus not found.")
+
+    subject_id = syllabus.get('subject')
 
     if request.method == "POST":
         data = {
-            "title": request.POST.get("title"),
-            "description": request.POST.get("description"),
-            "subject": subject_id,  # include subject id in data if API requires it
+            "objectives": request.POST.get("objectives", ""),
+            "subject": subject_id,
         }
 
         files = {}
@@ -811,10 +888,18 @@ def syllabus_update_view(request, syllabus_id):
         if file_upload:
             files["file"] = (file_upload.name, file_upload, file_upload.content_type)
 
-        update_url = f"http://127.0.0.1:8000/backend/syllabus-update/{subject_id}/"
+        update_url = f"http://127.0.0.1:8000/backend/syllabus-update/{syllabus_id}/"
         update_response = requests.post(update_url, data=data, files=files, headers=headers)
+
         if update_response.status_code == 200:
             return redirect("syllabus-list", subject_id=subject_id)
+        else:
+            error_message = "Failed to update syllabus. Please try again."
+            return render(request, "syllabuses/syllabus_update.html", {
+                "syllabus": syllabus,
+                "subject_id": subject_id,
+                "error": error_message
+            })
         
     return render(request, "syllabuses/syllabus_update.html", {
         "syllabus": syllabus,
@@ -833,29 +918,32 @@ def syllabus_delete_view(request, syllabus_id):
     headers = {'Authorization': f'Token {token}'}
 
     # Fetch syllabus data
-    url = f"http://127.0.0.1:8000/backend/syllabus-delete/{syllabus_id}/"
+    url = f"http://127.0.0.1:8000/backend/syllabus-detail/{syllabus_id}/"
     response = requests.get(url, headers=headers)
     syllabus = response.json() if response.status_code == 200 else {}
 
     if not syllabus:
         return HttpResponseNotFound("Syllabus not found")
+    
     subject_id = syllabus.get('subject')  # ✅ Get subject_id before deletion
+
     if request.method == 'POST':
-        # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/backend/syllabus-delete/{subject_id}/"
+        # Correct DELETE URL using syllabus_id
+        delete_url = f"http://127.0.0.1:8000/backend/syllabus-delete/{syllabus_id}/"
         delete_response = requests.delete(delete_url, headers=headers)
 
         if delete_response.status_code in [200, 204]:
             return redirect('syllabus-list', subject_id=subject_id)
+
     return render(request, 'syllabuses/syllabus_delete.html', {
         'error': 'Failed to delete syllabus.',
         'syllabus': syllabus,
         'subject_id': subject_id
     })
+
 #-------------------------------------------------------------------------------------------------------------------
 #                       CHAPTERS VIEWS 
 #-------------------------------------------------------------------------------------------------------------------
-
 @login_required
 def chapter_list_view(request, subject_id):
     token = request.session.get('auth_token')
@@ -864,8 +952,8 @@ def chapter_list_view(request, subject_id):
 
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")
+
     api_url = f"http://127.0.0.1:8000/backend/chapter-list/{subject_id}/"
-    # Make the API request with the token
     response = requests.get(api_url, headers=headers)
 
     if response.status_code == 200:
@@ -877,14 +965,21 @@ def chapter_list_view(request, subject_id):
     else:
         print(f"Error fetching chapters: {response.status_code}, {response.text}")
         chapters = []
-    # ✅ Proper way to get subject_id
+
+    # ✅ Fetch subject info for template
     try:
         subject = Subject.objects.get(id=subject_id)
         semester_id = subject.semester_id
     except Subject.DoesNotExist:
-        semester_id = None  # fallback
-    return render(request, 'chapters/chapter_list.html', {'chapters': chapters, 
-'semester_id': semester_id, 'subject_id': subject_id})
+        subject = None
+        semester_id = None
+
+    return render(request, 'chapters/chapter_list.html', {
+        'chapters': chapters,
+        'subject': subject,
+        'semester_id': semester_id,
+        'subject_id': subject_id,
+    })
 
 @login_required
 def chapter_detail_view(request, chapter_id):
@@ -915,6 +1010,12 @@ def chapter_create_view(request, subject_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to create chapters.")
 
+    # ✅ Fetch the subject to show context in template
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
     if request.method == "POST":
         token = request.session.get('auth_token')
         if not token:
@@ -923,20 +1024,30 @@ def chapter_create_view(request, subject_id):
         data = {
             "title": request.POST.get("title"),
             "description": request.POST.get("description"),
-            "subject": subject_id,  # include subject id in data if API requires it
-            "order": request.POST.get("order", 0)  # Optional order field
+            "order": int(request.POST.get("order", 1))  # Convert to int, default to 1
         }
-        api_url = f"http://127.0.0.1:8000/backend/chapter-update/{subject_id}/"
+        
+        # ✅ Fixed API URL - should be chapter-create, not chapter-update
+        api_url = f"http://127.0.0.1:8000/backend/chapter-create/{subject_id}/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, json=data, headers=headers)   
 
         if response.status_code == 201:
             return redirect("chapter-list", subject_id=subject_id)
+        else:
+            # ✅ Handle API errors (optional)
+            error_message = "Failed to create chapter. Please try again."
+            return render(request, "chapters/chapter_create.html", {
+                "subject_id": subject_id,
+                "subject": subject,
+                "error": error_message
+            })
+    
     return render(request, "chapters/chapter_create.html", {
         "subject_id": subject_id,
+        "subject": subject,  # ✅ Send subject to template for breadcrumb
     })
     
-
 @login_required
 def chapter_update_view(request, chapter_id):
     if not is_admin(request):
@@ -946,31 +1057,28 @@ def chapter_update_view(request, chapter_id):
     if not token:
         return HttpResponseForbidden("Authentication token missing.")
 
-    headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/backend/chapter-update/{chapter_id}/"
-    response = requests.get(api_url, headers=headers)
+    api_url = f"http://127.0.0.1:8000/backend/chapter-detail/{chapter_id}/"
+    response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
     chapter = response.json() if response.status_code == 200 else {}
 
-    subject_id = chapter.get('subject')  # ✅ Extract subject_id from API
+    subject_id = chapter.get('subject')  # For redirecting
+
     if request.method == "POST":
+        order_value = request.POST.get("order")
         data = {
             "title": request.POST.get("title"),
             "description": request.POST.get("description"),
-            "subject": subject_id,  # include subject id in data if API requires it
-            "order": request.POST.get("order", 0)  # Optional order field
+            "subject": subject_id,
+            "order": int(order_value) if order_value else 0,
         }
 
-        update_url = f"http://127.0.0.1:8000/backend/chapter-update/{subject_id}/"
-        update_response = requests.post(update_url, json=data, headers=headers)
+        update_url = f"http://127.0.0.1:8000/backend/chapter-update/{chapter_id}/"
+        update_response = requests.post(update_url, json=data, headers={'Authorization': f'Token {token}'})
 
         if update_response.status_code == 200:
             return redirect("chapter-list", subject_id=subject_id)
-        
-    return render(request, "chapters/chapter_update.html", {
-        "chapter": chapter,
-        "subject_id": subject_id
-    })
 
+    return render(request, "chapters/chapter_update.html", {"chapter": chapter, "subject_id": subject_id})
 
 @login_required
 def chapter_delete_view(request, chapter_id):
@@ -981,31 +1089,27 @@ def chapter_delete_view(request, chapter_id):
     if not token:
         return HttpResponseForbidden("Authentication token missing.")
 
-    headers = {'Authorization': f'Token {token}'}
-
-    # Fetch chapter data
-    url = f"http://127.0.0.1:8000/backend/chapter-delete/{chapter_id}/"
-    response = requests.get(url, headers=headers)
+    api_url = f"http://127.0.0.1:8000/backend/chapter-detail/{chapter_id}/"
+    response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
     chapter = response.json() if response.status_code == 200 else {}
 
     if not chapter:
         return HttpResponseNotFound("Chapter not found")
+
     subject_id = chapter.get('subject')  # ✅ Get subject_id before deletion
 
-    if request.method == 'POST':
-        # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/backend/chapter-update/{subject_id}/"
-
-        delete_response = requests.delete(delete_url, headers=headers)
+    if request.method == "POST":
+        delete_url = f"http://127.0.0.1:8000/backend/chapter-delete/{chapter_id}/"
+        delete_response = requests.delete(delete_url, headers={'Authorization': f'Token {token}'})
 
         if delete_response.status_code in [200, 204]:
-            return redirect('chapter-list', subject_id=subject_id)
-        
-    return render(request, 'chapters/chapter_delete.html', {
-        'error': 'Failed to delete chapter.',
-        'chapter': chapter,
-        'subject_id': subject_id
+            return redirect("chapter-list", subject_id=subject_id)
+
+    return render(request, "chapters/chapter_delete.html", {
+        "chapter": chapter,
+        "subject_id": subject_id  # ✅ Include for cancel/back link
     })
+
 #-------------------------------------------------------------------------------------------------------------------
 #                       Note VIEWS 
 #-------------------------------------------------------------------------------------------------------------------
@@ -1017,9 +1121,9 @@ def note_list_view(request, chapter_id):
 
     headers = {'Authorization': f'Token {token}'}
     print(f"Sending request with headers: {headers}")  # Debugging
-    api_url = f'http://127.0.0.1:8000/backend/note-list/{chapter_id}/'  # Adjust the URL as per your API endpoint
-     # Make the API request with the token
-    response = requests.get(api_url,headers=headers)
+
+    api_url = f'http://127.0.0.1:8000/backend/note-list/{chapter_id}/'
+    response = requests.get(api_url, headers=headers)
 
     if response.status_code == 200:
         notes = response.json()
@@ -1030,13 +1134,21 @@ def note_list_view(request, chapter_id):
     else:
         print(f"Error fetching notes: {response.status_code}, {response.text}")  # Debugging
         notes = []
-     # ✅ Proper way to get course_id
+
+    # ✅ Fetch subject_id from chapter
     try:
         chapter = Chapter.objects.get(id=chapter_id)
         subject_id = chapter.subject_id
     except Chapter.DoesNotExist:
-        subject_id = None  # fallback
-    return render(request, 'notes/note_list.html', {'notes': notes, 'subject_id': subject_id, 'chapter_id': chapter_id})
+        chapter = None
+        subject_id = None
+
+    return render(request, 'notes/note_list.html', {
+        'notes': notes,
+        'chapter_id': chapter_id,
+        'subject_id': subject_id,
+        'chapter': chapter
+    })
 
 
 @login_required
@@ -1046,28 +1158,38 @@ def note_detail_view(request, note_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    print(f"Sending request with headers: {headers}")
-    note_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
+    api_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
 
-    response = requests.get(note_url, headers=headers)
+    response = requests.get(api_url, headers=headers)
     if response.status_code == 200:
         note = response.json()
+        file_url = note.get('file', '')
+        is_pdf = file_url.lower().endswith('.pdf') if file_url else False
     else:
         return HttpResponseNotFound("Note not found")
-    
+
     # ✅ Get chapter_id from note data
     chapter_id = note.get('chapter')
     if not chapter_id:
         return HttpResponseNotFound("Chapter not found for this note")
+
     return render(request, 'notes/note_detail.html', {
         'note': note,
         'chapter_id': chapter_id,
+        'is_pdf': is_pdf,
     })
+
 
 @login_required
 def note_create_view(request, chapter_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to create notes.")
+
+    # ✅ Fetch the chapter to show in template
+    try:
+        chapter = Chapter.objects.get(id=chapter_id)
+    except Chapter.DoesNotExist:
+        return HttpResponseNotFound("Chapter not found.")
 
     if request.method == "POST":
         token = request.session.get('auth_token')
@@ -1077,56 +1199,70 @@ def note_create_view(request, chapter_id):
         data = {
             "title": request.POST.get("title"),
             "description": request.POST.get("description"),
-            "chapter": chapter_id,  # include chapter id in data if API requires it
+            "chapter": chapter_id,  # Link to this chapter
         }
-        files = {
-            'file': request.FILES.get('file')
-        } if 'file' in request.FILES else {}
 
-        api_url = f"http://127.0.0.1:8000/backend/note-update/{chapter_id}/"
+        files = {}
+        if 'file' in request.FILES:
+            files['file'] = request.FILES['file']
+
+        # ✅ API endpoint for creating notes
+        api_url = f"http://127.0.0.1:8000/backend/note-create/{chapter_id}/"
         headers = {'Authorization': f'Token {token}'}
         response = requests.post(api_url, data=data, files=files, headers=headers)
+
         if response.status_code == 201:
             return redirect("note-list", chapter_id=chapter_id)
+        else:
+            # ✅ Optional: handle API errors
+            error_message = "Failed to create note. Please try again."
+            return render(request, "notes/note_create.html", {
+                "chapter": chapter,
+                "error": error_message
+            })
+    
     return render(request, "notes/note_create.html", {
-        "chapter_id": chapter_id,
+        "chapter": chapter,  # ✅ Send chapter to template for breadcrumb
     })
 
 @login_required
 def note_update_view(request, note_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to update notes.")
-    
+
     token = request.session.get('auth_token')
     if not token:
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/backend/note-update/{note_id}/"
+
+    # ✅ Get note details
+    api_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
     response = requests.get(api_url, headers=headers)
     note = response.json() if response.status_code == 200 else {}
-    chapter_id = note.get('chapter')  # ✅ Extract chapter_id from API
+
+    chapter_id = note.get('chapter')  # For redirecting after update
+
     if request.method == "POST":
         data = {
             "title": request.POST.get("title"),
             "description": request.POST.get("description"),
-            "chapter": chapter_id,  # include subject id in data if API requires it
+            "chapter": chapter_id,
         }
 
+        # Handle optional file upload
         files = {}
         file_upload = request.FILES.get("file")
         if file_upload:
             files["file"] = (file_upload.name, file_upload, file_upload.content_type)
 
         update_url = f"http://127.0.0.1:8000/backend/note-update/{note_id}/"
-
         update_response = requests.post(update_url, data=data, files=files, headers=headers)
+
         if update_response.status_code == 200:
             return redirect("note-list", chapter_id=chapter_id)
-    return render(request, "notes/note_update.html", {
-        "note": note,
-        "chapter_id": chapter_id
-    })
+
+    return render(request, "notes/note_update.html", {"note": note, "chapter_id": chapter_id})
 
 @login_required
 def note_delete_view(request, note_id):
@@ -1139,26 +1275,26 @@ def note_delete_view(request, note_id):
 
     headers = {'Authorization': f'Token {token}'}
 
-    # Fetch note data
-    url = f"http://127.0.0.1:8000/backend/chapter-delete/{note_id}/"
-    response = requests.get(url, headers=headers)
+    # ✅ Fetch note data
+    detail_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
+    response = requests.get(detail_url, headers=headers)
     note = response.json() if response.status_code == 200 else {}
 
     if not note:
         return HttpResponseNotFound("Note not found")
-    chapter_id = note.get('chapter')
-    # ✅ Get chapter_id before deletion
+
+    chapter_id = note.get('chapter')  # ✅ Get chapter_id before deletion
+
     if request.method == 'POST':
-        # DELETE request with headers
-        delete_url = f"http://127.0.0.1:8000/backend/chapter-delete/{note_id}/"
+        # DELETE request
+        delete_url = f"http://127.0.0.1:8000/backend/note-delete/{note_id}/"
         delete_response = requests.delete(delete_url, headers=headers)
-        
+
         if delete_response.status_code in [200, 204]:
             return redirect('note-list', chapter_id=chapter_id)
 
     return render(request, 'notes/note_delete.html', {
-        'error': 'Failed to delete note.',
         'note': note,
         'chapter_id': chapter_id
     })
-        
+

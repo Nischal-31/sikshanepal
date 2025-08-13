@@ -4,12 +4,11 @@
 {% block title %}Past Questions - {{ subject.name }}{% endblock %}
 
 {% block content %}
-<section class="py-4 bg-light">
-  <div class="container">
+<section id="about-home" class="py-4 bg-light">
+  <div class="container d-flex justify-content-between align-items-center">
     <h2 class="mb-0">Past Questions / {{ subject.name }}</h2>
   </div>
-</section>
-
+</section>  
 <div class="container py-4">
   <h1 class="mb-4">Past Questions</h1>
 
@@ -52,24 +51,21 @@
         </div>
       {% endfor %}
     </div>
-
-    {% if user.is_authenticated and user.user_type == 'admin' %}
-      <div class="mt-4 text-end">
-        <a href="{% url 'pastQuestion-create' subject.id %}" class="btn btn-success">
-          <i class="fas fa-plus me-1"></i> Add New Past Question
-        </a>
-      </div>
-    {% endif %}
   {% else %}
     <div class="alert alert-info" role="alert">
       No past questions found for this subject.
-      {% if user.is_authenticated and user.user_type == 'admin' %}
-        <a href="{% url 'pastQuestion-create' subject.id %}" class="btn btn-sm btn-success ms-2">
-          <i class="fas fa-plus me-1"></i> Add New Past Question
-        </a>
-      {% endif %}
     </div>
   {% endif %}
+
+  <!-- Buttons at the bottom -->
+  <div class="mt-4 d-flex gap-2">
+    <a href="{% url 'subject-detail' subject.id %}" class="btn btn-outline-secondary btn-sm">← Back to Subject</a>
+    {% if user.is_authenticated and user.user_type == 'admin' %}
+      <a href="{% url 'pastQuestion-create' subject.id %}" class="btn btn-success btn-sm">
+        <i class="fas fa-plus me-1"></i> Add New Past Question
+      </a>
+    {% endif %}
+  </div>
 </div>
 
 <!-- FontAwesome CDN for icons -->

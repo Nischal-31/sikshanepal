@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Update Note{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">{{ chapter.title }} / Notes / Update</h2>
+  </div>
+</section>
+
+<!-- Form section -->
+<section id="update-note" class="py-5">
+  <div class="container">
+    <h1 class="mb-4 text-center">Update Note</h1>
+    
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow rounded-4">
+          <div class="card-body p-4">
+            <form method="POST" action="{% url 'note-update' note.id %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              
+              <!-- Title -->
+              <div class="mb-3">
+                <label for="title" class="form-label">Note Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ note.title }}" required placeholder="Enter note title">
+              </div>
+              
+              <!-- Description -->
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter note description (optional)">{{ note.description }}</textarea>
+              </div>
+              
+              <!-- File Upload -->
+              <div class="mb-3">
+                <label for="file" class="form-label">Upload File</label>
+                <input type="file" class="form-control" id="file" name="file">
+                {% if note.file %}
+                  <div class="form-text">
+                    Current file: <a href="{{ note.file }}" target="_blank">View / Download</a>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <!-- Submit -->
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Update Note</button>
+              </div>
+            </form>
+            
+            <!-- Back Link -->
+            <div class="mt-3 text-center">
+              <a href="{% url 'note-list' chapter_id %}" class="btn btn-outline-secondary">Back to Note List</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

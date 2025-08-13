@@ -1,34 +1,35 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Syllabus - {{ syllabus.subject.name }}{% endblock %}
+{% block title %}Syllabus: {{ syllabus.subject.name }}{% endblock %}
 
 {% block content %}
 <section id="about-home" class="py-4 bg-light">
   <div class="container">
-    <h2 class="mb-0">Courses /</h2>
+    <h2 class="mb-0">Syllabus Details /</h2>
   </div>
 </section>
 
 <div class="container py-4">
   <div class="card shadow rounded">
     <div class="card-body">
-      <h3 class="card-title">Syllabus for {{ syllabus.subject.name }}</h3>
+      <h3 class="card-title">Syllabus: {{ syllabus.subject.name }}</h3>
 
       {% if syllabus.objectives %}
-        <p class="card-text text-muted">{{ syllabus.objectives|linebreaks }}</p>
+        <p class="card-text text-muted">{{ syllabus.objectives }}</p>
       {% endif %}
 
       {% if syllabus.file %}
         {% if is_pdf %}
-          <embed src="{{ syllabus.file.url }}#zoom=page-width" width="100%" height="800px" type="application/pdf" />
+          <embed src="{{ syllabus.file }}#zoom=page-width" width="100%" height="800px" type="application/pdf">
         {% else %}
           <p>This file type can’t be previewed. Please download:</p>
-          <a href="{{ syllabus.file.url }}" class="btn btn-outline-primary" download>Download File</a>
+          <a href="{{ syllabus.file }}" class="btn btn-outline-primary" download>Download File</a>
         {% endif %}
       {% else %}
         <p>No file uploaded.</p>
       {% endif %}
+
     </div>
   </div>
 

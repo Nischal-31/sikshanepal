@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Syllabus{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">{{ subject.name }} / Syllabus / Create</h2>
+  </div>
+</section>
+
+<!-- Form section -->
+<section id="create-syllabus" class="py-5">
+  <div class="container">
+    <h1 class="mb-4 text-center">Create a New Syllabus</h1>
+
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow rounded-4">
+          <div class="card-body p-4">
+
+            {% if error %}
+              <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'syllabus-create' subject_id %}" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label for="objectives" class="form-label">Objectives</label>
+                <textarea class="form-control" id="objectives" name="objectives" rows="5" placeholder="Enter syllabus objectives (optional)"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="file" class="form-label">Upload File</label>
+                <input type="file" class="form-control" id="file" name="file">
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg">Create Syllabus</button>
+              </div>
+            </form>
+
+            <div class="mt-3 text-center">
+              <a href="{% url 'syllabus-list' subject_id %}" class="btn btn-outline-secondary">Back to Syllabus List</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

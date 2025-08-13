@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Chapter{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section id="about-home" class="py-4 bg-light">
+  <div class="container">
+    <h2 class="mb-0">{{ subject.name }} / Chapters / Create</h2>
+  </div>
+</section>
+
+<!-- Form section -->
+<section id="create-chapter" class="py-5">
+  <div class="container">
+    <h1 class="mb-4 text-center">Create a New Chapter</h1>
+    
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow rounded-4">
+          <div class="card-body p-4">
+            <form method="POST" action="{% url 'chapter-create' subject_id %}">
+              {% csrf_token %}
+              
+              <div class="mb-3">
+                <label for="title" class="form-label">Chapter Title</label>
+                <input type="text" class="form-control" id="title" name="title" required placeholder="Enter chapter title">
+              </div>
+              
+              <div class="mb-3">
+                <label for="order" class="form-label">Chapter Order</label>
+                <input type="number" class="form-control" id="order" name="order" required placeholder="Enter chapter order (e.g., 1, 2, 3)">
+                <div class="form-text">This determines the display order of the chapter.</div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter chapter description (optional)"></textarea>
+              </div>
+              
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg">Create Chapter</button>
+              </div>
+            </form>
+            <div class="mt-3 text-center">
+              <a href="{% url 'chapter-list' subject_id %}" class="btn btn-outline-secondary">Back to Chapter List</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
