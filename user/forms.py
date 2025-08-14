@@ -12,7 +12,6 @@ class UserRegisterForm(UserCreationForm):
     terms_agree = forms.BooleanField(required=True, label="I Agree to Terms and Conditions")
     remember_me = forms.BooleanField(required=False, label="Remember Me")
     
-    
     class Meta:
         model = CustomUser  # Make sure to point to your custom user model
         fields = ['username', 'email', 'phone_no', 'first_name', 'last_name', 'password1', 'password2']
