@@ -15,6 +15,10 @@ urlpatterns = [
     path('profile/', views.userProfile, name='user-profile-api'),
     path('api/token/', obtain_auth_token, name='api_token_auth'),
 
+    path('password-reset/', views.password_reset_request, name='password_reset_api'),
+    path('password-reset-confirm/', views.password_reset_confirm, name='password_reset_confirm_api'),
+    path('change-password/', views.change_password, name='change_password_api'),
+
     # Course URLs
     path('course-list/', views.courseList, name="course-list-api"),
     path('course-detail/<int:pk>/', views.courseDetail, name="course-detail-api"),

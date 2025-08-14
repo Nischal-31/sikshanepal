@@ -11,14 +11,21 @@ from sikshanepal import settings
 from .models import Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
 from rest_framework.decorators import api_view,permission_classes,authentication_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .serializers import UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer      
+from .serializers import ChangePasswordSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer      
 from django.urls import reverse
 from user.models import CustomUser
 from .permissions import IsAdminUser, IsAdminOrReadOnly
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import TokenAuthentication
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
 #-----------------------------------------------------------------------------------------------------------------------------------------------
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -36,7 +43,11 @@ def apiOverview(request):
             "Update": request.build_absolute_uri(reverse('user-update-api', args=['<id>'])),
             "Delete": request.build_absolute_uri(reverse('user-delete-api', args=['<id>'])),
             "Profile": request.build_absolute_uri(reverse('user-profile-api')),
-            "Token Authentication": request.build_absolute_uri(reverse('api_token_auth'))
+            "Token Authentication": request.build_absolute_uri(reverse('api_token_auth')),
+            # 🔹 New Endpoints for Password Management
+            "Password Reset Request": request.build_absolute_uri(reverse('password_reset_api')),
+            "Password Reset Confirm": request.build_absolute_uri(reverse('password_reset_confirm_api')),
+            "Change Password": request.build_absolute_uri(reverse('change_password_api'))
         },
         "Courses": {
             "List": request.build_absolute_uri(reverse('course-list-api')),
@@ -190,7 +201,59 @@ def userProfile(request):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def password_reset_request(request):
+    serializer = PasswordResetRequestSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
+    user = CustomUser.objects.get(email=serializer.validated_data['email'])
+    token_generator = PasswordResetTokenGenerator()
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    token = token_generator.make_token(user)
+
+    reset_link = request.build_absolute_uri(
+    reverse('password_reset_confirm_form', args=[uidb64, token])
+)
+     # 🔹 Print the link for testing
+    print(f"Password reset link for {user.email}: {reset_link}")
+    send_password_reset_email(user, reset_link)
+    return Response({"detail": "Password reset link sent"}, status=status.HTTP_200_OK)
+
+def send_password_reset_email(user, reset_link):
+    subject = "Reset Your Password"
+    from_email = "noreply@example.com"
+    to_email = [user.email]
+
+    # Render HTML content from a template
+    html_content = render_to_string("emails/password_reset_email.html", {
+        "user": user,
+        "reset_link": reset_link,
+    })
+
+    # Plain text fallback
+    text_content = f"Hello {user.username},\n\nClick the link below to reset your password:\n{reset_link}"
+
+    email = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+    email.attach_alternative(html_content, "text/html")
+    email.send(fail_silently=False)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def password_reset_confirm(request):
+    serializer = PasswordResetConfirmSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response({"detail": "Password has been reset"}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response({"detail": "Password updated successfully"}, status=status.HTTP_200_OK)
 #-------------------------COURSE---------------------------------------------------------------------------------------------------
 
 @api_view(['POST'])
