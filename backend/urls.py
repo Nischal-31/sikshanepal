@@ -13,7 +13,7 @@ urlpatterns = [
     path('user-update/<str:pk>/', views.userUpdate, name="user-update-api"),
     path('user-delete/<str:pk>/', views.userDelete, name="user-delete-api"),
     path('profile/', views.userProfile, name='user-profile-api'),
-    path('api/token/', obtain_auth_token, name='api_token_auth'),
+    path('api/token/', views.CustomAuthToken.as_view(), name='api_token_auth'),
 
     path('password-reset/', views.password_reset_request, name='password_reset_api'),
     path('password-reset-confirm/', views.password_reset_confirm, name='password_reset_confirm_api'),

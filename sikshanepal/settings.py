@@ -69,6 +69,7 @@ ESEWA_SECRET_KEY = "8gBm/:&EnhH.1/q"  # UAT secret key example
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Or your custom permission class

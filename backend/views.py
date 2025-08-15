@@ -19,6 +19,9 @@ from user.models import CustomUser
 from .permissions import IsAdminUser, IsAdminOrReadOnly
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
@@ -200,6 +203,24 @@ def userProfile(request):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({
+            "token": token.key,
+            "user": {
+                "username": user.username,
+                "email": user.email,
+                "is_admin": user.user_type
+            }
+        })
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
