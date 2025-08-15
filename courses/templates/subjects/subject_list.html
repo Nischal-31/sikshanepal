@@ -4,56 +4,348 @@
 {% block title %}Subjects for {{ subject.name }}{% endblock %}
 
 {% block content %}
-<section id="about-home" class="py-4 bg-light">
-  <div class="container">
-    <h2 class="mb-0">Subject List /</h2>
-  </div>
-</section>
+<style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --card-shadow-hover: 0 12px 40px rgba(0,0,0,0.15);
+    --border-radius: 16px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
+  /* Breadcrumb Section */
+  .breadcrumb-section {
+    background: var(--primary-gradient);
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .breadcrumb-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: drift 20s infinite linear;
+  }
+
+  @keyframes drift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-30px, -30px); }
+  }
+
+  .breadcrumb-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .breadcrumb-title {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  /* Card Styles */
+  .subject-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    height: 100%;
+    position: relative;
+    border: none;
+    overflow: hidden;
+  }
+
+  .subject-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .subject-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: var(--transition);
+  }
+
+  .subject-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .subject-badge {
+    background: var(--primary-gradient);
+    color: white;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .subject-content {
+    padding: 2rem 1.5rem 1rem;
+    text-align: center;
+  }
+
+  .subject-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+  }
+
+  .subject-meta {
+    color: #718096;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  /* Button Styles */
+  .btn-modern {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: var(--transition);
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-outline-primary-modern {
+    background: white;
+    color: #667eea;
+    border-color: #667eea;
+  }
+
+  .btn-outline-primary-modern:hover {
+    background: var(--primary-gradient);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-outline-warning-modern {
+    background: white;
+    color: #f59e0b;
+    border-color: #f59e0b;
+  }
+
+  .btn-outline-warning-modern:hover {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+
+  .btn-outline-danger-modern {
+    background: white;
+    color: #ef4444;
+    border-color: #ef4444;
+  }
+
+  .btn-outline-danger-modern:hover {
+    background: var(--danger-gradient);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+
+  .btn-success-modern {
+    background: var(--success-gradient);
+    color: white;
+  }
+
+  .subject-actions {
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin: 2rem 0;
+  }
+
+  .empty-state-icon {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state-text {
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Animations */
+  .fade-in {
+    animation: fadeInUp 0.6s ease-out both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .subject-actions {
+      flex-direction: column;
+    }
+    .btn-modern {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<!-- Main Content -->
 <div class="container py-5">
-  <h1 class="mb-4 fw-bold">Subjects</h1>
+  <br>
+  <br>
+  <br>
+  <br>
+  <div class="row">
+    <div class="col-12 text-center mb-5">
+      <h1 class="fw-bold" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Available Subjects</h1>
+      <p class="text-muted">Browse and manage subjects for this semester</p>
+    </div>
+  </div>
 
   {% if subjects %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       {% for subject in subjects %}
-        <div class="col">
-          <a href="{% url 'chapter-list' subject.id %}" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm border-0">
-            <div class="card-body">
-              <h5 class="card-title">{{ subject.name }}</h5>
-              <p class="card-text text-muted mb-1">
-                Code: {{ subject.code }}<br>
-                Credits: {{ subject.credits }}<br>
-              </p>
-            </div>
-            <div class="card-footer bg-transparent border-0 d-flex flex-wrap gap-2">
-              <a href="{% url 'subject-detail' subject.id %}" class="btn btn-outline-primary btn-sm">Details</a>
-              {% if user.is_authenticated and user.user_type == 'admin' %}
-                <a href="{% url 'subject-update' subject.id %}" class="btn btn-outline-warning btn-sm">Edit</a>
-                <form action="{% url 'subject-delete' subject.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this subject?');">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                </form>
-              {% endif %}
+      <div class="col fade-in">
+        <a href="{% url 'subject-detail' subject.id %}" class="text-decoration-none">
+        <div class="subject-card">
+          <div class="subject-content">
+            <div class="subject-badge">{{ subject.code }}</div>
+            <h3 class="subject-title">{{ subject.name }}</h3>
+            <div class="subject-meta">
+              <div><strong>Credits:</strong> {{ subject.credits }}</div>
             </div>
           </div>
-          </a>
+          <div class="subject-actions">
+            <a href="{% url 'chapter-list' subject.id %}" class="btn-modern btn-outline-primary-modern">
+              <i class="fas fa-book-open me-1"></i> Chapters
+            </a>
+            <a href="{% url 'subject-detail' subject.id %}" class="btn-modern btn-outline-primary-modern">
+              <i class="fas fa-info-circle me-1"></i> Details
+            </a>
+            {% if user.is_authenticated and user.user_type == 'admin' %}
+              <a href="{% url 'subject-update' subject.id %}" class="btn-modern btn-outline-warning-modern">
+                <i class="fas fa-edit me-1"></i> Edit
+              </a>
+              <form action="{% url 'subject-delete' subject.id %}" method="post" class="d-inline" onsubmit="return confirm('Delete this subject?');">
+                {% csrf_token %}
+                <button type="submit" class="btn-modern btn-outline-danger-modern">
+                  <i class="fas fa-trash-alt me-1"></i> Delete
+                </button>
+              </form>
+            {% endif %}
+          </div>
         </div>
+        </a>
+      </div>
       {% endfor %}
     </div>
 
-    <div class="mt-5 d-flex justify-content-between flex-wrap gap-3">
-      <a href="{% url 'semester-list' course_id %}" class="btn btn-secondary btn-sm">← Back to Semester List</a>
+    <div class="mt-5 text-center">
+      <a href="{% url 'semester-list' course_id %}" class="btn-modern" style="background: #e2e8f0; color: #4a5568;">
+        <i class="fas fa-arrow-left me-2"></i> Back to Semesters
+      </a>
       {% if user.is_authenticated and user.user_type == 'admin' %}
-        <a href="{% url 'subject-create' semester_id %}" class="btn btn-success btn-sm">+ Create New Subject</a>
+        <a href="{% url 'subject-create' semester_id %}" class="btn-modern btn-success-modern ms-2">
+          <i class="fas fa-plus me-2"></i> Add New Subject
+        </a>
       {% endif %}
     </div>
 
   {% else %}
-    <p class="text-muted">No subjects found for this semester.</p>
-    {% if user.is_authenticated and user.user_type == 'admin' %}
-      <a href="{% url 'subject-create' semester_id %}" class="btn btn-success mt-3">+ Create New Subject</a>
-    {% endif %}
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <i class="fas fa-book-open"></i>
+      </div>
+      <h3 class="empty-state-title">No Subjects Found</h3>
+      <p class="empty-state-text">This semester doesn't have any subjects yet.</p>
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+        <a href="{% url 'subject-create' semester_id %}" class="btn-modern btn-success-modern">
+          <i class="fas fa-plus me-2"></i> Create First Subject
+        </a>
+      {% endif %}
+    </div>
   {% endif %}
 </div>
+
+<!-- Scripts -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+
+<script>
+  // Card hover effects
+  document.querySelectorAll('.subject-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-8px)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+
+  // Staggered animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animationPlayState = 'running';
+      }
+    });
+  });
+
+  document.querySelectorAll('.fade-in').forEach(el => {
+    el.style.animationPlayState = 'paused';
+    observer.observe(el);
+  });
+</script>
+
 {% endblock %}

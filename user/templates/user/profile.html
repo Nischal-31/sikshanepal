@@ -5,126 +5,124 @@
 {% block title %}My Profile{% endblock %}
 
 {% block content %}
-<!-- Profile Header Section -->
-<section id="profile-header" class="py-4 border-bottom">
+<!-- Profile Header -->
+<section id="profile-header" class="bg-light py-4 border-bottom">
   <div class="container" style="max-width: 900px;">
-    <h2 class="fw-bold mb-3">My Profile /</h2>
+    <h2 class="fw-bold mb-0">
+      <i class="fas fa-user-circle me-2 text-primary"></i> My Profile
+    </h2>
   </div>
 </section>
 
-<!-- Main Profile Content -->
+<!-- Profile Main -->
 <section id="profile-main" class="py-5">
   <div class="container" style="max-width: 900px;">
 
-    <div class="d-flex flex-wrap align-items-start gap-4">
-
+    <div class="row g-4 align-items-start">
       <!-- Profile Image -->
-      <div class="profile-image flex-shrink-0">
+      <div class="col-12 col-md-auto text-center">
         {% if user.profile_picture %}
-          <img 
-            src="{{ user.profile_picture.url }}" 
-            alt="Profile Picture" 
-            class="rounded-circle shadow"
-            style="width: 180px; height: 180px; object-fit: cover; border: 4px solid #0d6efd;"
-          >
+          <img src="{{ user.profile_picture.url }}" 
+               alt="Profile Picture" 
+               class="rounded-circle shadow-lg border border-4 border-primary"
+               style="width: 180px; height: 180px; object-fit: cover;">
         {% else %}
-          <img 
-            src="{% static 'images/default_profile.jpg' %}" 
-            alt="Default Profile Picture" 
-            class="rounded-circle shadow"
-            style="width: 180px; height: 180px; object-fit: cover; border: 4px solid #6c757d;"
-          >
+          <img src="{% static 'images/default_profile.jpg' %}" 
+               alt="Default Profile Picture" 
+               class="rounded-circle shadow-lg border border-4 border-secondary"
+               style="width: 180px; height: 180px; object-fit: cover;">
         {% endif %}
       </div>
 
-      <!-- Profile Form -->
-      <div class="profile-form flex-grow-1">
-        <div class="card shadow-sm rounded-4 p-4 border-0 mb-5">
-          <h4 class="fw-bold mb-3">Update Profile</h4>
-          <form id="profile-form" method="POST" enctype="multipart/form-data" novalidate>
-            {% csrf_token %}
-            <div class="row g-3">
-              {% for field in form %}
-                <div class="col-12">
-                  {% if field.field.widget.input_type == "checkbox" %}
-                    <div class="form-check">
-                      {{ field|add_class:"form-check-input" }}
-                      <label class="form-check-label fw-semibold" for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                      </label>
+      <!-- Profile & Password Forms -->
+      <div class="col">
+        
+        <!-- Update Profile -->
+        <div class="card shadow-sm rounded-4 border-0 mb-4">
+          <div class="card-body p-4">
+            <h4 class="fw-bold mb-3"><i class="fas fa-user-edit me-2 text-primary"></i> Update Profile</h4>
+            <form id="profile-form" method="POST" enctype="multipart/form-data" novalidate>
+              {% csrf_token %}
+              <div class="row g-3">
+                {% for field in form %}
+                  <div class="col-12">
+                    {% if field.field.widget.input_type == "checkbox" %}
+                      <div class="form-check">
+                        {{ field|add_class:"form-check-input" }}
+                        <label class="form-check-label fw-semibold" for="{{ field.id_for_label }}">
+                          {{ field.label }}
+                        </label>
+                        {% if field.help_text %}
+                          <div class="form-text ms-4">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                          <div class="text-danger ms-4 small">
+                            {% for error in field.errors %}{{ error }}{% endfor %}
+                          </div>
+                        {% endif %}
+                      </div>
+                    {% else %}
+                      <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                      {{ field|add_class:"form-control shadow-sm" }}
                       {% if field.help_text %}
-                        <div class="form-text ms-4">{{ field.help_text }}</div>
+                        <div class="form-text">{{ field.help_text }}</div>
                       {% endif %}
                       {% if field.errors %}
-                        <div class="text-danger ms-4 small">
-                          {% for error in field.errors %}
-                            {{ error }}
-                          {% endfor %}
+                        <div class="invalid-feedback d-block small">
+                          {% for error in field.errors %}{{ error }}{% endfor %}
                         </div>
                       {% endif %}
-                    </div>
-                  {% else %}
-                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
-                    {{ field|add_class:"form-control shadow-sm" }}
-                    {% if field.help_text %}
-                      <div class="form-text">{{ field.help_text }}</div>
                     {% endif %}
-                    {% if field.errors %}
-                      <div class="invalid-feedback d-block small">
-                        {% for error in field.errors %}
-                          {{ error }}
-                        {% endfor %}
-                      </div>
-                    {% endif %}
-                  {% endif %}
-                </div>
-              {% endfor %}
-            </div>
-            <div class="d-flex justify-content-start mt-4">
-              <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm rounded-pill">
-                Save Changes
-              </button>
-            </div>
-            <div id="profile-message" class="mt-3"></div>
-          </form>
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-primary btn-lg px-4 shadow-sm rounded-pill">
+                  <i class="fas fa-save me-1"></i> Save Changes
+                </button>
+              </div>
+              <div id="profile-message" class="mt-3"></div>
+            </form>
+          </div>
         </div>
-
-        <!-- Change Password Form -->
-        <div class="card shadow-sm rounded-4 p-4 border-0">
-          <h4 class="fw-bold mb-3">Change Password</h4>
-          <form id="change-password-form" method="POST" novalidate>
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="old_password" class="form-label fw-semibold">Old Password</label>
-              <input type="password" id="old_password" name="old_password" class="form-control shadow-sm" required>
-            </div>
-            <div class="mb-3">
-              <label for="new_password" class="form-label fw-semibold">New Password</label>
-              <input type="password" id="new_password" name="new_password" class="form-control shadow-sm" required>
-            </div>
-            <div class="mb-3">
-              <label for="confirm_password" class="form-label fw-semibold">Confirm New Password</label>
-              <input type="password" id="confirm_password" name="confirm_password" class="form-control shadow-sm" required>
-            </div>
-            <div class="d-flex justify-content-start mt-3">
-              <button type="submit" class="btn btn-warning btn-lg px-5 shadow-sm rounded-pill">
-                Update Password
-              </button>
-            </div>
-            <div id="password-message" class="mt-3"></div>
-          </form>
+{% if user.has_usable_password %}
+        <!-- Change Password -->
+        <div class="card shadow-sm rounded-4 border-0">
+          <div class="card-body p-4">
+            <h4 class="fw-bold mb-3"><i class="fas fa-key me-2 text-warning"></i> Change Password</h4>
+            <form id="change-password-form" method="POST" novalidate>
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="old_password" class="form-label fw-semibold">Old Password</label>
+                <input type="password" id="old_password" name="old_password" class="form-control shadow-sm" required>
+              </div>
+              <div class="mb-3">
+                <label for="new_password" class="form-label fw-semibold">New Password</label>
+                <input type="password" id="new_password" name="new_password" class="form-control shadow-sm" required>
+              </div>
+              <div class="mb-3">
+                <label for="confirm_password" class="form-label fw-semibold">Confirm New Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control shadow-sm" required>
+              </div>
+              <div class="mt-3 text-end">
+                <button type="submit" class="btn btn-warning btn-lg px-4 shadow-sm rounded-pill">
+                  <i class="fas fa-lock me-1"></i> Update Password
+                </button>
+              </div>
+              <div id="password-message" class="mt-3"></div>
+            </form>
+          </div>
         </div>
-
+{% endif %}
       </div>
     </div>
   </div>
 </section>
 
 <script>
-// Get the user's token from Django template context
 const userToken = "{{ token }}";
 
-// ---------------- Profile Update AJAX ----------------
+// Profile Update AJAX
 document.getElementById('profile-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const formData = new FormData(this);
@@ -133,29 +131,23 @@ document.getElementById('profile-form').addEventListener('submit', async functio
   try {
     const response = await fetch("{% url 'user-profile-api' %}", {
       method: 'PUT',
-      headers: {
-        'Authorization': 'Token ' + userToken
-        // Do NOT set Content-Type for FormData; browser handles it
-      },
+      headers: { 'Authorization': 'Token ' + userToken },
       body: formData
     });
-
     const data = await response.json();
     if (response.ok) {
-      messageDiv.innerHTML = '<div class="text-success">Profile updated successfully.</div>';
+      messageDiv.innerHTML = '<div class="alert alert-success py-2">Profile updated successfully.</div>';
     } else {
       let errors = '';
-      for (const key in data) {
-        errors += `<div>${key}: ${data[key]}</div>`;
-      }
-      messageDiv.innerHTML = '<div class="text-danger">' + errors + '</div>';
+      for (const key in data) errors += `<div>${key}: ${data[key]}</div>`;
+      messageDiv.innerHTML = '<div class="alert alert-danger py-2">' + errors + '</div>';
     }
   } catch (err) {
-    messageDiv.innerHTML = '<div class="text-danger">Error: ' + err + '</div>';
+    messageDiv.innerHTML = '<div class="alert alert-danger py-2">Error: ' + err + '</div>';
   }
 });
 
-// ---------------- Change Password AJAX ----------------
+// Change Password AJAX
 document.getElementById('change-password-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const old_password = document.getElementById('old_password').value;
@@ -164,7 +156,7 @@ document.getElementById('change-password-form').addEventListener('submit', async
   const messageDiv = document.getElementById('password-message');
 
   if (new_password !== confirm_password) {
-    messageDiv.innerHTML = '<div class="text-danger">New passwords do not match.</div>';
+    messageDiv.innerHTML = '<div class="alert alert-danger py-2">New passwords do not match.</div>';
     return;
   }
 
@@ -180,16 +172,14 @@ document.getElementById('change-password-form').addEventListener('submit', async
 
     const data = await response.json();
     if (response.ok) {
-      messageDiv.innerHTML = '<div class="text-success">' + data.detail + '</div>';
+      messageDiv.innerHTML = '<div class="alert alert-success py-2">' + data.detail + '</div>';
       document.getElementById('change-password-form').reset();
     } else {
-      messageDiv.innerHTML = '<div class="text-danger">' + (data.detail || 'Something went wrong.') + '</div>';
+      messageDiv.innerHTML = '<div class="alert alert-danger py-2">' + (data.detail || 'Something went wrong.') + '</div>';
     }
   } catch (err) {
-    messageDiv.innerHTML = '<div class="text-danger">Error: ' + err + '</div>';
+    messageDiv.innerHTML = '<div class="alert alert-danger py-2">Error: ' + err + '</div>';
   }
 });
 </script>
-
 {% endblock %}
-

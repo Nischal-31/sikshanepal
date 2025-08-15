@@ -4,16 +4,262 @@
 {% block title %}Courses{% endblock %}
 
 {% block content %}
-<section id="about-home" class="py-4 bg-light">
-  <div class="container">
-    <h2 class="mb-0">Courses /</h2>
-  </div>
-</section>
+<style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --card-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    --card-shadow-hover: 0 15px 35px rgba(0,0,0,0.15);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 15px;
+  }
+
+  /* Header Section Styling */
+  #about-home {
+    background: var(--primary-gradient) !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #about-home::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255,255,255,0.05) 10px,
+      rgba(255,255,255,0.05) 20px
+    );
+    animation: slide 20s infinite linear;
+  }
+
+  @keyframes slide {
+    0% { transform: translateX(-50px); }
+    100% { transform: translateX(0px); }
+  }
+
+  #about-home h2 {
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Main Section Styling */
+  #course {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+
+  #course h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem !important;
+  }
+
+  #course p {
+    font-size: 1.2rem;
+    color: #64748b !important;
+  }
+
+  /* Card Styling */
+  .card {
+    border: none !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--card-shadow) !important;
+    transition: var(--transition) !important;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: var(--transition);
+    z-index: 10;
+  }
+
+  .card:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: var(--card-shadow-hover) !important;
+  }
+
+  .card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .card-img-top {
+    transition: var(--transition) !important;
+    border-radius: 0 !important;
+  }
+
+  .card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .card-title {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: #2d3748 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .card-text {
+    color: #64748b !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Rating Stars */
+  .text-warning i {
+    color: #fbbf24 !important;
+    filter: drop-shadow(0 1px 2px rgba(251, 191, 36, 0.3));
+  }
+
+  /* Price Styling */
+  .fw-bold.fs-5 {
+    color: #059669 !important;
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+  }
+
+  /* Button Styling */
+  .btn {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: var(--transition) !important;
+    border: none !important;
+    text-transform: none !important;
+  }
+
+  .btn-primary {
+    background: var(--primary-gradient) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+    color: white !important;
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+  }
+
+  .btn-danger:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
+    color: white !important;
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
+    padding: 0.75rem 2rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 50px !important;
+  }
+
+  .btn-success:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4) !important;
+    color: white !important;
+  }
+
+  /* Admin Actions */
+  .mt-3.d-flex.gap-2 {
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 1rem !important;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    #course h1 {
+      font-size: 2.2rem;
+    }
+
+    .card-body {
+      padding: 1.25rem !important;
+    }
+
+    .mt-3.d-flex.gap-2 {
+      flex-direction: column;
+      gap: 0.5rem !important;
+    }
+
+    .btn-sm {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Animation for cards */
+  .col-12.col-md-6.col-lg-4 {
+    animation: fadeInUp 0.6s ease-out both;
+  }
+
+  .col-12.col-md-6.col-lg-4:nth-child(1) { animation-delay: 0.1s; }
+  .col-12.col-md-6.col-lg-4:nth-child(2) { animation-delay: 0.2s; }
+  .col-12.col-md-6.col-lg-4:nth-child(3) { animation-delay: 0.3s; }
+  .col-12.col-md-6.col-lg-4:nth-child(4) { animation-delay: 0.4s; }
+  .col-12.col-md-6.col-lg-4:nth-child(5) { animation-delay: 0.5s; }
+  .col-12.col-md-6.col-lg-4:nth-child(6) { animation-delay: 0.6s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Create button enhancement */
+  .mt-4.text-center {
+    padding: 2rem 0;
+    background: rgba(255,255,255,0.5);
+    border-radius: var(--border-radius);
+    margin-top: 3rem !important;
+  }
+</style>
 
 <section id="course" class="py-5">
+  <br>
+  <br>
+  <br>
+  <br>
   <div class="container">
     <h1 class="mb-3 text-center">Our Popular Courses</h1>
-    <p class="text-center text-muted mb-5">Replenish man having thing gathering lights yielding shall you</p>
+    <p class="text-center text-muted mb-5">
+  Access study materials, lab work, and coding exercises — All in one place to help you learn faster and smarter.
+</p>
+
 
     <div class="row g-4">
       {% for course in courses %}
@@ -34,20 +280,19 @@
                     <i class="fas fa-star"></i>
                     <i class="fas fa-star"></i>
                   </div>
-                  <small class="text-muted">(239)</small>
+                  <small class="text-muted">(400+)</small>
                 </div>
-                <div class="fw-bold fs-5">$49.99</div>
+                <div class="fw-bold fs-5">$ Free</div>
 
                 {% if user.is_authenticated and user.user_type == 'admin' %}
                 <div class="mt-3 d-flex gap-2">
-  <a href="{% url 'course-detail' course.id %}" class="btn btn-sm btn-primary">Details</a>
-  <a href="{% url 'course-update' course.id %}" class="btn btn-sm btn-primary">Edit</a>
-  <form action="{% url 'course-delete' course.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this course?');" class="m-0">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-  </form>
-</div>
-
+                  <a href="{% url 'course-detail' course.id %}" class="btn btn-sm btn-primary">Details</a>
+                  <a href="{% url 'course-update' course.id %}" class="btn btn-sm btn-primary">Edit</a>
+                  <form action="{% url 'course-delete' course.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this course?');" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                  </form>
+                </div>
                 {% endif %}
               </div>
             </div>

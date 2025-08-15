@@ -4,41 +4,778 @@
 {% block title %}Past Question: {{ pastQuestion.title }}{% endblock %}
 
 {% block content %}
-<section id="about-home" class="py-4 bg-light">
-  <div class="container">
-    <h2 class="mb-0">Courses /</h2>
-  </div>
-</section>
+<style>
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary: #8b5cf6;
+        --accent: #06b6d4;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --dark: #0f172a;
+        --light: #f8fafc;
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        --blur-sm: blur(4px);
+        --blur-md: blur(8px);
+        --blur-lg: blur(16px);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+        animation: backgroundFloat 20s ease-in-out infinite;
+        z-index: -1;
+    }
+
+    @keyframes backgroundFloat {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-30px) rotate(0.5deg); }
+        66% { transform: translateY(20px) rotate(-0.5deg); }
+    }
+
+    /* Floating Particles */
+    .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .particle:nth-child(1) { width: 4px; height: 4px; top: 20%; left: 20%; animation-delay: 0s; }
+    .particle:nth-child(2) { width: 6px; height: 6px; top: 60%; left: 80%; animation-delay: -2s; }
+    .particle:nth-child(3) { width: 3px; height: 3px; top: 80%; left: 40%; animation-delay: -4s; }
+    .particle:nth-child(4) { width: 5px; height: 5px; top: 40%; left: 60%; animation-delay: -1s; }
+    .particle:nth-child(5) { width: 7px; height: 7px; top: 10%; left: 90%; animation-delay: -3s; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.4; }
+        50% { transform: translateY(-20px) translateX(10px); opacity: 0.8; }
+    }
+
+    /* Glassmorphism Container */
+    .glass-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: var(--blur-lg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        box-shadow: var(--shadow-2xl);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb-nav {
+        padding: 1.5rem 0;
+        position: relative;
+    }
+
+    .breadcrumb-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumb-item:hover {
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .breadcrumb-separator {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.8rem;
+    }
+
+    /* Main Container */
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem 4rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Question Card */
+    .question-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: var(--blur-md);
+        border-radius: 32px;
+        box-shadow: var(--shadow-2xl);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+        position: relative;
+        transform: translateY(0);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .question-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Card Header */
+    .card-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+        position: relative;
+        padding: 3rem 3rem 2rem;
+        overflow: hidden;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .question-title {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        line-height: 1.2;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .title-icon {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.8rem;
+        border-radius: 16px;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: var(--blur-sm);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .year-badge {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        backdrop-filter: var(--blur-sm);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    /* Card Body */
+    .card-body {
+        padding: 3rem;
+        position: relative;
+    }
+
+    /* Description Section */
+    .description-card {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .description-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 2px;
+    }
+
+    .description-text {
+        color: var(--dark);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin: 0;
+        font-weight: 500;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .description-icon {
+        color: var(--primary);
+        font-size: 1.2rem;
+        margin-top: 0.1rem;
+        flex-shrink: 0;
+    }
+
+    /* File Preview */
+    .file-preview-wrapper {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+        border: 2px dashed rgba(6, 182, 212, 0.3);
+        border-radius: 24px;
+        padding: 2rem;
+        position: relative;
+        transition: all 0.4s ease;
+        overflow: hidden;
+    }
+
+    .file-preview-wrapper:hover {
+        border-color: var(--accent);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        transform: translateY(-2px);
+    }
+
+    .file-preview-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .file-preview-wrapper:hover::before {
+        opacity: 1;
+    }
+
+    /* PDF Viewer */
+    .pdf-container {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+        background: white;
+    }
+
+    .pdf-embed {
+        width: 100%;
+        height: 75vh;
+        min-height: 600px;
+        border: none;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .pdf-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2rem;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        backdrop-filter: var(--blur-sm);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(99, 102, 241, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Download Section */
+    .download-area {
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+
+    .file-icon-large {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--accent), var(--primary));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        box-shadow: var(--shadow-lg);
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .download-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .download-subtitle {
+        color: #64748b;
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+    }
+
+    .download-btn {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .download-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s;
+    }
+
+    .download-btn:hover::before {
+        left: 100%;
+    }
+
+    .download-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(99, 102, 241, 0.4);
+        color: white;
+    }
+
+    .download-btn:active {
+        transform: translateY(-1px);
+    }
+
+    /* No File Section */
+    .no-file-area {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #94a3b8;
+    }
+
+    .no-file-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        opacity: 0.7;
+    }
+
+    .no-file-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .action-section {
+        margin-top: 3rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-back {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--dark);
+        border: 2px solid rgba(15, 23, 42, 0.1);
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        transition: all 0.3s ease;
+        backdrop-filter: var(--blur-sm);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-back:hover {
+        background: var(--dark);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .main-container {
+            padding: 0 1rem 3rem;
+        }
+        
+        .card-header,
+        .card-body {
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .breadcrumb-content {
+            padding: 0 1rem;
+        }
+
+        .main-container {
+            padding: 0 0.5rem 2rem;
+        }
+
+        .question-card {
+            border-radius: 24px;
+        }
+
+        .card-header,
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .question-title {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .pdf-embed {
+            height: 60vh;
+            min-height: 400px;
+        }
+
+        .action-section {
+            flex-direction: column;
+        }
+
+        .btn-back,
+        .download-btn {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card-header,
+        .card-body {
+            padding: 1rem;
+        }
+
+        .description-card {
+            padding: 1.5rem;
+        }
+
+        .pdf-embed {
+            height: 50vh;
+            min-height: 300px;
+        }
+
+        .file-preview-wrapper {
+            padding: 1rem;
+        }
+    }
+
+    /* Enhanced Animations */
+    .question-card {
+        animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .action-section {
+        animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(60px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 
 
-<div class="container py-4">
-  <div class="card shadow rounded">
-    <div class="card-body">
-      <h3 class="card-title">{{ pastQuestion.title }} ({{ pastQuestion.year }})</h3>
-      
-      {% if pastQuestion.description %}
-        <p class="card-text text-muted">{{ pastQuestion.description }}</p>
-      {% endif %}
-
-      {% if pastQuestion.file %}
-  {% if is_pdf %}
-  <embed src="{{ pastQuestion.file }}#zoom=page-width" width="100%" height="800px" type="application/pdf">
-{% else %}
-  <p>This file type can’t be previewed. Please download:</p>
-  <a href="{{ pastQuestion.file }}" class="btn btn-outline-primary" download>Download File</a>
-{% endif %}
+<!-- Floating Particles -->
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
 
 
-{% else %}
-  <p>No file uploaded.</p>
-{% endif %}
-
-
-    </div>
-  </div>
-
-  <div class="mt-3">
-    <a href="javascript:history.back()" class="btn btn-secondary">← Back</a>
-  </div>
+<div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
 </div>
+
+<!-- Main Content -->
+<div class="main-container">
+    <div class="question-card">
+        <!-- Card Header -->
+        <div class="card-header">
+            <div class="header-content">
+                <h1 class="question-title">
+                    <div class="title-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <div>{{ pastQuestion.title }}</div>
+                        <div class="year-badge">{{ pastQuestion.year }}</div>
+                    </div>
+                </h1>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <!-- Description Section -->
+            {% if pastQuestion.description %}
+            <div class="description-card">
+                <div class="description-text">
+                    <i class="fas fa-info-circle description-icon"></i>
+                    <span>{{ pastQuestion.description }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- File Preview Section -->
+            <div class="file-preview-wrapper">
+                {% if pastQuestion.file %}
+                    {% if is_pdf %}
+                        <!-- PDF Preview -->
+                        <div class="pdf-container">
+                            <embed 
+                                src="{{ pastQuestion.file }}#zoom=page-width" 
+                                class="pdf-embed"
+                                type="application/pdf"
+                                onload="hidePdfLoading()">
+                            <div class="pdf-loading" id="pdfLoading">
+                                <div class="loading-spinner"></div>
+                                <span style="color: var(--primary); font-weight: 600;">Loading PDF...</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Download Section for non-PDF files -->
+                        <div class="download-area">
+                            <div class="file-icon-large">
+                                <i class="fas fa-file-download"></i>
+                            </div>
+                            <h3 class="download-title">File Ready for Download</h3>
+                            <p class="download-subtitle">This file type can't be previewed online, but you can download it below.</p>
+                            <a href="{{ pastQuestion.file }}" class="download-btn" download>
+                                <i class="fas fa-download"></i>
+                                <span>Download File</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <!-- No File Message -->
+                    <div class="no-file-area">
+                        <div class="no-file-icon">
+                            <i class="fas fa-file-slash"></i>
+                        </div>
+                        <p class="no-file-text">No file uploaded for this question yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-section">
+        <a href="javascript:history.back()" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Questions</span>
+        </a>
+    </div>
+</div>
+
+<script>
+    // Enhanced JavaScript functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // PDF loading handler
+        window.hidePdfLoading = function() {
+            const loadingElement = document.getElementById('pdfLoading');
+            if (loadingElement) {
+                loadingElement.style.opacity = '0';
+                setTimeout(() => {
+                    loadingElement.style.display = 'none';
+                }, 300);
+            }
+        };
+
+        // Responsive PDF height adjustment
+        function adjustPdfHeight() {
+            const pdfEmbed = document.querySelector('.pdf-embed');
+            if (pdfEmbed && window.innerWidth > 1024) {
+                const windowHeight = window.innerHeight;
+                const headerHeight = document.querySelector('.breadcrumb-nav')?.offsetHeight || 0;
+                const cardHeaderHeight = document.querySelector('.card-header')?.offsetHeight || 0;
+                const availableHeight = windowHeight - headerHeight - cardHeaderHeight - 200;
+                
+                pdfEmbed.style.height = Math.max(availableHeight, 600) + 'px';
+            }
+        }
+
+        // Smooth scroll enhancement
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Enhanced hover effects for interactive elements
+        const interactiveElements = document.querySelectorAll('.download-btn, .btn-back, .question-card');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+        });
+
+        // Initialize responsive adjustments
+        window.addEventListener('resize', adjustPdfHeight);
+        adjustPdfHeight();
+
+        // Add loading state management
+        const pdfEmbed = document.querySelector('.pdf-embed');
+        if (pdfEmbed) {
+            pdfEmbed.addEventListener('load', function() {
+                hidePdfLoading();
+            });
+
+            // Fallback: hide loading after 10 seconds
+            setTimeout(hidePdfLoading, 10000);
+        }
+    });
+
+    // Add smooth transitions on scroll
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        const particles = document.querySelector('.particles');
+        if (particles) {
+            particles.style.transform = `translateY(${rate}px)`;
+        }
+    });
+</script>
 {% endblock %}

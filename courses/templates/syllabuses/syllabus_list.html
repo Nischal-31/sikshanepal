@@ -4,81 +4,409 @@
 {% block title %}Syllabus - {{ subject.name }}{% endblock %}
 
 {% block content %}
-<section id="about-home" class="py-4 bg-light">
+<!-- Hero Section with Breadcrumb -->
+<section class="hero-section py-5 bg-gradient-primary text-white">
   <div class="container">
-    <h2 class="mb-0">Syllabus List / {{ subject.name }}</h2>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="display-5 fw-bold mb-2">{{ subject.name }}</h1>
+        <p class="lead mb-0 text-white-75">Course Syllabus & Learning Objectives</p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <div class="hero-icon">
+          <i class="fas fa-book-open fa-4x opacity-75"></i>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="container py-4">
-  <h1 class="mb-4">Syllabus</h1>
-
+<!-- Main Content -->
+<div class="container py-5">
   {% if syllabus %}
-    <div class="list-group">
-      <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
-        <div class="flex-grow-1">
-          {% if syllabus.objectives %}
-            <h5>Objectives:</h5>
-            <p class="mb-1 text-secondary small">{{ syllabus.objectives|linebreaks }}</p>
-          {% endif %}
-
-          {% if syllabus.file %}
-            <a href="{% url 'syllabus-detail' syllabus.id %}" class="btn btn-outline-secondary btn-sm" target="_blank">
-              <i class="fas fa-file-download me-1"></i> View/Download
-            </a>
-          {% else %}
-            <span class="text-muted small">No syllabus file uploaded.</span>
+    <!-- Syllabus Card -->
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-header bg-white border-0 pb-0">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h2 class="card-title h4 text-primary fw-bold mb-1">
+              <i class="fas fa-clipboard-list me-2"></i>Course Syllabus
+            </h2>
+            <p class="text-muted mb-0 small">Complete course information and requirements</p>
+          </div>
+          {% if user.is_authenticated and user.user_type == 'admin' %}
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-cog me-1"></i> Actions
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'syllabus-update' syllabus.id %}">
+                    <i class="fas fa-edit me-2 text-primary"></i> Edit Syllabus
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form action="{% url 'syllabus-delete' syllabus.id %}" method="post" 
+                        onsubmit="return confirm('Are you sure you want to delete this syllabus?');" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item text-danger">
+                      <i class="fas fa-trash-alt me-2"></i> Delete Syllabus
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
           {% endif %}
         </div>
-
-        {% if user.is_authenticated and user.user_type == 'admin' %}
-          <div class="d-flex align-items-center gap-2 flex-wrap">
-            <a href="{% url 'syllabus-update' syllabus.id %}" class="btn btn-sm btn-primary" title="Edit">
-              <i class="fas fa-edit"></i>
-            </a>
-            <form action="{% url 'syllabus-delete' syllabus.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this syllabus?');" class="m-0">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </form>
+      </div>
+      
+      <div class="card-body pt-4">
+        {% if syllabus.objectives %}
+          <!-- Learning Objectives Section -->
+          <div class="objectives-section mb-4">
+            <div class="section-header mb-3">
+              <h5 class="fw-semibold text-dark mb-1">
+                <i class="fas fa-bullseye text-success me-2"></i>Learning Objectives
+              </h5>
+              <div class="section-divider"></div>
+            </div>
+            <div class="objectives-content p-3 bg-light rounded-3 border-start border-success border-3">
+              <div class="text-dark">{{ syllabus.objectives|linebreaks }}</div>
+            </div>
           </div>
         {% endif %}
+        
+        <!-- Download Section -->
+        <div class="download-section">
+          <div class="section-header mb-3">
+            <h5 class="fw-semibold text-dark mb-1">
+              <i class="fas fa-download text-primary me-2"></i>Syllabus Document
+            </h5>
+            <div class="section-divider"></div>
+          </div>
+          
+          {% if syllabus.file %}
+            <div class="download-card p-4 bg-gradient-light rounded-3 border">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="d-flex align-items-center">
+                    <div class="file-icon me-3">
+                      <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">{{ subject.name }} - Syllabus</h6>
+                      <p class="text-muted small mb-0">Complete course syllabus document</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                  <a href="{% url 'syllabus-detail' syllabus.id %}" 
+                     class="btn btn-primary btn-lg shadow-sm" target="_self">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    View Document
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="alert alert-warning border-0 shadow-sm" role="alert">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x text-warning me-3"></i>
+                <div>
+                  <h6 class="alert-heading mb-1">No Document Available</h6>
+                  <p class="mb-0 small">The syllabus document has not been uploaded yet. Please check back later.</p>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   {% else %}
-    <div class="alert alert-info" role="alert">
-      No syllabus available for this subject.
+    <!-- No Syllabus State -->
+    <div class="empty-state text-center py-5">
+      <div class="empty-icon mb-4">
+        <i class="fas fa-book-open fa-4x text-muted opacity-50"></i>
+      </div>
+      <h3 class="text-muted mb-2">No Syllabus Available</h3>
+      <p class="text-muted mb-4">There is currently no syllabus available for this subject.</p>
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+        <a href="{% url 'syllabus-create' subject.id %}" class="btn btn-primary btn-lg">
+          <i class="fas fa-plus me-2"></i>Create Syllabus
+        </a>
+      {% endif %}
     </div>
   {% endif %}
 
-  <!-- Buttons at the bottom -->
-  <div class="mt-4 d-flex gap-2">
-    <a href="{% url 'subject-detail' subject.id %}" class="btn btn-outline-secondary btn-sm">← Back to Subject</a>
-    {% if user.is_authenticated and user.user_type == 'admin' %}
-      <a href="{% url 'syllabus-create' subject.id %}" class="btn btn-success btn-sm">
-        <i class="fas fa-plus me-1"></i> Create Syllabus
-      </a>
-    {% endif %}
+  <!-- Action Buttons -->
+  <div class="action-buttons mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'subject-detail' subject.id %}" class="btn btn-outline-secondary btn-lg w-100">
+          <i class="fas fa-arrow-left me-2"></i>Back to Subject
+        </a>
+      </div>
+      {% if user.is_authenticated and user.user_type == 'admin' and syllabus %}
+        <div class="col-md-6 mt-3 mt-md-0">
+          <a href="{% url 'syllabus-create' subject.id %}" class="btn btn-success btn-lg w-100">
+            <i class="fas fa-plus me-2"></i>Create New Syllabus
+          </a>
+        </div>
+      {% endif %}
+    </div>
   </div>
 </div>
 
-<!-- FontAwesome CDN for icons -->
+<!-- FontAwesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
 
 <style>
-  .list-group-item {
+  /* Custom CSS Variables */
+  :root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --light-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    --shadow-soft: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-medium: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-large: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+  }
+
+  /* Hero Section */
+  .bg-gradient-primary {
+    background: var(--primary-gradient);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bg-gradient-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="20" cy="80" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+    pointer-events: none;
+  }
+
+  .breadcrumb-light .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .text-white-75 {
+    color: rgba(255, 255, 255, 0.75) !important;
+  }
+
+  .hero-icon {
+    opacity: 0.6;
+    transform: rotate(-15deg);
+  }
+
+  /* Card Enhancements */
+  .card {
+    transition: all 0.3s ease;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-large);
+  }
+
+  .card-header {
+    padding: 2rem 2rem 1rem;
+  }
+
+  .card-body {
+    padding: 0 2rem 2rem;
+  }
+
+  /* Section Headers */
+  .section-header {
+    position: relative;
+  }
+
+  .section-divider {
+    height: 3px;
+    background: linear-gradient(90deg, var(--bs-primary), transparent);
+    border-radius: 2px;
+    width: 60px;
+  }
+
+  /* Objectives Section */
+  .objectives-content {
+    position: relative;
+    line-height: 1.7;
+  }
+
+  .objectives-content::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: -0.5rem;
+    bottom: -0.5rem;
+    width: 4px;
+    background: var(--success-gradient);
+    border-radius: 2px;
+  }
+
+  /* Download Section */
+  .bg-gradient-light {
+    background: var(--light-gradient);
+  }
+
+  .download-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent !important;
+  }
+
+  .download-card:hover {
+    border-color: var(--bs-primary) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+  }
+
+  .file-icon {
+    padding: 1rem;
+    background: rgba(220, 53, 69, 0.1);
     border-radius: 0.5rem;
-    margin-bottom: 0.75rem;
-    transition: box-shadow 0.2s ease;
+    display: inline-block;
   }
-  .list-group-item:hover {
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+
+  /* Buttons */
+  .btn {
+    font-weight: 500;
+    letter-spacing: 0.025em;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
   }
-  form.m-0 button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+  .btn-lg {
+    padding: 0.875rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  .btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+    opacity: 0.95;
+  }
+
+  .btn-success {
+    background: var(--success-gradient);
+    border: none;
+  }
+
+  .btn-outline-secondary {
+    border-width: 2px;
+    font-weight: 500;
+  }
+
+  .btn-outline-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Dropdown */
+  .dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow-large);
+    border-radius: 0.75rem;
+    padding: 0.5rem 0;
+  }
+
+  .dropdown-item {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    transform: translateX(5px);
+  }
+
+  /* Alert Enhancements */
+  .alert {
+    border-radius: 0.75rem;
+    border: none;
+    padding: 1.5rem;
+  }
+
+  .alert-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  }
+
+  /* Empty State */
+  .empty-state {
+    padding: 4rem 2rem;
+  }
+
+  .empty-icon {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 3rem 0 !important;
+    }
+    
+    .display-5 {
+      font-size: 2rem;
+    }
+    
+    .card-header,
+    .card-body {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+    
+    .btn-lg {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+    
+    .hero-icon {
+      display: none;
+    }
+    
+    .objectives-content {
+      margin-left: 0;
+      padding-left: 1rem;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .hero-section,
+    .action-buttons,
+    .dropdown,
+    .btn {
+      display: none !important;
+    }
+    
+    .card {
+      box-shadow: none !important;
+      border: 1px solid #dee2e6 !important;
+    }
   }
 </style>
-{% endblock %}
+{% endblock %}

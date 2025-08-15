@@ -4,40 +4,1023 @@
 {% block title %}Note: {{ note.title }}{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb / Header -->
-<section id="about-home" class="py-4 bg-light">
-  <div class="container">
-    <h2 class="mb-0">{{ note.chapter.title }} / Notes /</h2>
-  </div>
-</section>
+<style>
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary: #8b5cf6;
+        --accent: #06b6d4;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --dark: #0f172a;
+        --light: #f8fafc;
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+        --blur-sm: blur(4px);
+        --blur-md: blur(8px);
+        --blur-lg: blur(16px);
+        --blur-xl: blur(20px);
+    }
 
-<!-- Note details -->
-<div class="container py-4">
-  <div class="card shadow rounded">
-    <div class="card-body">
-      <h3 class="card-title">{{ note.title }}</h3>
-      
-      {% if note.description %}
-        <p class="card-text text-muted">{{ note.description }}</p>
-      {% endif %}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-      {% if note.file %}
-    {% if is_pdf %}
-        <embed src="{{ note.file }}#zoom=page-width" width="100%" height="800px" type="application/pdf">
-    {% else %}
-        <p>This file type can’t be previewed. Please download:</p>
-        <a href="{{ note.file }}" class="btn btn-outline-primary" download>Download File</a>
-    {% endif %}
-{% else %}
-    <p>No file uploaded.</p>
-{% endif %}
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 70%, #f5576c 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+    }
 
-    </div>
-  </div>
+    /* Dynamic Background Animation */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.3) 0%, transparent 60%),
+            radial-gradient(circle at 75% 25%, rgba(139, 92, 246, 0.2) 0%, transparent 60%),
+            radial-gradient(circle at 25% 75%, rgba(6, 182, 212, 0.25) 0%, transparent 60%),
+            radial-gradient(circle at 75% 75%, rgba(245, 87, 108, 0.2) 0%, transparent 60%);
+        animation: backgroundPulse 20s ease-in-out infinite;
+        z-index: -2;
+    }
 
-  <!-- Back button -->
-  <div class="mt-3">
-    <a href="javascript:history.back()" class="btn btn-secondary">← Back</a>
-  </div>
+    @keyframes backgroundPulse {
+        0%, 100% { 
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.3) 0%, transparent 60%),
+                radial-gradient(circle at 75% 25%, rgba(139, 92, 246, 0.2) 0%, transparent 60%),
+                radial-gradient(circle at 25% 75%, rgba(6, 182, 212, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 75% 75%, rgba(245, 87, 108, 0.2) 0%, transparent 60%);
+        }
+        25% { 
+            background: 
+                radial-gradient(circle at 75% 75%, rgba(99, 102, 241, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 25% 75%, rgba(139, 92, 246, 0.3) 0%, transparent 60%),
+                radial-gradient(circle at 75% 25%, rgba(6, 182, 212, 0.2) 0%, transparent 60%),
+                radial-gradient(circle at 25% 25%, rgba(245, 87, 108, 0.25) 0%, transparent 60%);
+        }
+        50% { 
+            background: 
+                radial-gradient(circle at 75% 25%, rgba(99, 102, 241, 0.2) 0%, transparent 60%),
+                radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.3) 0%, transparent 60%),
+                radial-gradient(circle at 25% 75%, rgba(245, 87, 108, 0.2) 0%, transparent 60%);
+        }
+        75% { 
+            background: 
+                radial-gradient(circle at 25% 75%, rgba(99, 102, 241, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.2) 0%, transparent 60%),
+                radial-gradient(circle at 25% 25%, rgba(6, 182, 212, 0.2) 0%, transparent 60%),
+                radial-gradient(circle at 75% 25%, rgba(245, 87, 108, 0.3) 0%, transparent 60%);
+        }
+    }
+
+    /* Floating Orbs */
+    .floating-orbs {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+    }
+
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        backdrop-filter: var(--blur-sm);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        animation: orbFloat 25s ease-in-out infinite;
+    }
+
+    .orb:nth-child(1) { 
+        width: 100px; height: 100px; 
+        top: 20%; left: 10%; 
+        animation-delay: 0s; 
+        animation-duration: 20s;
+    }
+    .orb:nth-child(2) { 
+        width: 60px; height: 60px; 
+        top: 70%; right: 20%; 
+        animation-delay: -5s; 
+        animation-duration: 25s;
+    }
+    .orb:nth-child(3) { 
+        width: 80px; height: 80px; 
+        top: 40%; left: 70%; 
+        animation-delay: -10s; 
+        animation-duration: 30s;
+    }
+    .orb:nth-child(4) { 
+        width: 120px; height: 120px; 
+        bottom: 30%; left: 30%; 
+        animation-delay: -15s; 
+        animation-duration: 35s;
+    }
+    .orb:nth-child(5) { 
+        width: 40px; height: 40px; 
+        top: 10%; right: 40%; 
+        animation-delay: -20s; 
+        animation-duration: 15s;
+    }
+
+    @keyframes orbFloat {
+        0%, 100% { 
+            transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); 
+            opacity: 0.4; 
+        }
+        25% { 
+            transform: translateY(-30px) translateX(20px) scale(1.1) rotate(90deg); 
+            opacity: 0.7; 
+        }
+        50% { 
+            transform: translateY(-60px) translateX(-20px) scale(0.9) rotate(180deg); 
+            opacity: 0.5; 
+        }
+        75% { 
+            transform: translateY(-30px) translateX(-40px) scale(1.05) rotate(270deg); 
+            opacity: 0.8; 
+        }
+    }
+
+    /* Breadcrumb Section */
+    .breadcrumb-hero {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        backdrop-filter: var(--blur-lg);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .breadcrumb-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--primary), var(--accent), var(--secondary), transparent);
+        animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+        0% { opacity: 0.3; transform: translateX(-100%); }
+        50% { opacity: 1; transform: translateX(0%); }
+        100% { opacity: 0.3; transform: translateX(100%); }
+    }
+
+    .breadcrumb-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .breadcrumb-path {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        padding: 0.5rem 0;
+    }
+
+    .breadcrumb-item:hover {
+        transform: translateY(-2px);
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .breadcrumb-separator {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+
+    /* Main Container */
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 3rem 2rem 4rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Note Card */
+    .note-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: var(--blur-xl);
+        border-radius: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: var(--shadow-2xl), var(--shadow-glow);
+        overflow: hidden;
+        position: relative;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .note-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+        background-size: 300% 100%;
+        animation: gradientShift 4s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .note-card:hover {
+        transform: translateY(-12px) scale(1.01);
+        box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.3), var(--shadow-glow);
+    }
+
+    /* Card Header */
+    .card-header {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+        padding: 3rem 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 70%),
+            radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .note-title {
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 900;
+        color: var(--dark);
+        margin: 0;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .title-icon-wrapper {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        padding: 1.2rem;
+        border-radius: 20px;
+        color: white;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .title-icon-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: iconShimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes iconShimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    /* Card Body */
+    .card-body {
+        padding: 2rem 3rem 3rem;
+        position: relative;
+    }
+
+    /* Description Section */
+    .description-section {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(139, 92, 246, 0.08));
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .description-section::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(135deg, var(--accent), var(--secondary));
+        border-radius: 0 2px 2px 0;
+    }
+
+    .description-text {
+        color: var(--dark);
+        font-size: 1.2rem;
+        line-height: 1.8;
+        margin: 0;
+        font-weight: 500;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .description-icon {
+        color: var(--accent);
+        font-size: 1.4rem;
+        margin-top: 0.2rem;
+        flex-shrink: 0;
+        animation: pulse 2s infinite;
+    }
+
+    /* File Preview Section */
+    .file-preview-container {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.9));
+        border: 2px dashed rgba(99, 102, 241, 0.3);
+        border-radius: 24px;
+        padding: 2rem;
+        position: relative;
+        transition: all 0.4s ease;
+        overflow: hidden;
+    }
+
+    .file-preview-container:hover {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .file-preview-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 60%),
+            radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+
+    .file-preview-container:hover::before {
+        opacity: 1;
+    }
+
+    /* PDF Viewer */
+    .pdf-viewer-wrapper {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+        background: white;
+    }
+
+    .pdf-embed {
+        width: 100%;
+        height: 80vh;
+        min-height: 700px;
+        border: none;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .pdf-loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: var(--blur-md);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        border-radius: 16px;
+        z-index: 10;
+        transition: all 0.5s ease;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(99, 102, 241, 0.2);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+        color: var(--primary);
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Download Section */
+    .download-showcase {
+        text-align: center;
+        padding: 4rem 2rem;
+        position: relative;
+    }
+
+    .download-icon-mega {
+        width: 140px;
+        height: 140px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, var(--accent), var(--primary), var(--secondary));
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: white;
+        box-shadow: var(--shadow-2xl);
+        position: relative;
+        overflow: hidden;
+        animation: downloadPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes downloadPulse {
+        0%, 100% { transform: scale(1); box-shadow: var(--shadow-2xl); }
+        50% { transform: scale(1.05); box-shadow: var(--shadow-2xl), 0 0 60px rgba(99, 102, 241, 0.4); }
+    }
+
+    .download-icon-mega::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: rotate 4s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .download-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 1rem;
+    }
+
+    .download-subtitle {
+        color: #64748b;
+        font-size: 1.3rem;
+        margin-bottom: 3rem;
+        line-height: 1.6;
+    }
+
+    .download-btn-mega {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        border: none;
+        padding: 1.5rem 3rem;
+        border-radius: 50px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.4s ease;
+        box-shadow: var(--shadow-xl);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .download-btn-mega::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.7s;
+    }
+
+    .download-btn-mega:hover::before {
+        left: 100%;
+    }
+
+    .download-btn-mega:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(99, 102, 241, 0.5);
+        color: white;
+    }
+
+    /* No File Section */
+    .no-file-showcase {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: #94a3b8;
+        position: relative;
+    }
+
+    .no-file-icon-mega {
+        width: 160px;
+        height: 160px;
+        margin: 0 auto 2.5rem;
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        opacity: 0.7;
+        animation: noFilePulse 4s ease-in-out infinite;
+    }
+
+    @keyframes noFilePulse {
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.02); opacity: 0.9; }
+    }
+
+    .no-file-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .no-file-text {
+        font-size: 1.3rem;
+        line-height: 1.6;
+    }
+
+    /* Action Section */
+    .action-section {
+        margin-top: 4rem;
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-back-mega {
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--dark);
+        border: 2px solid rgba(15, 23, 42, 0.1);
+        padding: 1.2rem 3rem;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.4s ease;
+        backdrop-filter: var(--blur-md);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-back-mega::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+        transition: left 0.7s;
+    }
+
+    .btn-back-mega:hover::before {
+        left: 100%;
+    }
+
+    .btn-back-mega:hover {
+        background: var(--dark);
+        color: white;
+        border-color: var(--dark);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: var(--shadow-2xl);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .main-container {
+            padding: 2rem 1rem 3rem;
+        }
+        
+        .card-header,
+        .card-body {
+            padding: 2rem;
+        }
+
+        .pdf-embed {
+            height: 70vh;
+            min-height: 500px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .breadcrumb-container {
+            padding: 0 1rem;
+        }
+
+        .main-container {
+            padding: 1rem 0.5rem 2rem;
+        }
+
+        .note-card {
+            border-radius: 24px;
+        }
+
+        .card-header,
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .note-title {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .title-icon-wrapper {
+            align-self: center;
+        }
+
+        .pdf-embed {
+            height: 60vh;
+            min-height: 400px;
+        }
+
+        .action-section {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-back-mega,
+        .download-btn-mega {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .download-icon-mega,
+        .no-file-icon-mega {
+            width: 100px;
+            height: 100px;
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card-header,
+        .card-body {
+            padding: 1rem;
+        }
+
+        .description-section {
+            padding: 1.5rem;
+        }
+
+        .file-preview-container {
+            padding: 1rem;
+        }
+
+        .pdf-embed {
+            height: 50vh;
+            min-height: 300px;
+        }
+
+        .download-showcase,
+        .no-file-showcase {
+            padding: 2rem 1rem;
+        }
+    }
+
+    /* Entrance Animations */
+    .note-card {
+        animation: cardEntrance 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .action-section {
+        animation: actionEntrance 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+    }
+
+    @keyframes cardEntrance {
+        from {
+            opacity: 0;
+            transform: translateY(60px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes actionEntrance {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+<br>
+<br>
+<br>
+<br>
+<br>
+<!-- Floating Orbs -->
+<div class="floating-orbs">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
 </div>
+<!-- Note Details -->
+<div class="main-container">
+    <div class="note-card">
+        <!-- Card Header -->
+        <div class="card-header">
+            <h1 class="note-title">
+                <div>{{ note.title }}</div>
+            </h1>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <!-- Description Section -->
+            {% if note.description %}
+            <div class="description-section">
+                <div class="description-text">
+                    <i class="fas fa-info-circle description-icon"></i>
+                    <span>{{ note.description }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- File Preview Section -->
+            <div class="file-preview-container">
+                {% if note.file %}
+                    {% if is_pdf %}
+                        <!-- PDF Preview -->
+                        <div class="pdf-viewer-wrapper">
+                            <embed 
+                                src="{{ note.file }}#zoom=page-width" 
+                                class="pdf-embed"
+                                type="application/pdf"
+                                onload="hidePdfLoading()">
+                            <div class="pdf-loading-overlay" id="pdfLoadingOverlay">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">Loading PDF Document...</div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Download Section for non-PDF files -->
+                        <div class="download-showcase">
+                            <div class="download-icon-mega">
+                                <i class="fas fa-file-download"></i>
+                            </div>
+                            <h2 class="download-title">File Ready for Download</h2>
+                            <p class="download-subtitle">This file type can't be previewed online, but you can download it instantly using the button below.</p>
+                            <a href="{{ note.file }}" class="download-btn-mega" download>
+                                <i class="fas fa-download"></i>
+                                <span>Download File</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <!-- No File Message -->
+                    <div class="no-file-showcase">
+                        <div class="no-file-icon-mega">
+                            <i class="fas fa-file-slash"></i>
+                        </div>
+                        <h2 class="no-file-title">No File Available</h2>
+                        <p class="no-file-text">This note doesn't have an associated file yet. Please check back later or contact your instructor.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="action-section">
+        <a href="javascript:history.back()" class="btn-back-mega">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Notes</span>
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // PDF loading handler
+        window.hidePdfLoading = function() {
+            const loadingOverlay = document.getElementById('pdfLoadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            }
+        };
+
+        // Enhanced responsive PDF height
+        function optimizePdfHeight() {
+            const pdfEmbed = document.querySelector('.pdf-embed');
+            if (pdfEmbed && window.innerWidth > 1024) {
+                const windowHeight = window.innerHeight;
+                const breadcrumbHeight = document.querySelector('.breadcrumb-hero')?.offsetHeight || 0;
+                const cardHeaderHeight = document.querySelector('.card-header')?.offsetHeight || 0;
+                const availableHeight = windowHeight - breadcrumbHeight - cardHeaderHeight - 300;
+                
+                pdfEmbed.style.height = Math.max(availableHeight, 600) + 'px';
+            }
+        }
+
+        // Parallax effect for floating orbs
+        let animationFrameId;
+        
+        function updateParallax() {
+            const scrolled = window.pageYOffset;
+            const orbs = document.querySelectorAll('.orb');
+            
+            orbs.forEach((orb, index) => {
+                const speed = (index + 1) * 0.3;
+                const yPos = -(scrolled * speed);
+                const xPos = Math.sin(scrolled * 0.01 + index) * 20;
+                const rotation = scrolled * (index + 1) * 0.1;
+                
+                orb.style.transform = `translateY(${yPos}px) translateX(${xPos}px) rotate(${rotation}deg)`;
+            });
+        }
+        
+        function onScroll() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            animationFrameId = requestAnimationFrame(updateParallax);
+        }
+
+        // Enhanced hover effects for interactive elements
+        const interactiveElements = document.querySelectorAll('.download-btn-mega, .btn-back-mega, .note-card');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', function(e) {
+                this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                
+                // Add subtle glow effect
+                if (this.classList.contains('note-card')) {
+                    this.style.boxShadow = '0 40px 80px -20px rgba(0, 0, 0, 0.3), 0 0 60px rgba(99, 102, 241, 0.2)';
+                }
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                if (this.classList.contains('note-card')) {
+                    this.style.boxShadow = '';
+                }
+            });
+        });
+
+        // Smooth reveal animations for sections
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = `slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) both`;
+                }
+            });
+        }, observerOptions);
+
+        // Initialize all functionality
+        document.querySelectorAll('.note-card, .action-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Event listeners
+        window.addEventListener('scroll', onScroll);
+        window.addEventListener('resize', optimizePdfHeight);
+        
+        // Initialize on load
+        optimizePdfHeight();
+
+        // PDF loading fallback
+        const pdfEmbed = document.querySelector('.pdf-embed');
+        if (pdfEmbed) {
+            pdfEmbed.addEventListener('load', function() {
+                hidePdfLoading();
+            });
+
+            // Fallback: hide loading after 15 seconds
+            setTimeout(hidePdfLoading, 15000);
+        }
+
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' || e.key === 'Backspace') {
+                const backButton = document.querySelector('.btn-back-mega');
+                if (backButton && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    backButton.click();
+                }
+            }
+        });
+
+        // Enhanced loading states
+        const loadingText = document.querySelector('.loading-text');
+        if (loadingText) {
+            const loadingMessages = [
+                'Loading PDF Document...',
+                'Preparing your content...',
+                'Almost ready...',
+                'Just a moment more...'
+            ];
+            
+            let messageIndex = 0;
+            const loadingInterval = setInterval(() => {
+                if (document.getElementById('pdfLoadingOverlay')) {
+                    messageIndex = (messageIndex + 1) % loadingMessages.length;
+                    loadingText.textContent = loadingMessages[messageIndex];
+                } else {
+                    clearInterval(loadingInterval);
+                }
+            }, 2000);
+        }
+    });
+
+    // Add smooth transitions for dynamic content
+    function addSmoothTransitions() {
+        const elements = document.querySelectorAll('*');
+        elements.forEach(el => {
+            if (!el.style.transition && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
+                el.style.transition = 'all 0.3s ease';
+            }
+        });
+    }
+
+    // Initialize smooth transitions after a brief delay
+    setTimeout(addSmoothTransitions, 100);
+</script>
 {% endblock %}

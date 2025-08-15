@@ -4,58 +4,803 @@
 {% block title %}Chapters for {{ subject.name }}{% endblock %}
 
 {% block content %}
-<section id="about-home" class="py-4 bg-light">
-  <div class="container d-flex justify-content-between align-items-center">
-    <h2 class="mb-0">Note List /</h2>
-  </div>
-</section>
+<style>
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary: #8b5cf6;
+        --accent: #06b6d4;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --dark: #0f172a;
+        --light: #f8fafc;
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        --blur-sm: blur(4px);
+        --blur-md: blur(8px);
+        --blur-lg: blur(16px);
+    }
 
-<div class="container py-4">
-  <h1 class="mb-4">Notes</h1>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-  {% if notes %}
-    <ul class="list-group">
-      {% for note in notes %}
-        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-          <div>
-            <h5 class="mb-1">{{ note.title }}</h5>
-            <small class="text-muted">
-              Chapter: {{ note.chapter.title }} | File: <a href="{{ note.file.url }}" target="_blank">Download</a>
-            </small>
-            <p class="mb-0">{{ note.description }}</p>
-          </div>
-          <div class="d-flex gap-2 align-items-center mt-2 mt-md-0">
-            <a href="{% url 'note-detail' note.id %}" class="btn btn-sm btn-primary">Details</a>
-            {% if user.is_authenticated and user.user_type == 'admin' %}
-            <a href="{% url 'note-update' note.id %}" class="btn btn-sm btn-primary">Edit</a>
-            <form action="{% url 'note-delete' note.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this note?');" class="m-0">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-            </form>
-            {% endif %}
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
 
-    {% if user.is_authenticated and user.user_type == 'admin' %}
-      <div class="mt-4">
-        <a href="{% url 'note-create' chapter_id %}" class="btn btn-success">Create New Note</a>
-      </div>
-    {% endif %}
-    
-    {% if user.is_authenticated and user.user_type == 'normal' %}
-      <div class="mt-4">
-        <a href="{% url 'chapter-list' subject_id %}" class="btn btn-outline-secondary">← Back to Chapters</a>
-      </div>
-    {% endif %}
+    /* Animated Background */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 40% 90%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
+        animation: backgroundShift 25s ease-in-out infinite;
+        z-index: -1;
+    }
 
-  {% else %}
-    <p>No notes found for this chapter.</p>
-    {% if user.is_authenticated and user.user_type == 'admin' %}
-      <a href="{% url 'note-create' chapter_id %}" class="btn btn-success">Create New Note</a>
-    {% endif %}
-  {% endif %}
+    @keyframes backgroundShift {
+        0%, 100% { 
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 90%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
+        }
+        33% { 
+            background: 
+                radial-gradient(circle at 70% 20%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 30% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 90% 40%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
+        }
+        66% { 
+            background: 
+                radial-gradient(circle at 40% 60%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 60% 20%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
+        }
+    }
+
+    /* Floating Elements */
+    .floating-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        animation: float 15s ease-in-out infinite;
+    }
+
+    .shape:nth-child(1) { width: 60px; height: 60px; top: 10%; left: 10%; animation-delay: 0s; }
+    .shape:nth-child(2) { width: 40px; height: 40px; top: 20%; right: 20%; animation-delay: -3s; }
+    .shape:nth-child(3) { width: 80px; height: 80px; bottom: 30%; left: 30%; animation-delay: -6s; }
+    .shape:nth-child(4) { width: 50px; height: 50px; top: 60%; right: 10%; animation-delay: -9s; }
+    .shape:nth-child(5) { width: 70px; height: 70px; bottom: 10%; right: 40%; animation-delay: -12s; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); opacity: 0.3; }
+        25% { transform: translateY(-30px) translateX(20px) rotate(90deg); opacity: 0.6; }
+        50% { transform: translateY(-60px) translateX(-10px) rotate(180deg); opacity: 0.4; }
+        75% { transform: translateY(-30px) translateX(-30px) rotate(270deg); opacity: 0.8; }
+    }
+
+    /* Breadcrumb Section */
+    .breadcrumb-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: var(--blur-md);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1.5rem 0;
+        position: relative;
+    }
+
+    .breadcrumb-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    }
+
+    .breadcrumb-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .breadcrumb-title {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Main Container */
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+        position: relative;
+    }
+
+    /* Page Header */
+    .page-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+    }
+
+    .page-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, white, rgba(255, 255, 255, 0.8));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 2px;
+        animation: expandWidth 1s ease-out 0.5s both;
+    }
+
+    @keyframes expandWidth {
+        from { width: 0; }
+        to { width: 100px; }
+    }
+
+    /* Notes Grid */
+    .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    /* Note Card */
+    .note-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: var(--blur-md);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(0);
+    }
+
+    .note-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .note-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .note-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Card Header */
+    .card-header {
+        padding: 1.5rem 2rem 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    .note-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0 0 0.5rem 0;
+        line-height: 1.3;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .note-icon {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .note-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .chapter-tag {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+        color: var(--primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-weight: 600;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        max-width: fit-content;
+    }
+
+    .download-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s ease;
+    }
+
+    .download-link:hover {
+        color: var(--primary);
+        transform: translateX(2px);
+    }
+
+    /* Card Body */
+    .card-body {
+        padding: 1rem 2rem 1.5rem;
+    }
+
+    .note-description {
+        color: #475569;
+        line-height: 1.6;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        padding: 1rem 2rem 2rem;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        color: white;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--error), #dc2626);
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #dc2626, var(--error));
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        color: white;
+    }
+
+    /* Action Section */
+    .action-section {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .btn-large {
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-success:hover {
+        background: linear-gradient(135deg, #059669, var(--success));
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(16, 185, 129, 0.4);
+        color: white;
+    }
+
+    .btn-outline {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--dark);
+        border: 2px solid rgba(15, 23, 42, 0.1);
+        backdrop-filter: var(--blur-sm);
+    }
+
+    .btn-outline:hover {
+        background: var(--dark);
+        color: white;
+        border-color: var(--dark);
+        transform: translateY(-3px);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 6rem 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: var(--blur-md);
+        border-radius: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-xl);
+        margin-bottom: 3rem;
+    }
+
+    .empty-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #94a3b8;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    .empty-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 1rem;
+    }
+
+    .empty-text {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Delete Form */
+    .delete-form {
+        margin: 0;
+        display: inline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .notes-grid {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .main-container {
+            padding: 2rem 1rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .breadcrumb-container {
+            padding: 0 1rem;
+        }
+
+        .notes-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .note-card {
+            border-radius: 20px;
+        }
+
+        .card-header,
+        .card-body,
+        .action-buttons {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .note-title {
+            font-size: 1.2rem;
+        }
+
+        .action-buttons {
+            gap: 0.5rem;
+        }
+
+        .btn {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .action-section {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-large {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main-container {
+            padding: 1rem 0.5rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .empty-state {
+            padding: 3rem 1rem;
+            border-radius: 24px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+        }
+    }
+
+    /* Animations */
+    .note-card {
+        animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .note-card:nth-child(2) { animation-delay: 0.1s; }
+    .note-card:nth-child(3) { animation-delay: 0.2s; }
+    .note-card:nth-child(4) { animation-delay: 0.3s; }
+    .note-card:nth-child(5) { animation-delay: 0.4s; }
+    .note-card:nth-child(6) { animation-delay: 0.5s; }
+
+    .action-section {
+        animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(60px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<!-- Floating Shapes -->
+<div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
 </div>
 
+<!-- Breadcrumb Section -->
+<section class="breadcrumb-section">
+    <div class="breadcrumb-container">
+        <h2 class="breadcrumb-title">
+            <i class="fas fa-sticky-note"></i>
+            Note List
+        </h2>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="main-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Study Notes</h1>
+    </div>
+
+    {% if notes %}
+        <!-- Notes Grid -->
+        <div class="notes-grid">
+            {% for note in notes %}
+            <div class="note-card">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <h3 class="note-title">
+                        <div class="note-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            {{ note.title }}
+                        </div>
+                    </h3>
+                    <div class="note-meta">
+                        <div class="chapter-tag">
+                            <i class="fas fa-book-open"></i>
+                            {{ note.chapter.title }}
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <a href="{{ note.file.url }}" class="download-link" target="_blank">
+                                <i class="fas fa-download"></i>
+                                Download File
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                {% if note.description %}
+                <div class="card-body">
+                    <p class="note-description">{{ note.description }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="{% url 'note-detail' note.id %}" class="btn btn-primary">
+                        <i class="fas fa-eye"></i>
+                        View Details
+                    </a>
+                    {% if user.is_authenticated and user.user_type == 'admin' %}
+                    <a href="{% url 'note-update' note.id %}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </a>
+                    <form action="{% url 'note-delete' note.id %}" method="post" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                            Delete
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Action Section -->
+        <div class="action-section">
+            {% if user.is_authenticated and user.user_type == 'admin' %}
+            <a href="{% url 'note-create' chapter_id %}" class="btn-large btn-success">
+                <i class="fas fa-plus"></i>
+                Create New Note
+            </a>
+            <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
+                <i class="fas fa-arrow-left"></i>
+                Back to Chapters
+            </a>
+            {% endif %}
+            
+            {% if user.is_authenticated and user.user_type == 'normal' %}
+            <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
+                <i class="fas fa-arrow-left"></i>
+                Back to Chapters
+            </a>
+            {% endif %}
+        </div>
+
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-sticky-note"></i>
+            </div>
+            <h2 class="empty-title">No Notes Available</h2>
+            <p class="empty-text">No notes have been uploaded for this chapter yet. Check back later or contact your instructor.</p>
+            {% if user.is_authenticated and user.user_type == 'admin' %}
+            <a href="{% url 'note-create' chapter_id %}" class="btn-large btn-success">
+                <i class="fas fa-plus"></i>
+                Create First Note
+            </a>
+            <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
+                <i class="fas fa-arrow-left"></i>
+                Back to Chapters
+            </a>
+            {% endif %}
+        </div>
+        <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
+                <i class="fas fa-arrow-left"></i>
+                Back to Chapters
+            </a>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhanced card hover effects
+        const noteCards = document.querySelectorAll('.note-card');
+        
+        noteCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Enhanced button interactions
+        const buttons = document.querySelectorAll('.btn, .btn-large');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Parallax effect for floating shapes
+        let ticking = false;
+        
+        function updateParallax() {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.shape');
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.5;
+                const yPos = -(scrolled * speed);
+                shape.style.transform = `translateY(${yPos}px) translateX(${Math.sin(scrolled * 0.01) * 10}px)`;
+            });
+            
+            ticking = false;
+        }
+        
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        }
+        
+        window.addEventListener('scroll', requestTick);
+
+        // Initialize animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = `slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both`;
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Observe elements for animation
+        document.querySelectorAll('.note-card, .action-section, .empty-state').forEach(el => {
+            observer.observe(el);
+        });
+    });
+</script>
 {% endblock %}

@@ -4,37 +4,454 @@
 {% block title %}Syllabus: {{ syllabus.subject.name }}{% endblock %}
 
 {% block content %}
-<section id="about-home" class="py-4 bg-light">
+<!-- Hero Section with Breadcrumb -->
+<section class="hero-section py-5 bg-gradient-primary text-white">
   <div class="container">
-    <h2 class="mb-0">Syllabus Details /</h2>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="display-5 fw-bold mb-2">{{ syllabus.subject.name }}</h1>
+        <p class="lead mb-0 text-white-75">Syllabus Document Viewer</p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <div class="hero-icon">
+          <i class="fas fa-file-alt fa-4x opacity-75"></i>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="container py-4">
-  <div class="card shadow rounded">
-    <div class="card-body">
-      <h3 class="card-title">Syllabus: {{ syllabus.subject.name }}</h3>
-
-      {% if syllabus.objectives %}
-        <p class="card-text text-muted">{{ syllabus.objectives }}</p>
-      {% endif %}
-
-      {% if syllabus.file %}
-        {% if is_pdf %}
-          <embed src="{{ syllabus.file }}#zoom=page-width" width="100%" height="800px" type="application/pdf">
-        {% else %}
-          <p>This file type can’t be previewed. Please download:</p>
-          <a href="{{ syllabus.file }}" class="btn btn-outline-primary" download>Download File</a>
-        {% endif %}
-      {% else %}
-        <p>No file uploaded.</p>
-      {% endif %}
-
+<!-- Main Content -->
+<div class="container py-5">
+  <div class="row">
+    <!-- Sidebar with Document Info -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-lg border-0 sticky-sidebar">
+        <div class="card-header bg-gradient-light border-0">
+          <h5 class="card-title mb-0 fw-semibold">
+            <i class="fas fa-info-circle text-primary me-2"></i>Document Information
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="document-info">
+            <div class="info-item mb-3">
+              <label class="small text-muted fw-semibold text-uppercase">Subject</label>
+              <p class="h6 mb-0 text-dark">{{ syllabus.subject.name }}</p>
+            </div>
+            
+            {% if syllabus.objectives %}
+              <div class="info-item mb-3">
+                <label class="small text-muted fw-semibold text-uppercase">Learning Objectives</label>
+                <div class="objectives-preview p-3 bg-light rounded border-start border-success border-3">
+                  <p class="mb-0 text-dark small lh-base">{{ syllabus.objectives|truncatewords:30 }}</p>
+                  {% if syllabus.objectives|wordcount > 30 %}
+                    <button class="btn btn-link btn-sm p-0 mt-2 text-success" onclick="toggleObjectives()">
+                      <span id="toggle-text">Show more</span> <i id="toggle-icon" class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="full-objectives" class="mt-2" style="display: none;">
+                      <p class="mb-0 text-dark small lh-base">{{ syllabus.objectives }}</p>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+            
+            {% if syllabus.file %}
+              <div class="info-item mb-3">
+                <label class="small text-muted fw-semibold text-uppercase">File Type</label>
+                <p class="mb-2">
+                  {% if is_pdf %}
+                    <span class="badge bg-danger fs-6"><i class="fas fa-file-pdf me-1"></i>PDF Document</span>
+                  {% else %}
+                    <span class="badge bg-primary fs-6"><i class="fas fa-file me-1"></i>Document File</span>
+                  {% endif %}
+                </p>
+              </div>
+              
+              <div class="d-grid gap-2">
+                <a href="{{ syllabus.file }}" class="btn btn-primary btn-lg" download>
+                  <i class="fas fa-download me-2"></i>Download Document
+                </a>
+                {% if is_pdf %}
+                  <button class="btn btn-outline-secondary" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand me-2"></i>Fullscreen View
+                  </button>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Document Viewer -->
+    <div class="col-lg-8">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-0">
+          {% if syllabus.file %}
+            {% if is_pdf %}
+              <div class="pdf-container position-relative">
+                <div id="pdf-loading" class="text-center py-5">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <p class="mt-3 text-muted">Loading PDF document...</p>
+                </div>
+                <embed id="pdf-viewer" 
+                       src="{{ syllabus.file }}#zoom=page-width&view=FitH" 
+                       width="100%" 
+                       height="800px" 
+                       type="application/pdf"
+                       class="rounded-bottom"
+                       onload="hidePdfLoading()">
+              </div>
+            {% else %}
+              <div class="no-preview-container text-center py-5">
+                <div class="no-preview-content">
+                  <i class="fas fa-file fa-4x text-muted mb-4 opacity-50"></i>
+                  <h5 class="text-muted mb-3">Preview Not Available</h5>
+                  <p class="text-muted mb-4">This file type cannot be previewed in the browser.<br>Please download the file to view its contents.</p>
+                  <a href="{{ syllabus.file }}" class="btn btn-primary btn-lg" download>
+                    <i class="fas fa-download me-2"></i>Download File
+                  </a>
+                </div>
+              </div>
+            {% endif %}
+          {% else %}
+            <div class="no-file-container text-center py-5">
+              <div class="no-file-content">
+                <i class="fas fa-folder-open fa-4x text-muted mb-4 opacity-50"></i>
+                <h5 class="text-muted mb-3">No Document Available</h5>
+                <p class="text-muted mb-0">No syllabus document has been uploaded for this subject.</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
-
-  <div class="mt-3">
-    <a href="javascript:history.back()" class="btn btn-secondary">← Back</a>
+  
+  <!-- Action Buttons -->
+  <div class="action-buttons mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'subject-detail' syllabus.id %}" class="btn btn-outline-secondary btn-lg w-100">
+          <i class="fas fa-arrow-left me-2"></i>Go Back
+        </a>
+      </div>
+      <div class="col-md-6 mt-3 mt-md-0">
+        {% if syllabus.file %}
+          <a href="{{ syllabus.file }}" class="btn btn-success btn-lg w-100" download>
+            <i class="fas fa-cloud-download-alt me-2"></i>Download Document
+          </a>
+        {% else %}
+          <button class="btn btn-secondary btn-lg w-100" disabled>
+            <i class="fas fa-times me-2"></i>No Document Available
+          </button>
+        {% endif %}
+      </div>
+    </div>
   </div>
 </div>
-{% endblock %}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+
+<style>
+  /* Custom CSS Variables */
+  :root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --light-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    --shadow-soft: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-medium: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-large: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+  }
+
+  /* Hero Section */
+  .bg-gradient-primary {
+    background: var(--primary-gradient);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bg-gradient-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="20" cy="80" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+    pointer-events: none;
+  }
+
+  .breadcrumb-light .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .text-white-75 {
+    color: rgba(255, 255, 255, 0.75) !important;
+  }
+
+  .hero-icon {
+    opacity: 0.6;
+    transform: rotate(-15deg);
+  }
+
+  /* Card Enhancements */
+  .card {
+    transition: all 0.3s ease;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .sticky-sidebar {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .bg-gradient-light {
+    background: var(--light-gradient);
+  }
+
+  /* Document Info Sidebar */
+  .info-item label {
+    letter-spacing: 0.5px;
+  }
+
+  .objectives-preview {
+    transition: all 0.3s ease;
+  }
+
+  .objectives-preview:hover {
+    background-color: #e8f5e8 !important;
+  }
+
+  /* PDF Container */
+  .pdf-container {
+    background: #f8f9fa;
+    min-height: 800px;
+  }
+
+  #pdf-viewer {
+    border: none;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+  }
+
+  #pdf-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+  }
+
+  /* Document Controls */
+  .document-controls .btn-group .btn {
+    border-radius: 0;
+  }
+
+  .document-controls .btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+  }
+
+  .document-controls .btn-group .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+
+  /* No Preview/File States */
+  .no-preview-container,
+  .no-file-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 0 0 1rem 1rem;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .no-preview-content,
+  .no-file-content {
+    max-width: 300px;
+  }
+
+  /* Buttons */
+  .btn {
+    font-weight: 500;
+    letter-spacing: 0.025em;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+  }
+
+  .btn-lg {
+    padding: 0.875rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  .btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+    opacity: 0.95;
+  }
+
+  .btn-success {
+    background: var(--success-gradient);
+    border: none;
+  }
+
+  .btn-outline-secondary {
+    border-width: 2px;
+    font-weight: 500;
+  }
+
+  .btn-outline-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn-outline-primary:hover {
+    background: var(--primary-gradient);
+    border-color: transparent;
+  }
+
+  /* Badge Enhancements */
+  .badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .sticky-sidebar {
+      position: static;
+    }
+    
+    .hero-icon {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 3rem 0 !important;
+    }
+    
+    .display-5 {
+      font-size: 2rem;
+    }
+    
+    .btn-lg {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+    
+    #pdf-viewer {
+      height: 600px;
+    }
+    
+    .document-controls {
+      display: none;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .hero-section,
+    .action-buttons,
+    .document-controls,
+    .card:first-child {
+      display: none !important;
+    }
+    
+    #pdf-viewer {
+      width: 100% !important;
+      height: auto !important;
+    }
+  }
+
+  /* Loading Animation */
+  .spinner-border {
+    animation: spinner-border 0.75s linear infinite;
+  }
+
+  /* Smooth Transitions */
+  * {
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, 
+                border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+</style>
+
+<script>
+  // Toggle objectives visibility
+  function toggleObjectives() {
+    const fullObjectives = document.getElementById('full-objectives');
+    const toggleText = document.getElementById('toggle-text');
+    const toggleIcon = document.getElementById('toggle-icon');
+    
+    if (fullObjectives.style.display === 'none') {
+      fullObjectives.style.display = 'block';
+      toggleText.textContent = 'Show less';
+      toggleIcon.className = 'fas fa-chevron-up';
+    } else {
+      fullObjectives.style.display = 'none';
+      toggleText.textContent = 'Show more';
+      toggleIcon.className = 'fas fa-chevron-down';
+    }
+  }
+
+  // PDF Controls
+  function zoomIn() {
+    const embed = document.getElementById('pdf-viewer');
+    embed.src = embed.src.replace(/#.*/, '') + '#zoom=150';
+  }
+
+  function zoomOut() {
+    const embed = document.getElementById('pdf-viewer');
+    embed.src = embed.src.replace(/#.*/, '') + '#zoom=75';
+  }
+
+  function resetZoom() {
+    const embed = document.getElementById('pdf-viewer');
+    embed.src = embed.src.replace(/#.*/, '') + '#zoom=page-width&view=FitH';
+  }
+
+  function toggleFullscreen() {
+    const embed = document.getElementById('pdf-viewer');
+    if (embed.requestFullscreen) {
+      embed.requestFullscreen();
+    } else if (embed.webkitRequestFullscreen) {
+      embed.webkitRequestFullscreen();
+    } else if (embed.msRequestFullscreen) {
+      embed.msRequestFullscreen();
+    }
+  }
+
+  function hidePdfLoading() {
+    const loading = document.getElementById('pdf-loading');
+    if (loading) {
+      loading.style.display = 'none';
+    }
+  }
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', function() {
+    // Hide loading after 3 seconds as fallback
+    setTimeout(hidePdfLoading, 3000);
+  });
+</script>
+{% endblock %}
