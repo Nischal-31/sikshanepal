@@ -41,7 +41,7 @@ def apiOverview(request):
     api_urls = {
         "Users": {
             "List": request.build_absolute_uri(reverse('user-list-api')),
-            "Detail View": request.build_absolute_uri(reverse('user-detail-api', args=['<id>'])),
+            "Detail": request.build_absolute_uri(reverse('user-detail-api', args=['<id>'])),
             "Create": request.build_absolute_uri(reverse('user-create-api')),
             "Update": request.build_absolute_uri(reverse('user-update-api', args=['<id>'])),
             "Delete": request.build_absolute_uri(reverse('user-delete-api', args=['<id>'])),
