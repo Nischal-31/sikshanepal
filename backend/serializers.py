@@ -81,7 +81,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'phone_no', 'first_name', 'last_name', 'terms_agree', 'remember_me', 'user_type']
+        fields = ['id', 'username', 'email', 'phone_no', 'first_name', 'last_name', 'terms_agree', 'remember_me', 'user_type', 'profile_picture']
 
     def create(self, validated_data):
         # Ensure the user_type is set, defaulting to 'normal' if not provided

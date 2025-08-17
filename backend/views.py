@@ -157,6 +157,7 @@ def userUpdate(request, pk):
     phone_no = request.data.get("phone_no")
     first_name = request.data.get("first_name")
     last_name = request.data.get("last_name")
+    profile_picture = request.FILES.get("profile_picture")
 
     if username:
         user.username = username
@@ -168,6 +169,8 @@ def userUpdate(request, pk):
         user.first_name = first_name
     if last_name:
         user.last_name = last_name
+    if profile_picture:
+        user.profile_picture = profile_picture
 
     try:
         user.save()  # Attempt to save the updated user
