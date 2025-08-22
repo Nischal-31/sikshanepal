@@ -28,6 +28,14 @@ urlpatterns = [
     path('subject-update/<str:subject_id>/', views.subject_update_view, name='subject-update'),
     path('subject-delete/<str:subject_id>/', views.subject_delete_view, name='subject-delete'),
 
+# Lab URLs
+
+    path('lab-list/<int:subject_id>/', views.lab_list_view, name='lab-list'),
+    path('lab-detail/<str:lab_id>/', views.lab_detail_view, name='lab-detail'),
+    path('lab-create/<int:subject_id>/', views.lab_create_view, name='lab-create'),
+    path('lab-update/<str:lab_id>/', views.lab_update_view, name='lab-update'),
+    path('lab-delete/<str:lab_id>/', views.lab_delete_view, name='lab-delete'),
+
 # Past Question URLs
 
     path('pastQuestion-list/<int:subject_id>/', views.pastQuestion_list_view, name='pastQuestion-list'),
@@ -59,5 +67,6 @@ urlpatterns = [
     path('note-create/<int:chapter_id>', views.note_create_view, name='note-create'),
     path('note-update/<str:note_id>/', views.note_update_view, name='note-update'),
     path('note-delete/<str:note_id>/', views.note_delete_view, name='note-delete'),
+
 
 ]

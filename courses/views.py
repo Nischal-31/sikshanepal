@@ -392,6 +392,7 @@ def subject_detail_view(request, subject_id):
     notes_url = f"http://127.0.0.1:8000/backend/note-list/{subject_id}"  # API for notes
     past_questions_url = f"http://127.0.0.1:8000/backend/pastQuestion-list/{subject_id}"  # API for past questions
     syllabus_url = f"http://127.0.0.1:8000/backend/syllabus-detail-by-subject/{subject_id}/" #API for Syllabus
+    lab_url = f"http://127.0.0.1:8000/backend/lab-list/{subject_id}" #API for Labs
 
     # Fetch subject details
     subject_response = requests.get(subject_url, headers=headers)
@@ -419,9 +420,20 @@ def subject_detail_view(request, subject_id):
     past_questions_response = requests.get(past_questions_url)
     past_questions = past_questions_response.json() if past_questions_response.status_code == 200 else []
 
+    # Fetch labs
+    lab_response = requests.get(lab_url)
+    labs = lab_response.json() if lab_response.status_code == 200 else []
+
+    # Fix file URLs for notes
     for note in notes:
         note['file'] = request.build_absolute_uri(note['file'])
-        
+
+    for pq in past_questions:
+        pq['file'] = request.build_absolute_uri(pq['file'])
+
+    for lab in labs:
+        lab['file'] = request.build_absolute_uri(lab['file'])
+
         
     return render(request, 'subjects/subject_detail.html', {
         'subject': subject,
@@ -429,6 +441,7 @@ def subject_detail_view(request, subject_id):
         'past_questions': past_questions,
         'syllabus':syllabus,
         'semester_id': semester_id, # ✅ Pass semester_id to template
+        'labs': labs
     })
 
 @login_required
@@ -522,6 +535,209 @@ def subject_delete_view(request, subject_id):
         "subject": subject,
         "semester_id": semester_id  # ✅ Include in context for cancel button
     })
+#-------------------------------------------------------------------------------------------------------------------
+#                       LAB VIEWS
+#-------------------------------------------------------------------------------------------------------------------
+@login_required
+def lab_list_view(request, subject_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f'http://127.0.0.1:8000/backend/lab-list/{subject_id}/'
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        labs = response.json()
+    elif response.status_code == 401:
+        labs = []
+    else:
+        labs = []
+
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        semester_id = subject.semester_id
+    except Subject.DoesNotExist:
+        subject = None
+        semester_id = None
+
+    return render(request, 'labs/lab_list.html', {
+        'labs': labs,
+        'semester_id': semester_id,
+        'subject_id': subject_id,
+        'subject': subject
+    })
+
+@login_required
+def lab_detail_view(request, lab_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        lab = response.json()
+        file_url = lab.get('file', '')
+        is_pdf = file_url.lower().endswith('.pdf') if file_url else False
+    else:
+        return HttpResponseNotFound("Lab not found")
+
+    return render(request, 'labs/lab_detail.html', {
+        'lab': lab,
+        'is_pdf': is_pdf,
+    })
+
+
+@login_required
+def lab_create_view(request, subject_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create labs.")
+
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,
+        }
+
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files['file'] = file_upload
+
+        api_url = f"http://127.0.0.1:8000/backend/lab-create/{subject_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, data=data, files=files, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("lab-list", subject_id=subject_id)
+        else:
+            error_message = "Failed to create lab. Please try again."
+            return render(request, "labs/lab_create.html", {
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": error_message
+            })
+
+    return render(request, "labs/lab_create.html", {
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+
+@login_required
+def lab_update_view(request, lab_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update labs.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
+    response = requests.get(api_url, headers=headers)
+    lab = response.json() if response.status_code == 200 else {}
+
+    if not lab:
+        return HttpResponseNotFound("Lab not found")
+
+    subject_id = lab.get('subject')
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
+
+    if request.method == "POST":
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,
+        }
+
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files['file'] = file_upload
+
+        update_url = f"http://127.0.0.1:8000/backend/lab-update/{lab_id}/"
+        update_response = requests.post(update_url, data=data, files=files, headers=headers)
+
+        if update_response.status_code == 200:
+            return redirect("lab-list", subject_id=subject_id)
+        else:
+            return render(request, "labs/lab_update.html", {
+                "lab": lab,
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": "Failed to update lab. Please try again."
+            })
+
+    return render(request, "labs/lab_update.html", {
+        "lab": lab,
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+
+@login_required
+def lab_delete_view(request, lab_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete labs.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
+    response = requests.get(url, headers=headers)
+    lab = response.json() if response.status_code == 200 else {}
+
+    if not lab:
+        return HttpResponseNotFound("Lab not found")
+
+    subject_id = lab.get('subject')
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
+
+    if request.method == 'POST':
+        delete_url = f"http://127.0.0.1:8000/backend/lab-delete/{lab_id}/"
+        delete_response = requests.delete(delete_url, headers=headers)
+
+        if delete_response.status_code in [200, 204]:
+            return redirect('lab-list', subject_id=subject_id)
+        else:
+            error_message = "Failed to delete lab. Please try again."
+            return render(request, 'labs/lab_delete.html', {
+                'lab': lab,
+                'subject': subject,
+                'subject_id': subject_id,
+                'error': error_message
+            })
+
+    return render(request, 'labs/lab_delete.html', {
+        'lab': lab,
+        'subject': subject,
+        'subject_id': subject_id
+    })
+
+
 
 #-------------------------------------------------------------------------------------------------------------------
 #                       PAST QUESTIONS VIEWS 
