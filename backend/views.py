@@ -8,12 +8,12 @@ import requests
 from rest_framework import generics,status,permissions
 
 from sikshanepal import settings
-from .models import Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
+from .models import Lab, Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
 from rest_framework.decorators import api_view,permission_classes,authentication_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ChangePasswordSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer      
+from .serializers import ChangePasswordSerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer      
 from django.urls import reverse
 from user.models import CustomUser
 from .permissions import IsAdminUser, IsAdminOrReadOnly
@@ -74,6 +74,14 @@ def apiOverview(request):
             "Create": request.build_absolute_uri(reverse('subject-create-api',args=[1])),
             "Update": request.build_absolute_uri(reverse('subject-update-api', args=[1])),
             "Delete": request.build_absolute_uri(reverse('subject-delete-api', args=[1]))
+        },
+        "Labs": {
+            "List All": request.build_absolute_uri(reverse('lab-list-api')),
+            "List By Subject": request.build_absolute_uri(reverse('lab-list-by-subject-api', args=[1])),
+            "Detail View": request.build_absolute_uri(reverse('lab-detail-api', args=[1])),
+            "Create": request.build_absolute_uri(reverse('lab-create-api',args=[1])),
+            "Update": request.build_absolute_uri(reverse('lab-update-api', args=[1])),
+            "Delete": request.build_absolute_uri(reverse('lab-delete-api', args=[1]))
         },
         "PastQuestions": {
             "List All": request.build_absolute_uri(reverse('pastQuestion-list-api')),
@@ -523,6 +531,87 @@ def subjectDelete(request, pk):
 
     subject.delete()
     return Response({'detail': 'Subject successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
+
+#--------------------------------------------------------------------------------------------------------------------
+#-------------------------LAB-----------------------------------
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def labCreate(request, subject_id):
+    # Ensure the subject_id is valid
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return Response({"detail": "Subject not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Add the subject_id to the request data so that it can be used in the serializer
+    data = request.data.copy()  # Copy request data to modify safely
+    data['subject'] = subject.id  # Assign correct subject_id   
+    # Create the lab using the serializer
+    serializer = LabSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminOrReadOnly])
+def labList(request):
+    labs = Lab.objects.all().order_by('id')
+    serializer = LabSerializer(labs, many=True, context={'request': request})
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminOrReadOnly])
+def labListBySubject(request, subject_id):
+    """
+    Retrieve labs by subject ID.
+    """
+    # Ensure we filter labs by subject_id
+    labs = Lab.objects.filter(subject_id=subject_id).order_by('id')
+    
+    # If no labs are found for that subject, return an empty list or a message
+    if not labs.exists():
+        return Response({"detail": "No labs found for this subject."}, status=404)
+    
+    serializer = LabSerializer(labs, many=True, context={'request': request})
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminOrReadOnly])
+def labDetail(request, pk):
+    try:
+        lab = Lab.objects.get(id=pk)
+    except Lab.DoesNotExist:
+        return Response({'error': 'Lab not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = LabSerializer(lab, many=False)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def labUpdate(request, pk):
+    try:
+        lab = Lab.objects.get(id=pk)
+    except Lab.DoesNotExist:
+        return Response({'error': 'Lab not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = LabSerializer(instance=lab, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def labDelete(request, pk):
+    try:
+        lab = Lab.objects.get(id=pk)
+        lab.delete()
+        return Response({'detail': 'Lab successfully deleted!'}, status=status.HTTP_204_NO_CONTENT)
+    except Lab.DoesNotExist:
+        return Response({'error': 'Lab not found'}, status=status.HTTP_404_NOT_FOUND)
+    
 #--------------------------------------------------------------------------------------------------------------------
 
 #-------------------------OLDQUESTIONS-----------------------------------   
@@ -546,7 +635,6 @@ def pastQuestionCreate(request, subject_id):
     if serializer.is_valid():
         serializer.save()  # Save the new past question
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

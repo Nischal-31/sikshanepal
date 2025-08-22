@@ -52,36 +52,6 @@
 <section class="main-content">
   <div class="container">
     {% if chapters %}
-      <!-- Stats Dashboard -->
-      <div class="stats-grid">
-        <div class="stat-card stat-card-primary">
-          <div class="stat-icon">📚</div>
-          <div class="stat-content">
-            <div class="stat-number">{{ chapters|length }}</div>
-            <div class="stat-label">Total Chapters</div>
-          </div>
-          <div class="stat-glow"></div>
-        </div>
-        
-        <div class="stat-card stat-card-secondary">
-          <div class="stat-icon">📝</div>
-          <div class="stat-content">
-            <div class="stat-number">Notes</div>
-            <div class="stat-label">Available</div>
-          </div>
-          <div class="stat-glow"></div>
-        </div>
-        
-        <div class="stat-card stat-card-accent">
-          <div class="stat-icon">📊</div>
-          <div class="stat-content">
-            <div class="stat-number">Progress</div>
-            <div class="stat-label">Track Learning</div>
-          </div>
-          <div class="stat-glow"></div>
-        </div>
-      </div>
-
       <!-- Chapter Controls -->
       <div class="content-header">
         <div class="content-title">
@@ -421,7 +391,7 @@
 
 .title-highlight {
   background: linear-gradient(45deg, #ffffff, #f0f9ff, #ffffff);
-  background-size: 300% 300%;
+  background-size: 500% 500%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

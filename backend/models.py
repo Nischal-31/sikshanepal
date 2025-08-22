@@ -7,11 +7,7 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
-#{
-#    "name": "Bsc-csit",
-#    "description": "Its all about the Bachelor of science in computer science and information technology..",
-#    "image": null
-#}
+    
 class Semester(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="semesters")
     number = models.IntegerField()
@@ -22,12 +18,6 @@ class Semester(models.Model):
         
     def __str__(self):
         return f"Semester {self.number} - {self.course.name}"
-
-#{
-#    "course": 1,
-#    "number": 1,
-#    "description": "This is the first semester of the Bsc-csit course."
-#}
 
 class Subject(models.Model):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE,related_name="subjects")  # Foreign key reference to Semester
@@ -41,14 +31,18 @@ class Subject(models.Model):
 
     def __str__(self):
         return f"{self.name} (Sem {self.semester.number})"
+
+class Lab(models.Model):
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="labs")
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    file = models.FileField(upload_to='lab_files/', null=True, blank=True)  # File upload for the lab files
+
+    class Meta:
+        unique_together = ("subject", "title") 
     
-#{
-#    "semester": 1,  (id of semester)
-#    "name": "Object-Oriented Programming",
-#    "code": "CSIT201",
-#    "credits": 3,
-#    "description": "This course covers object-oriented programming concepts using C++."
-#}
+    def __str__(self):
+        return f"{self.title} - {self.subject.name}"
 
 class PastQuestion(models.Model):
     subject = models.ForeignKey(Subject, related_name="past_questions", on_delete=models.CASCADE)

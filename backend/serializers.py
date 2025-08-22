@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.conf import settings
 from user.models import CustomUser
-from .models import Subject,Semester,Syllabus,Chapter,Course,Note,PastQuestion
+from .models import Lab, Subject,Semester,Syllabus,Chapter,Course,Note,PastQuestion
 
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -41,15 +41,21 @@ class SyllabusSerializer(serializers.ModelSerializer):
         model = Syllabus
         fields = ['id', 'subject', 'objectives', 'file']
 
+class LabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lab
+        fields = ['id', 'subject', 'title', 'description', 'file']
+
 
 class SubjectSerializer(serializers.ModelSerializer):
     syllabus = SyllabusSerializer(read_only=True)
     past_questions = PastQuestionsSerializer(many=True, read_only=True)
     chapters = ChapterSerializer(many=True, read_only=True)
+    labs = LabSerializer(many=True, read_only=True)
 
     class Meta:
         model = Subject
-        fields = ['id', 'semester', 'name', 'code', 'credits', 'description', 'syllabus', 'past_questions', 'chapters']
+        fields = ['id', 'semester', 'name', 'code', 'credits', 'description', 'syllabus', 'past_questions', 'chapters', 'labs']
 
 
 class SemesterSerializer(serializers.ModelSerializer):

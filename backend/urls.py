@@ -41,6 +41,14 @@ urlpatterns = [
     path('subject-create/<int:semester_id>/', views.subjectCreate, name="subject-create-api"),
     path('subject-update/<int:pk>/', views.subjectUpdate, name="subject-update-api"),
     path('subject-delete/<int:pk>/', views.subjectDelete, name="subject-delete-api"),
+
+    # Lab URLs
+    path('lab-create/<int:subject_id>/', views.labCreate, name="lab-create-api"),
+    path('lab-list/', views.labList, name="lab-list-api"),
+    path('lab-detail/<int:pk>/', views.labDetail, name="lab-detail-api"),
+    path('lab-update/<int:pk>/', views.labUpdate, name="lab-update-api"),
+    path('lab-delete/<int:pk>/', views.labDelete, name="lab-delete-api"),
+    path('lab-list/<int:subject_id>/', views.labListBySubject, name="lab-list-by-subject-api"),  # List labs by subject ID
     
      # PastQuestions URLs
     path('pastQuestion-list/', views.pastQuestionList, name="pastQuestion-list-api"),
