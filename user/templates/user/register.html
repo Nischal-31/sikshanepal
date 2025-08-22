@@ -9,49 +9,860 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Join StudyHub - Transform Your Learning</title>
     
     <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/css/signup.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{% static 'images/sikshanepal.png' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --primary-color: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary-color: #f8fafc;
+            --accent-color: #10b981;
+            --text-primary: #1a202c;
+            --text-secondary: #718096;
+            --text-light: #a0aec0;
+            --border-color: #e2e8f0;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-radius: 16px;
+            --border-radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Desktop Layout - 2 Sections */
+        @media (min-width: 992px) {
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            .main-container {
+                height: 100vh;
+                display: flex;
+                flex-direction: row;
+            }
+
+            .hero-section {
+                width: 50%;
+                flex: 0 0 50%;
+                background: var(--primary-gradient);
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                min-height: 100vh;
+            }
+
+            .hero-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+                animation: float 20s ease-in-out infinite;
+            }
+
+            .hero-content {
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                padding: 3rem;
+                color: white;
+                max-width: 500px;
+            }
+
+            .form-section {
+                width: 50%;
+                flex: 0 0 50%;
+                background: var(--white);
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                padding: 2rem;
+                min-height: 100vh;
+                overflow-y: auto;
+                padding-top: 4rem;
+                padding-bottom: 4rem;
+            }
+
+            .form-container {
+                width: 100%;
+                max-width: 480px;
+                margin: auto 0;
+            }
+        }
+
+        /* Mobile Layout - Single Section */
+        @media (max-width: 991px) {
+            body {
+                background: var(--bg-light);
+            }
+            
+            .main-container {
+                min-height: 100vh;
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .hero-section {
+                display: none !important;
+            }
+
+            .form-section {
+                width: 100%;
+                max-width: 400px;
+                background: transparent;
+                padding: 0;
+                display: block;
+            }
+
+            .form-container {
+                width: 100%;
+                background: var(--white);
+                border-radius: var(--border-radius-lg);
+                box-shadow: var(--shadow-xl);
+                overflow: hidden;
+            }
+
+            .mobile-header {
+                background: var(--primary-gradient);
+                padding: 2rem 1.5rem;
+                text-align: center;
+                color: white;
+                position: relative;
+                display: block !important;
+            }
+
+            .mobile-header::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                animation: rotate 10s linear infinite;
+            }
+
+            .mobile-header-content {
+                position: relative;
+                z-index: 2;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* Hero Section Styles */
+        .logo-hero {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-hero img {
+            max-width: 40px;
+            max-height: 40px;
+            filter: brightness(0) invert(1);
+        }
+
+        .hero-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* Form Styles */
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .form-body {
+            padding: 2rem;
+            padding-bottom: 1rem;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .auth-switch-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .auth-switch a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .social-login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background: var(--white);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(103, 126, 234, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .social-login:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .social-login:hover::before {
+            left: 100%;
+        }
+
+        .social-login img {
+            width: 24px;
+            height: 24px;
+            margin-right: 0.75rem;
+        }
+
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-color), transparent);
+        }
+
+        .divider span {
+            background: var(--white);
+            padding: 0 1.5rem;
+            position: relative;
+        }
+
+        /* Custom form styling to enhance crispy forms */
+        .form-section :global(.form-group) {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-section :global(.form-label) {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .form-section :global(.form-control) {
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--white);
+            font-weight: 400;
+        }
+
+        .form-section :global(.form-control:focus) {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(103, 126, 234, 0.1);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .form-section :global(.form-control::placeholder) {
+            color: var(--text-light);
+            opacity: 1;
+        }
+
+        .form-section :global(.btn-primary) {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1rem 2rem;
+            font-weight: 700;
+            font-size: 1rem;
+            width: 100%;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-section :global(.btn-primary::before) {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .form-section :global(.btn-primary:hover) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            filter: brightness(1.05);
+        }
+
+        .form-section :global(.btn-primary:hover::before) {
+            left: 100%;
+        }
+
+        .form-section :global(.btn-primary:active) {
+            transform: translateY(-1px);
+        }
+
+        /* Features section for mobile */
+        .features-mobile {
+            background: var(--bg-light);
+            padding: 2rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .features-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .features-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .feature-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(5px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .feature-icon i {
+            color: white;
+            font-size: 1rem;
+        }
+
+        .feature-text {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Loading state */
+        .loading {
+            pointer-events: none;
+            opacity: 0.8;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) and (min-width: 992px) {
+            .hero-content {
+                padding: 2rem;
+                max-width: 400px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .stats-grid {
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                padding: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-body {
+                padding: 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .form-header h2 {
+                font-size: 1.75rem;
+            }
+
+            .mobile-header {
+                padding: 1.5rem;
+            }
+            
+            .main-container {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Error/Success messages styling */
+        .form-section :global(.alert) {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .form-section :global(.alert-danger) {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #dc2626;
+        }
+
+        .form-section :global(.alert-success) {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        /* Custom checkbox styling */
+        .form-section :global(.form-check) {
+            margin: 1.5rem 0;
+        }
+
+        .form-section :global(.form-check-input) {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-top: 0.125rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .form-section :global(.form-check-input:checked) {
+            background: var(--primary-gradient);
+            border-color: var(--primary-color);
+        }
+
+        .form-section :global(.form-check-label) {
+            margin-left: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+    </style>
 </head>
-<body> 
-    <section class="wrapper">
-        <div class="container">
-            <div class="col-sm-8 offset-sm-2 col-lg-6 offset-lg-3 col-xl-6 offset-xl-3 text-center">
-                <div class="logo">
-                    <img decoding="async" src="/static/images/fe1.png" class="img-fluid" alt="logo">
+<body>
+    <div class="main-container">
+        <!-- Hero Section - Only visible on desktop -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="logo-hero">
+                    <img src="/static/images/fe1.png" alt="StudyHub Logo" class="img-fluid">
                 </div>
-                <form class="rounded bg-white shadow p-5" method="post">
-                    {% csrf_token %}
-                    <h3 class="text-dark fw-bolder fs-4 mb-2">Create an Account</h3>
-
-                    <div class="fw-normal text-muted mb-2">
-                        Already have an account? 
-                        <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">Log in here</a>
+                <h1 class="hero-title">StudyHub</h1>
+                <p class="hero-subtitle">Transform your learning experience with AI-powered study tools and collaborative features</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Active Students</span>
                     </div>
-
-                    <div class="text-center text-muted text-uppercase mb-2">or</div>
-
-                    <!-- Google Sign-In -->
-                    <a href="{% provider_login_url 'google' %}" class="btn btn-light login_with w-100 mb-4">
-                        <img decoding="async" src="/static/images/google.png" class="img-fluid me-3">
-                        Sign in with Google
-                    </a>
-
-                    <!-- Render the Form Using Crispy Forms -->
-                    {% crispy form %}
-
-
-                </form>
+                    <div class="stat-item">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Study Materials</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">95%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <div class="form-container">
+                <!-- Mobile Header - Only visible on mobile -->
+                <div class="mobile-header d-lg-none">
+                    <div class="mobile-header-content">
+                        <div class="logo-hero mb-3" style="width: 60px; height: 60px;">
+                            <img src="/static/images/fe1.png" alt="StudyHub Logo" style="max-width: 30px;">
+                        </div>
+                        <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem;">Join StudyHub</h1>
+                        <p style="font-size: 1rem; opacity: 0.9; margin: 0;">Start your learning journey today</p>
+                    </div>
+                </div>
+
+                <div class="form-body">
+                    <!-- Desktop Form Header -->
+                    <div class="form-header d-none d-lg-block">
+                        <h2>Create Account</h2>
+                        <p>Join thousands of students already learning with StudyHub</p>
+                    </div>
+
+                    <!-- Auth Switch -->
+                    <div class="auth-switch">
+                        <div class="auth-switch-text">Already have an account?</div>
+                        <a href="{% url 'login' %}">Sign in here</a>
+                    </div>
+
+                    <!-- Google Sign-In -->
+                    <a href="{% provider_login_url 'google' %}" class="social-login">
+                        <img src="/static/images/google.png" alt="Google">
+                        Continue with Google
+                    </a>
+
+                    <div class="divider">
+                        <span>or sign up with email</span>
+                    </div>
+
+                    <!-- Django Form -->
+                    <form method="post" id="signupForm">
+                        {% csrf_token %}
+                        {% crispy form %}
+                    </form>
+                </div>
+
+                <!-- Mobile Features - Only visible on mobile -->
+                <div class="features-mobile d-lg-none">
+                    <h3 class="features-title">Why Choose StudyHub?</h3>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="feature-text">AI-powered personalized learning paths</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="feature-text">Collaborative study groups & discussions</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="feature-text">Progress tracking & performance analytics</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div class="feature-text">Study anywhere with mobile app</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Form submission loading state
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating Account...';
+            }
+        });
+
+        // Enhanced form interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add floating label effect
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                // Check if input has value on load
+                if (input.value) {
+                    input.parentElement.classList.add('has-value');
+                }
+
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                    if (this.value) {
+                        this.parentElement.classList.add('has-value');
+                    } else {
+                        this.parentElement.classList.remove('has-value');
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.value) {
+                        this.parentElement.classList.add('has-value');
+                    } else {
+                        this.parentElement.classList.remove('has-value');
+                    }
+                });
+            });
+
+            // Add smooth scroll for mobile
+            if (window.innerWidth <= 991) {
+                const formInputs = document.querySelectorAll('input, select, textarea');
+                formInputs.forEach(input => {
+                    input.addEventListener('focus', function() {
+                        setTimeout(() => {
+                            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
+                    });
+                });
+            }
+
+            // Enhance social login with ripple effect
+            const socialBtn = document.querySelector('.social-login');
+            if (socialBtn) {
+                socialBtn.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(103, 126, 234, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            }
+
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // Performance optimization: Reduce animations on slower devices
+        if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) {
+            document.documentElement.style.setProperty('--transition', 'all 0.2s ease');
+        }
+    </script>
 </body>
 </html>
 
 {% endblock content %}
-
-
