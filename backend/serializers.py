@@ -85,18 +85,47 @@ class CourseSerializer(serializers.ModelSerializer):
 #=======================================================================================================================================
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+    password2 = serializers.CharField(write_only=True, required=True, label="Confirm Password")
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'phone_no', 'first_name', 'last_name', 'terms_agree', 'remember_me', 'user_type', 'profile_picture']
+        fields = [
+            'id', 'username', 'email', 'phone_no', 'first_name', 'last_name',
+            'terms_agree', 'remember_me', 'user_type', 'profile_picture',
+            'password', 'password2'
+        ]
+
+    def validate(self, attrs):
+        if attrs.get('password') != attrs.get('password2'):
+            raise serializers.ValidationError({"password": "Password fields didn’t match."})
+        return attrs
 
     def create(self, validated_data):
-        # Ensure the user_type is set, defaulting to 'normal' if not provided
+        validated_data.pop('password2')  # remove confirm password
+        password = validated_data.pop('password')
         user_type = validated_data.get('user_type', 'normal')
-        user = CustomUser.objects.create(**validated_data)
+        user = CustomUser(**validated_data)
+        user.set_password(password)  # hashes the password properly
         user.user_type = user_type
         user.save()
         return user
     
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username', 'email', 'phone_no', 'first_name', 'last_name',
+            'terms_agree', 'remember_me', 'user_type', 'profile_picture'
+        ]
+
+    def update(self, instance, validated_data):
+        # Update only the fields provided
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
     
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:

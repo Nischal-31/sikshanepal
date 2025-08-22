@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view,permission_classes,authentication
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ChangePasswordSerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer      
+from .serializers import ChangePasswordSerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
 from django.urls import reverse
 from user.models import CustomUser
 from .permissions import IsAdminUser, IsAdminOrReadOnly
@@ -124,7 +124,7 @@ def apiOverview(request):
 #----------------------------------------------------------------------------------------------------------------------------------------
 
 @api_view(['POST'])
-@permission_classes([ IsAdminUser])  # Only Admin can create users
+@permission_classes([AllowAny])  # Only Admin can create users
 def userCreate(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
@@ -159,36 +159,11 @@ def userUpdate(request, pk):
     except CustomUser.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     
-    # Proceed to update user fields (excluding user_type)
-    username = request.data.get("username")
-    email = request.data.get("email")
-    phone_no = request.data.get("phone_no")
-    first_name = request.data.get("first_name")
-    last_name = request.data.get("last_name")
-    profile_picture = request.FILES.get("profile_picture")
-
-    if username:
-        user.username = username
-    if email:
-        user.email = email
-    if phone_no:
-        user.phone_no = phone_no
-    if first_name:
-        user.first_name = first_name
-    if last_name:
-        user.last_name = last_name
-    if profile_picture:
-        user.profile_picture = profile_picture
-
-    try:
-        user.save()  # Attempt to save the updated user
-    except Exception as e:
-        return Response({'error': f"Failed to update user: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Return the updated user data
-    serializer = UserSerializer(user)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
+    serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])  # Only Admin can delete users
