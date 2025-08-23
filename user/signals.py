@@ -4,9 +4,24 @@ from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
 
+User = get_user_model()
+
+# 🔹 Fires on Allauth signup (Google, etc.)
 @receiver(user_signed_up)
-def send_welcome_email(sender, request, user, **kwargs):
+def send_welcome_email_allauth(sender, request, user, **kwargs):
+    send_welcome_email(user)
+
+# 🔹 Fires on ANY custom registration (form.save())
+@receiver(post_save, sender=User)
+def send_welcome_email_custom(sender, instance, created, **kwargs):
+    if created:
+        send_welcome_email(instance)
+
+# 🔹 Shared email sending logic
+def send_welcome_email(user):
     subject = 'Welcome to Our Website'
     from_email = 'xenobaka2@gmail.com'
     to_email = user.email

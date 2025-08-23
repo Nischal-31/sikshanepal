@@ -18,7 +18,7 @@ class UserRegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        
         # Set form to horizontal layout
         self.helper = FormHelper(self)
         self.helper.form_class = 'form-horizontal'

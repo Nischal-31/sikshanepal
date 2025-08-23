@@ -33,6 +33,7 @@ def Login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        remember = request.POST.get('remember')
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -40,6 +41,14 @@ def Login(request):
             # Create token if you want (optional)
             token, created = Token.objects.get_or_create(user=user)
             request.session['auth_token'] = token.key
+
+            # Handle "Remember me"
+            if not remember:
+                # Session will expire when the browser closes
+                request.session.set_expiry(0)
+            else:
+                # Session will last 30 days (you can change this)
+                request.session.set_expiry(60 * 60 * 24 * 30)
 
             messages.success(request, f"Welcome back, {user.username}!")
             return redirect('index')  # Redirect to your home/dashboard page
