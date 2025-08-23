@@ -9,16 +9,26 @@ from django.db.models.signals import post_save
 
 User = get_user_model()
 
-# 🔹 Fires on Allauth signup (Google, etc.)
+# Only fire welcome email for social signups via Allauth
 @receiver(user_signed_up)
 def send_welcome_email_allauth(sender, request, user, **kwargs):
-    send_welcome_email(user)
+    try:
+        send_welcome_email(user)
+    except Exception as e:
+        print("Error sending welcome email:", e)
 
-# 🔹 Fires on ANY custom registration (form.save())
+# Only fire for custom registrations, not social signups
 @receiver(post_save, sender=User)
 def send_welcome_email_custom(sender, instance, created, **kwargs):
     if created:
-        send_welcome_email(instance)
+        # Skip if user_signed_up already sent email
+        if not hasattr(instance, '_welcome_email_sent'):
+            try:
+                send_welcome_email(instance)
+                instance._welcome_email_sent = True
+            except Exception as e:
+                print("Error sending welcome email:", e)
+
 
 # 🔹 Shared email sending logic
 def send_welcome_email(user):
