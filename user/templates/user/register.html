@@ -301,6 +301,8 @@
             background: var(--bg-light);
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
+            position: relative;
+            z-index: 10;
         }
 
         .auth-switch-text {
@@ -313,11 +315,42 @@
             text-decoration: none;
             font-weight: 600;
             transition: var(--transition);
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            position: relative;
+            z-index: 10;
+            min-height: 44px;
+            line-height: 1.4;
+            -webkit-tap-highlight-color: rgba(103, 126, 234, 0.2);
         }
 
-        .auth-switch a:hover {
+        .auth-switch a:hover,
+        .auth-switch a:focus {
             color: var(--primary-dark);
             text-decoration: underline;
+            background: rgba(103, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .auth-switch a:active {
+            background: rgba(103, 126, 234, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* Mobile specific touch improvements */
+        @media (max-width: 991px) {
+            .auth-switch a {
+                min-height: 48px;
+                padding: 0.75rem 1.5rem;
+                margin: 0.25rem;
+                font-size: 1rem;
+                touch-action: manipulation;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
         }
 
         .social-login {
@@ -470,6 +503,42 @@
 
         .form-section :global(.btn-primary:active) {
             transform: translateY(-1px);
+        }
+
+        /* Password Toggle Styles */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem;
+            z-index: 10;
+            transition: var(--transition);
+            border-radius: 4px;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+            background: rgba(103, 126, 234, 0.1);
+        }
+
+        .password-toggle:focus {
+            outline: none;
+            color: var(--primary-color);
+        }
+
+        /* Adjust password input padding when toggle is present */
+        .password-wrapper .form-control {
+            padding-right: 3.5rem;
         }
 
         /* Features section for mobile */
@@ -769,8 +838,90 @@
             }
         });
 
+        // Password visibility toggle functionality
+        function initializePasswordToggle() {
+            // Find all password inputs
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            
+            passwordInputs.forEach((input) => {
+                // Skip if already processed
+                if (input.parentElement.classList.contains('password-wrapper')) {
+                    return;
+                }
+                
+                // Create wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 'password-wrapper';
+                
+                // Insert wrapper before input
+                input.parentNode.insertBefore(wrapper, input);
+                
+                // Move input into wrapper
+                wrapper.appendChild(input);
+                
+                // Create toggle button
+                const toggleBtn = document.createElement('button');
+                toggleBtn.type = 'button';
+                toggleBtn.className = 'password-toggle';
+                toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+                toggleBtn.setAttribute('aria-label', 'Toggle password visibility');
+                
+                // Add toggle button to wrapper
+                wrapper.appendChild(toggleBtn);
+                
+                // Toggle functionality
+                toggleBtn.addEventListener('click', function() {
+                    const isPassword = input.type === 'password';
+                    
+                    // Toggle input type
+                    input.type = isPassword ? 'text' : 'password';
+                    
+                    // Update icon
+                    const icon = this.querySelector('i');
+                    icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+                    
+                    // Update aria-label
+                    this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+                    
+                    // Refocus input after toggle
+                    input.focus();
+                });
+                
+                // Prevent form submission when clicking toggle
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+        }
+
         // Enhanced form interactions
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize password toggle
+            initializePasswordToggle();
+            
+            // Re-initialize after any dynamic content changes (for crispy forms)
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.addedNodes.length > 0) {
+                        // Check if any password inputs were added
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1) { // Element node
+                                const passwordInputs = node.querySelectorAll ? node.querySelectorAll('input[type="password"]') : [];
+                                if (passwordInputs.length > 0 || (node.tagName === 'INPUT' && node.type === 'password')) {
+                                    setTimeout(initializePasswordToggle, 100);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
             // Add floating label effect
             const inputs = document.querySelectorAll('.form-control');
             inputs.forEach(input => {
