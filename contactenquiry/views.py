@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render,redirect
 from django.core.mail import send_mail
 from contactenquiry.models import contactEnquiry
@@ -28,7 +29,15 @@ def contact(request):
                 'message': message
             })
             
-            send_mail('The contact form subject',message,'xenobaka2@gmail.com',[email],html_message=html)
+            # Send email
+            send_mail(
+                subject=f'Contact Form: {subject}',
+                message=message,  # plain text fallback
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                html_message=html,
+                fail_silently=False
+             )
             
             return redirect('contact')
         else:

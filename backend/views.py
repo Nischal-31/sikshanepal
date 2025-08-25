@@ -229,7 +229,7 @@ def password_reset_request(request):
 
 def send_password_reset_email(user, reset_link):
     subject = "Reset Your Password"
-    from_email = "xenobaka2@gmail.com"
+    from_email = settings.EMAIL_HOST_USER
     to_email = [user.email]
 
     # Render HTML content from a template

@@ -12,21 +12,22 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(os.path.join(BASE_DIR, '.env'))  # This loads the .env file
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)jhfw2#xa91_2^zbb^ei%3rv+7&eqovwfrwgneql)@zk^xd-jc'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 # ALLOWED_HOSTS should include your server's IP address or domain name
-ALLOWED_HOSTS = ["192.168.1.71", "localhost", "127.0.0.1","10.0.2.2"]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -136,17 +137,13 @@ WSGI_APPLICATION = 'sikshanepal.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    #'default': {
-    #    'ENGINE': 'django.db.backends.sqlite3',
-    #    'NAME': BASE_DIR / 'db.sqlite3',
-    #}
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sikshadb',# database name
-        'USER': 'postgres',  # your DB user
-        'PASSWORD': 'pass',  # your DB password
-        'HOST': 'localhost',  # or your DB server IP
-        'PORT': '5432',       # default PostgreSQL port
+        'NAME': os.getenv('DB_NAME'),# database name
+        'USER': os.getenv('DB_USER'),  # your DB user
+        'PASSWORD': os.getenv('DB_PASSWORD'),  # your DB password
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # or your DB server IP
+        'PORT': os.getenv('DB_PORT', '5432'),      # default PostgreSQL port
     }
 }
 
@@ -208,8 +205,11 @@ EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
-EMAIL_HOST_USER="xenobaka2@gmail.com"
-EMAIL_HOST_PASSWORD="qyypewdhzscwygze"
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+print("EMAIL_USER:", os.getenv("EMAIL_HOST_USER"))
+print("EMAIL_PASSWORD:", os.getenv("EMAIL_HOST_PASSWORD"))
+
 
 LOGIN_URL = '/user/login/'
 LOGIN_REDIRECT_URL = 'index' 

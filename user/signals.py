@@ -7,6 +7,8 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 
+from sikshanepal import settings
+
 User = get_user_model()
 
 # Only fire welcome email for social signups via Allauth
@@ -30,13 +32,23 @@ def send_welcome_email_custom(sender, instance, created, **kwargs):
                 print("Error sending welcome email:", e)
 
 
-# 🔹 Shared email sending logic
 def send_welcome_email(user):
     subject = 'Welcome to Our Website'
-    from_email = 'xenobaka2@gmail.com'
-    to_email = user.email
+    from_email = settings.EMAIL_HOST_USER
+    to_email = [user.email]  # always a list
+
+    # Render HTML content
     html_content = render_to_string('user/Email.html', {'username': user.username})
-    send_mail(subject, '', from_email, [to_email], html_message=html_content)
+
+    # Send the email
+    send_mail(
+        subject=subject,
+        message='',  # plain text fallback
+        from_email=from_email,
+        recipient_list=to_email,
+        html_message=html_content,
+        fail_silently=False
+    )
 
 @receiver(user_logged_in)
 def set_user_type_on_login(sender, request, user, **kwargs):
