@@ -130,7 +130,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'profile_picture']  # Add your custom fields here
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'profile_picture','phone_no']  # Add your custom fields here
 
 # 🔹 Forgot Password Request
 class PasswordResetRequestSerializer(serializers.Serializer):
