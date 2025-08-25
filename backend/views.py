@@ -152,7 +152,7 @@ def userDetail(request, pk):
     return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([IsAdminUser])  # Only Admin can update users
+@permission_classes([IsAuthenticated])  # Only Admin can update users
 def userUpdate(request, pk):
     try:
         user = CustomUser.objects.get(id=pk)  # Attempt to retrieve user by pk
