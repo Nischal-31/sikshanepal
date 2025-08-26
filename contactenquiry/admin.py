@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import contactEnquiry
 
-# Register your models here.
+@admin.register(contactEnquiry)
+class ContactEnquiryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'subject', 'message')
+    search_fields = ('name', 'email', 'subject')

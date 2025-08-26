@@ -19,6 +19,9 @@ urlpatterns = [
     path('password-reset-confirm/', views.password_reset_confirm, name='password_reset_confirm_api'),
     path('change-password/', views.change_password, name='change_password_api'),
 
+    # Contact Enquiry URLs
+    path('contact-enquiry/', views.contactEnquiryCreate, name="contact-enquiry-api"),
+
     # Course URLs
     path('course-list/', views.courseList, name="course-list-api"),
     path('course-detail/<int:pk>/', views.courseDetail, name="course-detail-api"),

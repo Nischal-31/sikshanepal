@@ -34,7 +34,7 @@ def contact(request):
                 subject=f'Contact Form: {subject}',
                 message=message,  # plain text fallback
                 from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[email],
+                recipient_list=[settings.EMAIL_HOST_USER,email],
                 html_message=html,
                 fail_silently=False
              )

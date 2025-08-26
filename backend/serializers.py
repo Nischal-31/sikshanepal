@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.conf import settings
+from contactenquiry.models import contactEnquiry
 from user.models import CustomUser
 from .models import Lab, Subject,Semester,Syllabus,Chapter,Course,Note,PastQuestion
 
@@ -183,3 +184,13 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
+
+
+#=======================================================================================================================================
+# Contact Enquiry Serializer
+#=======================================================================================================================================
+
+class ContactEnquirySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = contactEnquiry
+        fields = "__all__"

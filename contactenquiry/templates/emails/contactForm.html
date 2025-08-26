@@ -3,13 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Forms</title>
+    <title>Contact Form Submission</title>
 </head>
-<body>
-   <h1>Contact Form Submission</h1>
-   <p><b>Name:</b>{{name}}</p>
-   <p><b>Email:</b>{{email}}</p>
-   <p><b>Subject:</b>{{subject}}</p>
-   <p><b>Message:</b><br>{{message}}</p>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; color: #333;">
+    <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            📩 New Contact Form Submission
+        </h2>
+        
+        <p><strong>Name:</strong> {{ name }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>Subject:</strong> {{ subject }}</p>
+        <p><strong>Message:</strong></p>
+        <div style="background: #f4f6f8; padding: 12px; border-radius: 6px; font-style: italic;">
+            {{ message }}
+        </div>
+
+        <p style="margin-top: 20px; font-size: 13px; color: #777; text-align: center;">
+            This message was sent by sikshanepal3@gmail.com via the contact form of the website.
+        </p>
+    </div>
 </body>
 </html>

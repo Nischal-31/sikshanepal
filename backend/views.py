@@ -7,13 +7,14 @@ from django.http import JsonResponse
 import requests
 from rest_framework import generics,status,permissions
 
+from contactenquiry.models import contactEnquiry
 from sikshanepal import settings
 from .models import Lab, Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
 from rest_framework.decorators import api_view,permission_classes,authentication_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ChangePasswordSerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
+from .serializers import ChangePasswordSerializer, ContactEnquirySerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
 from django.urls import reverse
 from user.models import CustomUser
 from .permissions import IsAdminUser, IsAdminOrReadOnly
@@ -51,6 +52,9 @@ def apiOverview(request):
             "Password Reset Request": request.build_absolute_uri(reverse('password_reset_api')),
             "Password Reset Confirm": request.build_absolute_uri(reverse('password_reset_confirm_api')),
             "Change Password": request.build_absolute_uri(reverse('change_password_api'))
+        },
+        "Contact Enquiry": {
+            "Create": request.build_absolute_uri(reverse('contact-enquiry-api')),
         },
         "Courses": {
             "List": request.build_absolute_uri(reverse('course-list-api')),
@@ -939,3 +943,38 @@ def noteDelete(request,pk):
     note = Note.objects.get(id=pk)
     note.delete()
     return Response('Note successfully Deleted!')
+
+
+#-----------------------------------------------------------------------------------------------------------------------------
+#-------------------------CONTACT ENQUIRY-----------------------------------
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def contactEnquiryCreate(request):
+    print("Incoming data:", request.data)  # <-- log what Postman sends
+    serializer = ContactEnquirySerializer(data=request.data)
+    if serializer.is_valid():
+        enquiry = serializer.save()  # this is the saved instance
+
+        # Render email template
+        html = render_to_string('emails/contactForm.html', {
+            'name': enquiry.name,
+            'email': enquiry.email,
+            'subject': enquiry.subject,
+            'message': enquiry.message
+        })
+
+        # Send email
+        send_mail(
+            subject=f'Contact Form: {enquiry.subject}',
+            message=enquiry.message,  # plain text fallback
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[settings.EMAIL_HOST_USER, enquiry.email],
+            html_message=html,
+            fail_silently=False
+        )
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    print("Serializer errors:", serializer.errors)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
