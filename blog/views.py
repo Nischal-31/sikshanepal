@@ -1,35 +1,81 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post
-from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Post
 
 def blog_list(request):
+    posts = Post.objects.all().order_by('-created_at')
+    categories = Post.objects.values_list('category', flat=True).distinct()
+    category_choices = Post.CATEGORY_CHOICES  # for dropdown
+
+    # Handle create post in the same view
     if request.method == 'POST':
         title = request.POST.get('title')
         content = request.POST.get('content')
         extra_details = request.POST.get('extra_details')
+        category = request.POST.get('category')
         image = request.FILES.get('image')
 
-        if title and content:
-            slug = slugify(title)
-            post = Post.objects.create(
+        if title and content and category:
+            Post.objects.create(
                 title=title,
-                slug=slug,
                 content=content,
                 extra_details=extra_details,
+                category=category,
                 image=image,
-                author=request.user
             )
+            messages.success(request, "Post created successfully.")
             return redirect('blog_list')
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'blog/blog_list.html', {'posts': posts})
+        else:
+            messages.error(request, "Please fill in all required fields.")
 
-def blog_detail(request, slug):
-    # Get the current post by slug
-    post = get_object_or_404(Post, slug=slug)
+    return render(request, 'blog/blog_list.html', {
+        'posts': posts,
+        'categories': categories,
+        'category_choices': category_choices,
+    })
 
-    # Fetch the next post, you can adjust the ordering logic as per your requirements
+
+def blog_detail(request, id):
+    post = get_object_or_404(Post, id=id)
     next_post = Post.objects.filter(created_at__gt=post.created_at).order_by('created_at').first()
-
-    # Pass post and next_post to the template
     return render(request, 'blog/blog_detail.html', {'post': post, 'next_post': next_post})
+
+
+@login_required
+def blog_update(request, id):
+    post = get_object_or_404(Post, id=id)
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        extra_details = request.POST.get('extra_details')
+        category = request.POST.get('category')
+        image = request.FILES.get('image')
+
+        if title and content and category:
+            post.title = title
+            post.content = content
+            post.extra_details = extra_details
+            post.category = category
+            if image:
+                post.image = image
+            post.save()
+            messages.success(request, "Post updated successfully.")
+            return redirect('blog_list')
+        else:
+            messages.error(request, "Please fill in all required fields.")
+
+    return render(request, 'blog/blog_update.html', {'post': post})
+
+
+@login_required
+def blog_delete(request, id):
+    post = get_object_or_404(Post, id=id)
+
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, "Post deleted successfully.")
+        return redirect('blog_list')
+
+    return render(request, 'blog/blog_delete.html', {'post': post})

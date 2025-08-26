@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.conf import settings
+from blog.models import Post
 from contactenquiry.models import contactEnquiry
 from user.models import CustomUser
 from .models import Lab, Subject,Semester,Syllabus,Chapter,Course,Note,PastQuestion
@@ -193,4 +194,16 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ContactEnquirySerializer(serializers.ModelSerializer):
     class Meta:
         model = contactEnquiry
+        fields = "__all__"
+
+
+#==========================================================================================================================================
+# Post Serializer
+#================================================================================================================================================
+
+class PostSerializer(serializers.ModelSerializer):
+    category_display = serializers.CharField(source="get_category_display", read_only=True)
+
+    class Meta:
+        model = Post
         fields = "__all__"

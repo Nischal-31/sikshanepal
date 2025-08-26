@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Update Blog{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/create_post.css' %}">
+
+<section class="py-4 bg-light mb-4">
+  <div class="container">
+    <h2 class="mb-0">Update Blog Post</h2>
+  </div>
+</section>
+
+<div class="container mb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+              <input type="text" name="title" id="title" class="form-control" value="{{ post.title }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="content" class="form-label">Content <span class="text-danger">*</span></label>
+              <textarea name="content" id="content" rows="6" class="form-control" required>{{ post.content }}</textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="extra_details" class="form-label">Extra Details</label>
+              <textarea name="extra_details" id="extra_details" rows="4" class="form-control">{{ post.extra_details }}</textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+              <select name="category" id="category" class="form-control" required>
+                {% for key, value in post.CATEGORY_CHOICES %}
+                  <option value="{{ key }}" {% if post.category == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="image" class="form-label">Image</label>
+              <input type="file" name="image" id="image" class="form-control" accept="image/*">
+              {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="mt-2" style="max-width: 150px;">
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Update Post</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

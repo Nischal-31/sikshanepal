@@ -7,6 +7,7 @@ from django.http import JsonResponse
 import requests
 from rest_framework import generics,status,permissions
 
+from blog.models import Post
 from contactenquiry.models import contactEnquiry
 from sikshanepal import settings
 from .models import Lab, Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
@@ -14,7 +15,7 @@ from rest_framework.decorators import api_view,permission_classes,authentication
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ChangePasswordSerializer, ContactEnquirySerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
+from .serializers import ChangePasswordSerializer, ContactEnquirySerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, PostSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
 from django.urls import reverse
 from user.models import CustomUser
 from .permissions import IsAdminUser, IsAdminOrReadOnly
@@ -55,6 +56,13 @@ def apiOverview(request):
         },
         "Contact Enquiry": {
             "Create": request.build_absolute_uri(reverse('contact-enquiry-api')),
+        },
+        "Post": {
+        "Create": request.build_absolute_uri(reverse("post-create-api")),
+        "Detail View": request.build_absolute_uri(reverse("post-detail-api", kwargs={"id": 1})),
+        "List": request.build_absolute_uri(reverse("post-list-api")),
+        "Update": request.build_absolute_uri(reverse("post-update-api", kwargs={"id": 1})),
+        "Delete": request.build_absolute_uri(reverse("post-delete-api", kwargs={"id": 1})),
         },
         "Courses": {
             "List": request.build_absolute_uri(reverse('course-list-api')),
@@ -978,3 +986,51 @@ def contactEnquiryCreate(request):
     
     print("Serializer errors:", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+#=========================================================================================================================================
+# Post Serializer
+#=========================================================================================================================================
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def postList(request):
+    posts = Post.objects.all().order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def postDetail(request, id):
+    post = get_object_or_404(Post, id=id)
+    serializer = PostSerializer(post)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def postCreate(request):
+    serializer = PostSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT', 'PATCH'])
+@permission_classes([IsAdminUser])
+def postUpdate(request, id):
+    post = get_object_or_404(Post, id=id)
+    serializer = PostSerializer(post, data=request.data, partial=True)  # PATCH-friendly
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def postDelete(request, id):
+    post = get_object_or_404(Post, id=id)
+    post.delete()
+    return Response({'success': 'Post deleted successfully'}, status=status.HTTP_200_OK)

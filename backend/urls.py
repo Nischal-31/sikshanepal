@@ -22,6 +22,13 @@ urlpatterns = [
     # Contact Enquiry URLs
     path('contact-enquiry/', views.contactEnquiryCreate, name="contact-enquiry-api"),
 
+    # Post URLs
+    path('post-list/', views.postList, name="post-list-api"),
+    path('post-detail/<int:id>/', views.postDetail, name="post-detail-api"),
+    path('post-create/', views.postCreate, name="post-create-api"),
+    path('post-update/<int:id>', views.postUpdate, name="post-update-api"),
+    path('post-delete/<int:id>', views.postDelete, name="post-delete-api"),
+
     # Course URLs
     path('course-list/', views.courseList, name="course-list-api"),
     path('course-detail/<int:pk>/', views.courseDetail, name="course-detail-api"),
