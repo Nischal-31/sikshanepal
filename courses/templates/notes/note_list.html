@@ -1,806 +1,1098 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Chapters for {{ subject.name }}{% endblock %}
+{% block title %}Notes for {{ chapter.title }}{% endblock %}
 
 {% block content %}
-<style>
-    :root {
-        --primary: #6366f1;
-        --primary-dark: #4f46e5;
-        --secondary: #8b5cf6;
-        --accent: #06b6d4;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --error: #ef4444;
-        --dark: #0f172a;
-        --light: #f8fafc;
-        --glass-bg: rgba(255, 255, 255, 0.1);
-        --glass-border: rgba(255, 255, 255, 0.2);
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-        --blur-sm: blur(4px);
-        --blur-md: blur(8px);
-        --blur-lg: blur(16px);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
-
-    /* Animated Background */
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-            radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
-            radial-gradient(circle at 40% 90%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
-        animation: backgroundShift 25s ease-in-out infinite;
-        z-index: -1;
-    }
-
-    @keyframes backgroundShift {
-        0%, 100% { 
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 40% 90%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
-        }
-        33% { 
-            background: 
-                radial-gradient(circle at 70% 20%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 30% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 90% 40%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
-        }
-        66% { 
-            background: 
-                radial-gradient(circle at 40% 60%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 60% 20%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 20% 80%, rgba(6, 182, 212, 0.2) 0%, transparent 50%);
-        }
-    }
-
-    /* Floating Elements */
-    .floating-shapes {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        pointer-events: none;
-        z-index: -1;
-        overflow: hidden;
-    }
-
-    .shape {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 50%;
-        animation: float 15s ease-in-out infinite;
-    }
-
-    .shape:nth-child(1) { width: 60px; height: 60px; top: 10%; left: 10%; animation-delay: 0s; }
-    .shape:nth-child(2) { width: 40px; height: 40px; top: 20%; right: 20%; animation-delay: -3s; }
-    .shape:nth-child(3) { width: 80px; height: 80px; bottom: 30%; left: 30%; animation-delay: -6s; }
-    .shape:nth-child(4) { width: 50px; height: 50px; top: 60%; right: 10%; animation-delay: -9s; }
-    .shape:nth-child(5) { width: 70px; height: 70px; bottom: 10%; right: 40%; animation-delay: -12s; }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); opacity: 0.3; }
-        25% { transform: translateY(-30px) translateX(20px) rotate(90deg); opacity: 0.6; }
-        50% { transform: translateY(-60px) translateX(-10px) rotate(180deg); opacity: 0.4; }
-        75% { transform: translateY(-30px) translateX(-30px) rotate(270deg); opacity: 0.8; }
-    }
-
-    /* Breadcrumb Section */
-    .breadcrumb-section {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: var(--blur-md);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.5rem 0;
-        position: relative;
-    }
-
-    .breadcrumb-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    }
-
-    .breadcrumb-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .breadcrumb-title {
-        color: white;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* Main Container */
-    .main-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 3rem 2rem;
-        position: relative;
-    }
-
-    /* Page Header */
-    .page-header {
-        text-align: center;
-        margin-bottom: 4rem;
-        position: relative;
-    }
-
-    .page-title {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 900;
-        background: linear-gradient(135deg, white, rgba(255, 255, 255, 0.8));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 1rem;
-        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        position: relative;
-    }
-
-    .page-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 4px;
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        border-radius: 2px;
-        animation: expandWidth 1s ease-out 0.5s both;
-    }
-
-    @keyframes expandWidth {
-        from { width: 0; }
-        to { width: 100px; }
-    }
-
-    /* Notes Grid */
-    .notes-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
-    }
-
-    /* Note Card */
-    .note-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: var(--blur-md);
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: var(--shadow-xl);
-        overflow: hidden;
-        position: relative;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        transform: translateY(0);
-    }
-
-    .note-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25);
-    }
-
-    .note-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .note-card:hover::before {
-        opacity: 1;
-    }
-
-    /* Card Header */
-    .card-header {
-        padding: 1.5rem 2rem 1rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        position: relative;
-    }
-
-    .note-title {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: var(--dark);
-        margin: 0 0 0.5rem 0;
-        line-height: 1.3;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-
-    .note-icon {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        flex-shrink: 0;
-        box-shadow: var(--shadow-md);
-    }
-
-    .note-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        font-size: 0.875rem;
-        color: #64748b;
-    }
-
-    .chapter-tag {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-        color: var(--primary);
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-weight: 600;
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        max-width: fit-content;
-    }
-
-    .download-link {
-        color: var(--accent);
-        text-decoration: none;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        transition: all 0.2s ease;
-    }
-
-    .download-link:hover {
-        color: var(--primary);
-        transform: translateX(2px);
-    }
-
-    /* Card Body */
-    .card-body {
-        padding: 1rem 2rem 1.5rem;
-    }
-
-    .note-description {
-        color: #475569;
-        line-height: 1.6;
-        margin: 0;
-        font-size: 1rem;
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-        padding: 1rem 2rem 2rem;
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        border-top: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border-radius: 12px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.6s;
-    }
-
-    .btn:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white;
-        box-shadow: var(--shadow-md);
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-        color: white;
-    }
-
-    .btn-danger {
-        background: linear-gradient(135deg, var(--error), #dc2626);
-        color: white;
-        box-shadow: var(--shadow-md);
-    }
-
-    .btn-danger:hover {
-        background: linear-gradient(135deg, #dc2626, var(--error));
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-        color: white;
-    }
-
-    /* Action Section */
-    .action-section {
-        display: flex;
-        gap: 1.5rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 2rem;
-    }
-
-    .btn-large {
-        padding: 1rem 2.5rem;
-        border-radius: 50px;
-        font-size: 1.1rem;
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.8rem;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-success {
-        background: linear-gradient(135deg, var(--success), #059669);
-        color: white;
-        box-shadow: var(--shadow-lg);
-    }
-
-    .btn-success:hover {
-        background: linear-gradient(135deg, #059669, var(--success));
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(16, 185, 129, 0.4);
-        color: white;
-    }
-
-    .btn-outline {
-        background: rgba(255, 255, 255, 0.9);
-        color: var(--dark);
-        border: 2px solid rgba(15, 23, 42, 0.1);
-        backdrop-filter: var(--blur-sm);
-    }
-
-    .btn-outline:hover {
-        background: var(--dark);
-        color: white;
-        border-color: var(--dark);
-        transform: translateY(-3px);
-    }
-
-    /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 6rem 2rem;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: var(--blur-md);
-        border-radius: 32px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: var(--shadow-xl);
-        margin-bottom: 3rem;
-    }
-
-    .empty-icon {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 2rem;
-        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: #94a3b8;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.7; }
-        50% { transform: scale(1.05); opacity: 1; }
-    }
-
-    .empty-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--dark);
-        margin-bottom: 1rem;
-    }
-
-    .empty-text {
-        color: #64748b;
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-    }
-
-    /* Delete Form */
-    .delete-form {
-        margin: 0;
-        display: inline;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-        .notes-grid {
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .main-container {
-            padding: 2rem 1rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .breadcrumb-container {
-            padding: 0 1rem;
-        }
-
-        .notes-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .note-card {
-            border-radius: 20px;
-        }
-
-        .card-header,
-        .card-body,
-        .action-buttons {
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-
-        .note-title {
-            font-size: 1.2rem;
-        }
-
-        .action-buttons {
-            gap: 0.5rem;
-        }
-
-        .btn {
-            font-size: 0.8rem;
-            padding: 0.5rem 1rem;
-        }
-
-        .action-section {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .btn-large {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .main-container {
-            padding: 1rem 0.5rem;
-        }
-
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
-        .empty-state {
-            padding: 3rem 1rem;
-            border-radius: 24px;
-        }
-
-        .empty-icon {
-            width: 80px;
-            height: 80px;
-            font-size: 2rem;
-        }
-    }
-
-    /* Animations */
-    .note-card {
-        animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .note-card:nth-child(2) { animation-delay: 0.1s; }
-    .note-card:nth-child(3) { animation-delay: 0.2s; }
-    .note-card:nth-child(4) { animation-delay: 0.3s; }
-    .note-card:nth-child(5) { animation-delay: 0.4s; }
-    .note-card:nth-child(6) { animation-delay: 0.5s; }
-
-    .action-section {
-        animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
-    }
-
-    @keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(60px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
-
-<!-- Floating Shapes -->
-<div class="floating-shapes">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-</div>
-
-<!-- Breadcrumb Section -->
-<section class="breadcrumb-section">
-    <div class="breadcrumb-container">
-        <h2 class="breadcrumb-title">
-            <i class="fas fa-sticky-note"></i>
-            Note List
-        </h2>
+<br>
+<br>
+<br>
+
+<!-- Enhanced Hero Section -->
+<section class="hero-section">
+  <div class="hero-background">
+    <div class="hero-pattern"></div>
+    <div class="hero-glow"></div>
+    <div class="floating-elements">
+      <div class="floating-element floating-element-1"></div>
+      <div class="floating-element floating-element-2"></div>
+      <div class="floating-element floating-element-3"></div>
     </div>
+  </div>
+  
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-main">
+        <h1 class="hero-title">
+          <span class="title-highlight">{{ chapter.title }}</span>
+          <span class="title-subtitle">Study Notes</span>
+        </h1>
+        
+        <p class="hero-description">
+          Access comprehensive study materials and resources for your learning
+        </p>
+        
+        {% if user.is_authenticated and user.user_type == 'admin' %}
+        <div class="hero-actions">
+          <a href="{% url 'note-create' chapter_id %}" class="hero-btn hero-btn-primary">
+            <span class="hero-btn-icon">➕</span>
+            <span class="hero-btn-text">Add New Note</span>
+            <span class="hero-btn-glow"></span>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- Main Content -->
-<div class="main-container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h1 class="page-title">Study Notes</h1>
-    </div>
-
+<section class="main-content">
+  <div class="container">
     {% if notes %}
-        <!-- Notes Grid -->
-        <div class="notes-grid">
-            {% for note in notes %}
-            <div class="note-card">
-                <!-- Card Header -->
-                <div class="card-header">
-                    <h3 class="note-title">
-                        <div class="note-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div>
-                            {{ note.title }}
-                        </div>
-                    </h3>
-                    <div class="note-meta">
-                        <div class="chapter-tag">
-                            <i class="fas fa-book-open"></i>
-                            {{ note.chapter.title }}
-                        </div>
-                        <div style="margin-top: 0.5rem;">
-                            <a href="{{ note.file.url }}" class="download-link" target="_blank">
-                                <i class="fas fa-download"></i>
-                                Download File
-                            </a>
-                        </div>
-                    </div>
-                </div>
+      <!-- Note Controls -->
+      <div class="content-header">
+        <div class="content-title">
+          <h2 class="section-title">
+            <span class="title-icon">📄</span>
+            <span>Note Collection</span>
+          </h2>
+        </div>
+        
+        <div class="view-controls">
+          <button class="view-btn view-btn-outline" id="gridView" title="Grid View">
+            <span class="view-btn-icon">⊞</span>
+          </button>
+          <button class="view-btn view-btn-active" id="listView" title="List View">
+            <span class="view-btn-icon">☰</span>
+          </button>
+        </div>
+      </div>
 
-                <!-- Card Body -->
-                {% if note.description %}
-                <div class="card-body">
-                    <p class="note-description">{{ note.description }}</p>
+      <!-- Notes Grid -->
+      <div id="notesContainer" class="notes-grid">
+        {% for note in notes %}
+        <div class="note-wrapper">
+          <div class="note-card">
+            <!-- Note Header -->
+            <div class="note-header">
+              <h3 class="note-title">
+                <div class="note-icon">
+                  <span class="note-badge">📋</span>
                 </div>
-                {% endif %}
-
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <a href="{% url 'note-detail' note.id %}" class="btn btn-primary">
-                        <i class="fas fa-eye"></i>
-                        View Details
-                    </a>
-                    {% if user.is_authenticated and user.user_type == 'admin' %}
-                    <a href="{% url 'note-update' note.id %}" class="btn btn-primary">
-                        <i class="fas fa-edit"></i>
-                        Edit
-                    </a>
-                    <form action="{% url 'note-delete' note.id %}" method="post" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this note?');">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i>
-                            Delete
-                        </button>
-                    </form>
-                    {% endif %}
-                </div>
+                {{ note.title }}
+              </h3>
+              {% if note.description %}
+              <p class="note-description">{{ note.description|truncatewords:20 }}</p>
+              {% endif %}
             </div>
-            {% endfor %}
-        </div>
 
-        <!-- Action Section -->
-        <div class="action-section">
-            {% if user.is_authenticated and user.user_type == 'admin' %}
-            <a href="{% url 'note-create' chapter_id %}" class="btn-large btn-success">
-                <i class="fas fa-plus"></i>
-                Create New Note
-            </a>
-            <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
-                <i class="fas fa-arrow-left"></i>
-                Back to Chapters
-            </a>
-            {% endif %}
-            
-            {% if user.is_authenticated and user.user_type == 'normal' %}
-            <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
-                <i class="fas fa-arrow-left"></i>
-                Back to Chapters
-            </a>
-            {% endif %}
+            <!-- Note Body -->
+            <div class="note-body">
+              <div class="note-meta">
+                <div class="chapter-tag">
+                  <span class="chapter-icon">📚</span>
+                  {{ note.chapter.title }}
+                </div>
+                <div class="download-section">
+                  <a href="{{ note.file.url }}" class="download-link" target="_blank" title="Download File">
+                    <span class="download-icon">⬇️</span>
+                    <span class="download-text">Download</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="note-actions">
+                <a href="{% url 'note-detail' note.id %}" 
+                   class="action-btn action-btn-info" title="View Details">
+                  <span class="action-btn-icon">👁️</span>
+                  <span class="action-btn-text">View</span>
+                </a>
+
+                {% if user.is_authenticated and user.user_type == 'admin' %}
+                <a href="{% url 'note-update' note.id %}" 
+                   class="action-btn action-btn-primary" title="Edit Note">
+                  <span class="action-btn-icon">✏️</span>
+                  <span class="action-btn-text">Edit</span>
+                </a>
+
+                <form action="{% url 'note-delete' note.id %}" method="post" class="action-form">
+                  {% csrf_token %}
+                  <button type="submit" 
+                          class="action-btn action-btn-danger" 
+                          onclick="return confirm('Are you sure you want to delete this note? This action cannot be undone.');"
+                          title="Delete Note">
+                    <span class="action-btn-icon">🗑️</span>
+                    <span class="action-btn-text">Delete</span>
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+
+              <div class="note-status">
+                <span class="status-indicator">
+                  <span class="status-icon">✓</span>
+                  <span class="status-text">Available</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Hover Effects -->
+            <div class="note-glow"></div>
+            <div class="note-shine"></div>
+          </div>
         </div>
+        {% endfor %}
+      </div>
 
     {% else %}
-        <!-- Empty State -->
-        <div class="empty-state">
-            <div class="empty-icon">
-                <i class="fas fa-sticky-note"></i>
-            </div>
-            <h2 class="empty-title">No Notes Available</h2>
-            <p class="empty-text">No notes have been uploaded for this chapter yet. Check back later or contact your instructor.</p>
-            {% if user.is_authenticated and user.user_type == 'admin' %}
-            <a href="{% url 'note-create' chapter_id %}" class="btn-large btn-success">
-                <i class="fas fa-plus"></i>
-                Create First Note
-            </a>
-            <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
-                <i class="fas fa-arrow-left"></i>
-                Back to Chapters
-            </a>
-            {% endif %}
-        </div>
-        <a href="{% url 'chapter-list' subject_id %}" class="btn-large btn-outline">
-                <i class="fas fa-arrow-left"></i>
-                Back to Chapters
-            </a>
+      <!-- Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <h3 class="empty-title">No notes available yet</h3>
+        <p class="empty-description">No notes have been uploaded for this chapter yet. Check back later or contact your instructor.</p>
+        {% if user.is_authenticated and user.user_type == 'admin' %}
+        <a href="{% url 'note-create' chapter_id %}" class="empty-btn">
+          <span class="empty-btn-icon">➕</span>
+          <span>Create First Note</span>
+        </a>
+        {% endif %}
+      </div>
     {% endif %}
-</div>
+
+    <!-- Navigation Footer -->
+    <div class="nav-footer">
+      <a href="{% url 'chapter-list' subject_id %}" class="nav-back-btn" style="text-decoration: none;">
+        <span class="nav-back-icon">←</span>
+        <span class="nav-back-text">Back to Chapters</span>
+      </a>
+      
+      {% if notes %}
+      <div class="nav-info">
+        <span class="nav-info-icon">ℹ️</span>
+        <span class="nav-info-text">{{ notes|length }} note{{ notes|length|pluralize }} in this chapter</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+/* CSS Variables */
+:root {
+  --primary-color: #667eea;
+  --secondary-color: #764ba2;
+  --accent-color: #f093fb;
+  --success-color: #43e97b;
+  --info-color: #4facfe;
+  --warning-color: #feca57;
+  --danger-color: #ff6b6b;
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --background-light: #f7fafc;
+  --background-white: #ffffff;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  color: white;
+  padding: 4rem 0 5rem;
+  overflow: hidden;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+}
+
+.hero-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  background-size: 400px 400px, 600px 600px;
+  animation: patternFloat 20s ease-in-out infinite;
+}
+
+.hero-glow {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  width: 800px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: glowPulse 6s ease-in-out infinite;
+}
+
+.floating-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.floating-element {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+}
+
+.floating-element-1 {
+  top: 20%;
+  left: 10%;
+  animation: float1 12s ease-in-out infinite;
+}
+
+.floating-element-2 {
+  top: 60%;
+  right: 15%;
+  width: 40px;
+  height: 40px;
+  animation: float2 15s ease-in-out infinite reverse;
+}
+
+.floating-element-3 {
+  bottom: 30%;
+  left: 20%;
+  width: 80px;
+  height: 80px;
+  animation: float3 18s ease-in-out infinite;
+}
+
+@keyframes patternFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-30px) translateX(20px); }
+  66% { transform: translateY(20px) translateX(-10px); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  50% { transform: translateY(-40px) translateX(-20px) rotate(180deg); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-25px) scale(1.1); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+.hero-main {
+  animation: slideUp 1s ease-out 0.3s both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title-highlight {
+  background: linear-gradient(45deg, #ffffff, #f0f9ff, #ffffff);
+  background-size: 500% 500%;
+  font-size: 1.1em;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+.title-subtitle {
+  font-size: 0.6em;
+  font-weight: 400;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-description {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  animation: fadeIn 1s ease-out 0.6s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+.hero-actions {
+  animation: fadeInUp 1s ease-out 0.9s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-lg);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.hero-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  color: white;
+  text-decoration: none;
+}
+
+.hero-btn-icon {
+  font-size: 1rem;
+}
+
+.hero-btn-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.hero-btn:hover .hero-btn-glow {
+  left: 100%;
+}
+
+/* Main Content */
+.main-content {
+  padding: 3rem 0 4rem;
+  background: var(--background-light);
+  min-height: 60vh;
+}
+
+/* Content Header */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  animation: fadeIn 0.8s ease-out 0.4s both;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.title-icon {
+  font-size: 1.5rem;
+}
+
+/* View Controls */
+.view-controls {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--background-white);
+  padding: 0.375rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.view-btn {
+  padding: 0.625rem 0.875rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.view-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--primary-color);
+  transform: scale(0);
+  border-radius: var(--radius-md);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.view-btn-active::before,
+.view-btn:hover::before {
+  transform: scale(1);
+}
+
+.view-btn-icon {
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.view-btn-active,
+.view-btn:hover {
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.view-btn-active {
+  background: var(--primary-color);
+}
+
+.view-btn-outline {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+/* Notes Grid */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notes-grid.list-view {
+  grid-template-columns: 1fr;
+}
+
+.notes-grid.grid-view {
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.note-wrapper {
+  animation: fadeInScale 0.6s ease-out both;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.note-wrapper:nth-child(odd) { animation-delay: 0.1s; }
+.note-wrapper:nth-child(even) { animation-delay: 0.2s; }
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.note-card {
+  position: relative;
+  background: var(--background-white);
+  border-radius: var(--radius-xl);
+  padding: 0;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.note-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+}
+
+.note-header {
+  padding: 2rem 1.5rem 1rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.08));
+  position: relative;
+}
+
+.note-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.note-card:hover .note-title {
+  color: var(--primary-color);
+}
+
+.note-icon .note-badge {
+  font-size: 1.5rem;
+  display: block;
+}
+
+.note-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.note-body {
+  padding: 1.5rem;
+}
+
+.note-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chapter-tag {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  color: var(--primary-color);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: fit-content;
+}
+
+.chapter-icon {
+  font-size: 1rem;
+}
+
+.download-section {
+  display: flex;
+  align-items: center;
+}
+
+.download-link {
+  color: var(--info-color);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(79, 172, 254, 0.1);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(79, 172, 254, 0.2);
+  transition: all 0.3s ease;
+}
+
+.download-link:hover {
+  background: var(--info-color);
+  color: white;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.note-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 2px solid;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  transition: left 0.3s ease;
+}
+
+.action-btn:hover::before {
+  left: 100%;
+}
+
+.action-btn:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.action-btn-info {
+  color: var(--info-color);
+  border-color: var(--info-color);
+  background: transparent;
+}
+
+.action-btn-info::before {
+  background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.1), transparent);
+}
+
+.action-btn-info:hover {
+  background: var(--info-color);
+  color: white;
+}
+
+.action-btn-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  background: transparent;
+}
+
+.action-btn-primary::before {
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+}
+
+.action-btn-primary:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.action-btn-danger {
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+  background: transparent;
+}
+
+.action-btn-danger::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
+}
+
+.action-btn-danger:hover {
+  background: var(--danger-color);
+  color: white;
+}
+
+.action-form {
+  display: inline;
+}
+
+.note-status {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.status-icon {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.note-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.note-card:hover .note-glow {
+  opacity: 1;
+}
+
+.note-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.note-card:hover .note-shine {
+  left: 100%;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.empty-icon {
+  font-size: 5rem;
+  opacity: 0.3;
+  margin-bottom: 2rem;
+  display: block;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.empty-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.empty-description {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.empty-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.empty-btn:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+  color: white;
+}
+
+.empty-btn-icon {
+  font-size: 1.2rem;
+}
+
+/* Navigation Footer */
+.nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding: 1.5rem 2rem;
+  background: var(--background-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  animation: slideUp 0.6s ease-out 0.8s both;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.nav-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-color);
+  background: var(--background-white);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  transition: left 0.4s ease;
+  z-index: 1;
+}
+
+.nav-back-btn:hover::before {
+  left: 100%;
+}
+
+.nav-back-btn:hover {
+  color: white;
+  border-color: var(--primary-color);
+  text-decoration: none;
+}
+
+.nav-back-icon,
+.nav-back-text {
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.nav-back-icon {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.nav-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.nav-info-icon {
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+.nav-info-text {
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .notes-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .hero-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.95rem;
+  }
+  
+  .note-title {
+    font-size: 1.25rem;
+  }
+  
+  .nav-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 2.5rem);
+  }
+  
+  .note-title {
+    font-size: 1.2rem;
+  }
+  
+  .note-actions {
+    justify-content: center;
+  }
+}
+</style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Enhanced card hover effects
-        const noteCards = document.querySelectorAll('.note-card');
-        
-        noteCards.forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1}s`;
-            
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px) scale(1.02)';
-                this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Enhanced button interactions
-        const buttons = document.querySelectorAll('.btn, .btn-large');
-        buttons.forEach(button => {
-            button.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-            });
-            
-            button.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-
-        // Parallax effect for floating shapes
-        let ticking = false;
-        
-        function updateParallax() {
-            const scrolled = window.pageYOffset;
-            const shapes = document.querySelectorAll('.shape');
-            
-            shapes.forEach((shape, index) => {
-                const speed = (index + 1) * 0.5;
-                const yPos = -(scrolled * speed);
-                shape.style.transform = `translateY(${yPos}px) translateX(${Math.sin(scrolled * 0.01) * 10}px)`;
-            });
-            
-            ticking = false;
-        }
-        
-        function requestTick() {
-            if (!ticking) {
-                requestAnimationFrame(updateParallax);
-                ticking = true;
-            }
-        }
-        
-        window.addEventListener('scroll', requestTick);
-
-        // Initialize animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = `slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both`;
-                }
-            });
-        }, { threshold: 0.1 });
-
-        // Observe elements for animation
-        document.querySelectorAll('.note-card, .action-section, .empty-state').forEach(el => {
-            observer.observe(el);
-        });
+document.addEventListener('DOMContentLoaded', function() {
+  const gridViewBtn = document.getElementById('gridView');
+  const listViewBtn = document.getElementById('listView');
+  const notesContainer = document.getElementById('notesContainer');
+  
+  // Function to switch to grid view
+  function switchToGridView() {
+    if (notesContainer) {
+      notesContainer.classList.remove('list-view');
+      notesContainer.classList.add('grid-view');
+      gridViewBtn.classList.add('view-btn-active');
+      gridViewBtn.classList.remove('view-btn-outline');
+      listViewBtn.classList.remove('view-btn-active');
+      listViewBtn.classList.add('view-btn-outline');
+      
+      // Add staggered animation
+      const notes = notesContainer.querySelectorAll('.note-wrapper');
+      notes.forEach((note, index) => {
+        note.style.animation = 'none';
+        setTimeout(() => {
+          note.style.animation = `fadeInScale 0.4s ease-out both`;
+          note.style.animationDelay = `${index * 0.1}s`;
+        }, 10);
+      });
+    }
+  }
+  
+  // Function to switch to list view
+  function switchToListView() {
+    if (notesContainer) {
+      notesContainer.classList.remove('grid-view');
+      notesContainer.classList.add('list-view');
+      listViewBtn.classList.add('view-btn-active');
+      listViewBtn.classList.remove('view-btn-outline');
+      gridViewBtn.classList.remove('view-btn-active');
+      gridViewBtn.classList.add('view-btn-outline');
+      
+      // Add staggered animation
+      const notes = notesContainer.querySelectorAll('.note-wrapper');
+      notes.forEach((note, index) => {
+        note.style.animation = 'none';
+        setTimeout(() => {
+          note.style.animation = `fadeInScale 0.4s ease-out both`;
+          note.style.animationDelay = `${index * 0.05}s`;
+        }, 10);
+      });
+    }
+  }
+  
+  // Event listeners
+  if (gridViewBtn && listViewBtn && notesContainer) {
+    gridViewBtn.addEventListener('click', switchToGridView);
+    listViewBtn.addEventListener('click', switchToListView);
+    
+    // Set default view (list view is active by default)
+    switchToListView();
+  }
+  
+  // Add smooth transitions for note cards
+  const noteCards = document.querySelectorAll('.note-card');
+  noteCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-8px) scale(1.02)';
     });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0) scale(1)';
+    });
+  });
+  
+  // Enhanced button interactions
+  const actionBtns = document.querySelectorAll('.action-btn');
+  actionBtns.forEach(btn => {
+    btn.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+    });
+    
+    btn.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+    });
+  });
+});
 </script>
+
 {% endblock %}

@@ -18,112 +18,74 @@
 
     body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        background: #f8fafc;
         min-height: 100vh;
         color: #1e293b;
     }
 
-    /* Main Container */
+    /* Main Container - Full Width */
     .main-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1rem;
+        width: 100%;
+        padding: 1rem;
     }
 
-    /* Lab Card */
-    .lab-card {
+    /* Header Section */
+    .header-section {
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    /* Card Header */
-    .card-header {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
         padding: 2rem;
-        color: white;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .lab-title {
         font-size: 2rem;
         font-weight: 700;
-        margin: 0;
+        color: #1e293b;
+        margin-bottom: 1rem;
         display: flex;
         align-items: center;
         gap: 1rem;
     }
 
     .title-icon {
-        background: rgba(255, 255, 255, 0.2);
+        background: #3b82f6;
+        color: white;
         padding: 0.75rem;
         border-radius: 8px;
         font-size: 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Card Body */
-    .card-body {
-        padding: 2rem;
-    }
-
-    /* Description Section */
-    .description-section {
-        background: #f1f5f9;
-        border-left: 4px solid #06b6d4;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
     }
 
     .description-text {
         color: #475569;
         font-size: 1.1rem;
         line-height: 1.6;
-        margin: 0;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-
-    .description-icon {
-        color: #06b6d4;
-        font-size: 1.2rem;
-        margin-top: 0.1rem;
-        flex-shrink: 0;
-    }
-
-    /* File Preview Section */
-    .file-preview-container {
-        background: #f8fafc;
-        border: 2px dashed #cbd5e1;
-        border-radius: 12px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-    }
-
-    .file-preview-container:hover {
-        border-color: #6366f1;
         background: #f1f5f9;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
     }
 
-    /* PDF Viewer */
-    .pdf-container {
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
+    /* Content Area - Large and Clean */
+    .content-area {
         background: white;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    /* PDF Viewer - Maximum Space */
+    .pdf-container {
+        width: 100%;
+        position: relative;
     }
 
     .pdf-embed {
         width: 100%;
-        height: 70vh;
-        min-height: 500px;
+        height: 85vh;
+        min-height: 700px;
         border: none;
+        display: block;
     }
 
     .pdf-loading {
@@ -131,14 +93,14 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(255, 255, 255, 0.95);
+        background: white;
         padding: 2rem;
         border-radius: 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .loading-spinner {
@@ -146,12 +108,12 @@
         height: 40px;
         border: 3px solid #e2e8f0;
         border-radius: 50%;
-        border-top-color: #6366f1;
+        border-top-color: #3b82f6;
         animation: spin 1s linear infinite;
     }
 
     .loading-text {
-        color: #6366f1;
+        color: #3b82f6;
         font-weight: 600;
     }
 
@@ -159,24 +121,23 @@
         to { transform: rotate(360deg); }
     }
 
-    /* Download Section */
+    /* Download Section - Simple */
     .download-area {
         text-align: center;
-        padding: 3rem 2rem;
+        padding: 4rem 2rem;
     }
 
     .file-icon-large {
         width: 80px;
         height: 80px;
         margin: 0 auto 1.5rem;
-        background: linear-gradient(135deg, #06b6d4, #6366f1);
-        border-radius: 16px;
+        background: #3b82f6;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 2rem;
         color: white;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .download-title {
@@ -194,7 +155,7 @@
     }
 
     .download-btn {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        background: #3b82f6;
         color: white;
         border: none;
         padding: 0.75rem 2rem;
@@ -205,20 +166,18 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s;
     }
 
     .download-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.2);
+        background: #2563eb;
         color: white;
     }
 
-    /* No File Section */
+    /* No File Section - Simple */
     .no-file-area {
         text-align: center;
-        padding: 3rem 2rem;
+        padding: 4rem 2rem;
         color: #64748b;
     }
 
@@ -227,7 +186,7 @@
         height: 80px;
         margin: 0 auto 1.5rem;
         background: #e2e8f0;
-        border-radius: 16px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -239,11 +198,10 @@
         font-weight: 500;
     }
 
-    /* Action Section */
-    .action-section {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
+    /* Back Button */
+    .back-section {
+        margin-top: 1rem;
+        text-align: center;
     }
 
     .btn-back {
@@ -258,24 +216,18 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        transition: all 0.3s ease;
+        transition: all 0.2s;
     }
 
     .btn-back:hover {
         background: #f8fafc;
         border-color: #94a3b8;
-        transform: translateY(-1px);
         color: #475569;
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .main-container {
-            padding: 1rem 0.5rem;
-        }
-
-        .card-header,
-        .card-body {
+        .header-section {
             padding: 1.5rem;
         }
 
@@ -283,23 +235,17 @@
             font-size: 1.5rem;
             flex-direction: column;
             align-items: flex-start;
-            text-align: left;
             gap: 0.75rem;
         }
 
         .pdf-embed {
-            height: 60vh;
-            min-height: 400px;
+            height: 70vh;
+            min-height: 500px;
         }
 
         .download-area,
         .no-file-area {
             padding: 2rem 1rem;
-        }
-
-        .action-section {
-            flex-direction: column;
-            align-items: center;
         }
 
         .btn-back,
@@ -310,22 +256,17 @@
     }
 
     @media (max-width: 480px) {
-        .card-header,
-        .card-body {
+        .header-section {
             padding: 1rem;
         }
 
-        .description-section {
-            padding: 1rem;
-        }
-
-        .file-preview-container {
+        .description-text {
             padding: 1rem;
         }
 
         .pdf-embed {
-            height: 50vh;
-            min-height: 300px;
+            height: 60vh;
+            min-height: 400px;
         }
 
         .file-icon-large,
@@ -339,74 +280,65 @@
 
 <!-- Main Content -->
 <div class="main-container">
-    <div class="lab-card">
-        <!-- Card Header -->
-        <div class="card-header">
-            <h1 class="lab-title">
-                <div class="title-icon">
-                    <i class="fas fa-flask"></i>
-                </div>
-                <div>{{ lab.title }}</div>
-            </h1>
-        </div>
-
-        <!-- Card Body -->
-        <div class="card-body">
-            <!-- Description Section -->
-            {% if lab.description %}
-            <div class="description-section">
-                <div class="description-text">
-                    <i class="fas fa-info-circle description-icon"></i>
-                    <span>{{ lab.description }}</span>
-                </div>
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1 class="lab-title">
+            <div class="title-icon">
+                <i class="fas fa-file-alt"></i>
             </div>
-            {% endif %}
-
-            <!-- File Preview Section -->
-            <div class="file-preview-container">
-                {% if lab.file %}
-                    {% if is_pdf %}
-                        <!-- PDF Preview -->
-                        <div class="pdf-container">
-                            <embed 
-                                src="{{ lab.file }}#zoom=page-width" 
-                                class="pdf-embed"
-                                type="application/pdf"
-                                onload="hidePdfLoading()">
-                            <div class="pdf-loading" id="pdfLoading">
-                                <div class="loading-spinner"></div>
-                                <span class="loading-text">Loading PDF...</span>
-                            </div>
-                        </div>
-                    {% else %}
-                        <!-- Download Section for non-PDF files -->
-                        <div class="download-area">
-                            <div class="file-icon-large">
-                                <i class="fas fa-file-download"></i>
-                            </div>
-                            <h3 class="download-title">File Ready for Download</h3>
-                            <p class="download-subtitle">This file type can't be previewed online, but you can download it below.</p>
-                            <a href="{{ lab.file }}" class="download-btn" download>
-                                <i class="fas fa-download"></i>
-                                <span>Download File</span>
-                            </a>
-                        </div>
-                    {% endif %}
-                {% else %}
-                    <!-- No File Message -->
-                    <div class="no-file-area">
-                        <div class="no-file-icon">
-                            <i class="fas fa-file-slash"></i>
-                        </div>
-                        <p class="no-file-text">No file uploaded for this lab report yet.</p>
-                    </div>
-                {% endif %}
-            </div>
+            <div>{{ lab.title }}</div>
+        </h1>
+        
+        {% if lab.description %}
+        <div class="description-text">
+            {{ lab.description }}
         </div>
+        {% endif %}
     </div>
 
-    <!-- Action Buttons -->
-    <div class="action-section">
+    <!-- Content Area -->
+    <div class="content-area">
+        {% if lab.file %}
+            {% if is_pdf %}
+                <!-- PDF Viewer - Full Space -->
+                <div class="pdf-container">
+                    <embed 
+                        src="{{ lab.file }}#zoom=page-width" 
+                        class="pdf-embed"
+                        type="application/pdf"
+                        onload="hidePdfLoading()">
+                    <div class="pdf-loading" id="pdfLoading">
+                        <div class="loading-spinner"></div>
+                        <span class="loading-text">Loading PDF...</span>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Download Section -->
+                <div class="download-area">
+                    <div class="file-icon-large">
+                        <i class="fas fa-file-download"></i>
+                    </div>
+                    <h3 class="download-title">File Ready for Download</h3>
+                    <p class="download-subtitle">This file type can't be previewed online, but you can download it below.</p>
+                    <a href="{{ lab.file }}" class="download-btn" download>
+                        <i class="fas fa-download"></i>
+                        <span>Download File</span>
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- No File Message -->
+            <div class="no-file-area">
+                <div class="no-file-icon">
+                    <i class="fas fa-file-slash"></i>
+                </div>
+                <p class="no-file-text">No file uploaded for this lab report yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Back Button -->
+    <div class="back-section">
         <a href="javascript:history.back()" class="btn-back">
             <i class="fas fa-arrow-left"></i>
             <span>Back to Labs</span>
@@ -426,16 +358,6 @@
                 }, 300);
             }
         };
-
-        // Responsive PDF height adjustment
-        function adjustPdfHeight() {
-            const pdfEmbed = document.querySelector('.pdf-embed');
-            if (pdfEmbed && window.innerWidth > 1024) {
-                const windowHeight = window.innerHeight;
-                const availableHeight = windowHeight - 200; // Account for header and padding
-                pdfEmbed.style.height = Math.max(availableHeight, 500) + 'px';
-            }
-        }
 
         // PDF loading event handlers
         const pdfEmbed = document.querySelector('.pdf-embed');
@@ -458,12 +380,6 @@
                 }
             }
         });
-
-        // Event listeners
-        window.addEventListener('resize', adjustPdfHeight);
-        
-        // Initialize on load
-        adjustPdfHeight();
     });
 </script>
 {% endblock %}
