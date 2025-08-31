@@ -225,3 +225,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Disable frame blocking (for development only)
 X_FRAME_OPTIONS = 'SAMEORIGIN'  # or 'ALLOWALL' (not recommended for production)
 
+
+# settings.py
+from . import firebase   # this will run firebase.py once

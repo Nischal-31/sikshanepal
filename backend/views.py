@@ -7,9 +7,11 @@ from django.http import JsonResponse
 import requests
 from rest_framework import generics,status,permissions
 
+import blog
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
 from sikshanepal import settings
+from sikshanepal.firebase import send_blog_notification
 from .models import Lab, Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
 from rest_framework.decorators import api_view,permission_classes,authentication_classes
 from rest_framework.response import Response
@@ -1006,13 +1008,14 @@ def postDetail(request, id):
     serializer = PostSerializer(post)
     return Response(serializer.data)
 
+from firebase_admin import messaging
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
 def postCreate(request):
     serializer = PostSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        post = serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

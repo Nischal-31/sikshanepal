@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from requests import post
 from .models import Post
 
 def blog_list(request):
@@ -17,13 +18,26 @@ def blog_list(request):
         image = request.FILES.get('image')
 
         if title and content and category:
-            Post.objects.create(
+            new_post= Post.objects.create(
                 title=title,
                 content=content,
                 extra_details=extra_details,
                 category=category,
                 image=image,
             )
+
+            # Trigger FCM notification
+            from sikshanepal.firebase import send_blog_notification
+            try:
+                send_blog_notification(
+                    title="📢 New Blog Added!",
+                    body=f"{new_post.title} was just published.",
+                    blog_id=new_post.id
+                )
+                print(f"[DEBUG] Notification sent for blog: {new_post.title} (ID: {new_post.id})")
+            except Exception as e:
+                print(f"[ERROR] Failed to send notification: {e}")
+
             messages.success(request, "Post created successfully.")
             return redirect('blog_list')
         else:
