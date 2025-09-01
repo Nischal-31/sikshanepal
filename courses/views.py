@@ -5,7 +5,7 @@ from django.http import Http404, HttpResponseForbidden, HttpResponseNotFound, Js
 import requests
 from django.contrib.auth.decorators import login_required
 from backend.models import Chapter, Semester, Subject
-
+from sikshanepal.firebase import send_course_notification 
 
 def is_admin(request):
     return request.user.is_authenticated and request.user.user_type == 'admin'
@@ -91,8 +91,19 @@ def course_create_view(request):
         response = requests.post(api_url, data=data, files=files, headers=headers)
 
         if response.status_code == 201:
-            return redirect("course-list")  # Redirect to course list page
-    
+            # Send FCM notification for new course
+            course_name = response.json().get("name")
+            try:
+                send_course_notification(
+                    title="🎓 New Course Added!",
+                    body=f"{course_name} is now available.",
+                )
+                print(f"[DEBUG] Notification sent for course: {course_name}")
+            except Exception as e:
+                print(f"[ERROR] Failed to send course notification: {e}")
+
+            return redirect("course-list")
+        
     return render(request, "courses/course_create.html")
 
 @login_required

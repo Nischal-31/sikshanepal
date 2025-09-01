@@ -31,3 +31,24 @@ def send_blog_notification(title, body,blog_id=None ):
         print(f"[FIREBASE] Successfully sent message, response: {response}")
     except Exception as e:
         print(f"[ERROR] Failed to send notification: {e}")
+
+
+def send_course_notification(title, body, course_id=None):
+    """
+    Send an FCM notification to the 'courses' topic.
+    """
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title=title,
+            body=body,
+        ),
+        topic="courses",  # all subscribers
+        data={
+            "screen": "courses",
+        }
+    )
+    try:
+        response = messaging.send(message)
+        print(f"[FIREBASE] Successfully sent course message, response: {response}")
+    except Exception as e:
+        print(f"[ERROR] Failed to send course notification: {e}")
