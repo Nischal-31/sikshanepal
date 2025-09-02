@@ -28,6 +28,10 @@ urlpatterns = [
     path('post-create/', views.postCreate, name="post-create-api"),
     path('post-update/<int:id>', views.postUpdate, name="post-update-api"),
     path('post-delete/<int:id>', views.postDelete, name="post-delete-api"),
+    
+    # FCM Token Api
+    path("register/", views.register_fcm_token, name="register-fcm-token"),
+    path("delete/", views.delete_fcm_token, name="delete-fcm-token"),
 
     # Course URLs
     path('course-list/', views.courseList, name="course-list-api"),

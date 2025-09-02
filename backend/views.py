@@ -12,12 +12,12 @@ from blog.models import Post
 from contactenquiry.models import contactEnquiry
 from sikshanepal import settings
 from sikshanepal.firebase import send_blog_notification
-from .models import Lab, Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
+from .models import FCMDevice, Lab, Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
 from rest_framework.decorators import api_view,permission_classes,authentication_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ChangePasswordSerializer, ContactEnquirySerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, PostSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
+from .serializers import ChangePasswordSerializer, ContactEnquirySerializer, FCMDeviceSerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, PostSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
 from django.urls import reverse
 from user.models import CustomUser
 from .permissions import IsAdminUser, IsAdminOrReadOnly
@@ -58,6 +58,10 @@ def apiOverview(request):
         },
         "Contact Enquiry": {
             "Create": request.build_absolute_uri(reverse('contact-enquiry-api')),
+        },
+        "FCM Token": {
+            "Register": request.build_absolute_uri(reverse('register-fcm-token')),
+            "Delete": request.build_absolute_uri(reverse('delete-fcm-token')),
         },
         "Post": {
         "Create": request.build_absolute_uri(reverse("post-create-api")),
@@ -1000,7 +1004,6 @@ def postList(request):
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def postDetail(request, id):
@@ -1037,3 +1040,42 @@ def postDelete(request, id):
     post = get_object_or_404(Post, id=id)
     post.delete()
     return Response({'success': 'Post deleted successfully'}, status=status.HTTP_200_OK)
+
+
+#==========================================================================================================================================
+# FCM DEVICE 
+#==========================================================================================================================================
+
+# Register or update token
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def register_fcm_token(request):
+    serializer = FCMDeviceSerializer(data=request.data)
+    if serializer.is_valid():
+        token = serializer.validated_data.get("token")
+
+        # create or update so duplicate tokens don't pile up
+        device, created = FCMDevice.objects.update_or_create(
+            user=request.user,
+            token=token,
+            defaults={}
+        )
+
+        return Response(
+            {"message": "Token registered", "created": created},
+            status=status.HTTP_200_OK
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Delete token (logout or uninstall)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_fcm_token(request):
+    token = request.data.get("token")
+    if not token:
+        return Response({"error": "Token required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    deleted, _ = FCMDevice.objects.filter(user=request.user, token=token).delete()
+    if deleted:
+        return Response({"message": "Token deleted"}, status=status.HTTP_204_NO_CONTENT)
+    return Response({"error": "Token not found"}, status=status.HTTP_404_NOT_FOUND)

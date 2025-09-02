@@ -3,7 +3,7 @@ from django.conf import settings
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
 from user.models import CustomUser
-from .models import Lab, Subject,Semester,Syllabus,Chapter,Course,Note,PastQuestion
+from .models import FCMDevice, Lab, Subject,Semester,Syllabus,Chapter,Course,Note,PastQuestion
 
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -207,3 +207,12 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
+
+#================================================================================================================================================
+# FCMDEVICE Serializer
+#================================================================================================================================================
+
+class FCMDeviceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FCMDevice
+        fields = ["id", "token"]
