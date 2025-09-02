@@ -11,7 +11,7 @@ import blog
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
 from sikshanepal import settings
-from sikshanepal.firebase import send_blog_notification
+from sikshanepal.firebase import send_password_change_notification
 from .models import FCMDevice, Lab, Subject,Syllabus,Chapter,Semester,Course,Note,PastQuestion
 from rest_framework.decorators import api_view,permission_classes,authentication_classes
 from rest_framework.response import Response
@@ -278,6 +278,12 @@ def change_password(request):
     serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
     serializer.is_valid(raise_exception=True)
     serializer.save()
+
+    # Fetch all tokens for the user
+    tokens = FCMDevice.objects.filter(user=request.user).values_list('token', flat=True)
+    for token in tokens:
+        send_password_change_notification(token)
+
     return Response({"detail": "Password updated successfully"}, status=status.HTTP_200_OK)
 #-------------------------COURSE---------------------------------------------------------------------------------------------------
 

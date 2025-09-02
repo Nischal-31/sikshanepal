@@ -52,3 +52,29 @@ def send_course_notification(title, body, course_id=None):
         print(f"[FIREBASE] Successfully sent course message, response: {response}")
     except Exception as e:
         print(f"[ERROR] Failed to send course notification: {e}")
+
+def send_password_change_notification(token, title="Password Updated", body="Your password has been changed successfully!"):
+    """
+    Send a personal FCM notification to a specific device when the password is changed.
+    Opens the 'profile' screen on tap.
+    """
+    if not token:
+        print("[FIREBASE] No token provided, skipping personal notification.")
+        return
+
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title=title,
+            body=body,
+        ),
+        token=token,  # specific device
+        data={
+            "screen": "profile"
+        }
+    )
+
+    try:
+        response = messaging.send(message)
+        print(f"[FIREBASE] Successfully sent password-change notification, response: {response}")
+    except Exception as e:
+        print(f"[ERROR] Failed to send password-change notification: {e}")
