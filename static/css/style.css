@@ -457,14 +457,8 @@ footer .copyright .pro-links{
 
 }
 footer .copyright .pro-links i{
-  background-color: #5f7185;
   color: #fff;
 }
-footer .copyright .pro-links i:hover{
-  background-color: #FDC93B;
-  color: #2c2c2c;
-}
-
 /* About */
 
 #about-home{
@@ -785,6 +779,7 @@ margin: 0 auto;
  }
  #contact .getin .getin-details .pro-links i{
    margin-right:8px ;
+   text-align: center;
  }
 
 
