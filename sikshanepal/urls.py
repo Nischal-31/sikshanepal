@@ -11,6 +11,7 @@ urlpatterns = [
 	path('admin/', admin.site.urls),
     path('', views.index_view, name ='index'),
     path('about/', views.about_view, name ='about'),
+    path('privacy-policy/', views.privacy_policy_view, name ='privacy-policy'),
     path('course/', views.course_view, name ='course'),
     path('course-inner/', lambda request: render(request, 'course-inner.html'), name='course-inner'),
     path('subscription/', views.subscription_view, name='subscription'),

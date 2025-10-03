@@ -6,6 +6,9 @@ def index_view(request):
 def about_view(request):
     return render(request, 'about.html')
 
+def privacy_policy_view(request):
+    return render(request, 'privacy-policy.html')
+
 def blog_view(request):
     return render(request, 'blog.html')
 

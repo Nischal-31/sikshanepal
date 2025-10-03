@@ -41,7 +41,15 @@
 	</div>
 
 	<div class="copyright">
-		<p>Copyright 2026 All rights reserved | SikshaNepal</p>
+		<p>
+    Copyright 2026 | All rights reserved | SikshaNepal | 
+    <a href="{% url 'privacy-policy' %}" 
+       class="{% if request.path == '/privacy-policy' %}active{% endif %}" 
+       style="text-decoration: none;color: white;">
+       Privacy Policy
+    </a>
+</p>
+
 		<div class="pro-links">
     <a href="https://www.facebook.com" target="_blank">
         <i class="fab fa-facebook"></i>
