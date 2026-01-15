@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login ,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 import requests
-from .forms import UserRegisterForm
+
+from user.models import CustomUser
+from user.signals import User
+from .forms import UserRegisterForm, UserUpdateForm
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from backend.permissions import IsAdminUser, IsAdminOrReadOnly
@@ -114,3 +117,26 @@ def password_reset_confirm_view(request, uidb64, token):
     # Render a page where user can enter new password
     context = {'uidb64': uidb64, 'token': token}
     return render(request, 'user/password_reset_confirm.html', context)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def admin_view_user_profile(request, user_id):
+    """
+    Admin dashboard view to see a specific user's profile
+    """
+    user = get_object_or_404(User, id=user_id)
+    return render(request, 'dashboard/admin_view_user.html', {'user': user})
+
+def edit_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, request.FILES, instance=user)  # <-- important
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"{user.username} updated successfully!")
+            return redirect('users')
+    else:
+        form = UserUpdateForm(instance=user)
+    
+    return render(request, 'dashboard/edit_user.html', {'form': form, 'user': user})

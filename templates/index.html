@@ -18,7 +18,13 @@
 
 	<div class="btn">
 		<a class="blue" href="#">Learn More</a>
+		{% if user.is_authenticated and user.is_admin_user %}
+        <a class="blue" href="{% url 'home' %}">
+        Admin Dashboard
+        </a>
+       {% endif %}
 		<a class="yellow" href="{% url 'course-list' %}">Visit Courses</a>
+
 	</div>
 	{% else %}
 	<h2>Welcome, Guest ! Empower Your Future with SikshaNepal</h2>

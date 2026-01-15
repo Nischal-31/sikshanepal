@@ -1,0 +1,54 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}User Profile | Admin{% endblock %}
+{% block page_heading %}User Profile{% endblock %}
+
+{% block content %}
+<div class="p-6 max-w-3xl mx-auto bg-white shadow rounded">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-semibold">{{ user.get_full_name }}</h2>
+    <div class="space-x-2">
+      <a href="#" class="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600">Edit</a>
+      <a href="#" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Change Role</a>
+    </div>
+  </div>
+
+  <!-- Profile Details -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <p><span class="font-semibold">Username:</span> {{ user.username }}</p>
+      <p><span class="font-semibold">Email:</span> {{ user.email }}</p>
+      <p><span class="font-semibold">Role:</span> {{ user.role|capfirst }}</p>
+      <p><span class="font-semibold">Joined:</span> {{ user.date_joined|date:"M d, Y" }}</p>
+    </div>
+
+    <!-- Profile Picture -->
+    <div class="flex items-center justify-center">
+      {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="w-32 h-32 rounded-full object-cover">
+      {% else %}
+        <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+          No Image
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Optional Extra Info -->
+  <div class="mt-6">
+    <p>
+  <span class="font-semibold">Token:</span>
+  {% if user.auth_token %}
+    {{ user.auth_token.key }}
+  {% else %}
+    Not Created
+  {% endif %}
+</p>
+
+    <!-- Add more admin-only fields here if needed -->
+  </div>
+
+</div>
+{% endblock %}

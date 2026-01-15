@@ -29,6 +29,7 @@ urlpatterns = [
 	##### user related path########################## 
 	path('user/', include('user.urls')),
     path('backend/', include('backend.urls')),
+    path('dashboard/', include('dashboard.urls')),
 
     #path('user_api/', include('user_api.urls')),  # Separate user API
 ]
