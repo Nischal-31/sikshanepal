@@ -10,7 +10,6 @@ class CustomUser(AbstractUser):
     remember_me = models.BooleanField(default=False)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
-
     # Define the roles for users
     USER_TYPE_CHOICES = [
         ('admin', 'Admin'),

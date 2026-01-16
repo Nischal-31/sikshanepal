@@ -46,4 +46,6 @@ def contact(request):
     return render(request,'contactenquiry/contact.html', {
         'form':form
     })
+
+
     

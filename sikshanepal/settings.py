@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'blog',
     'contactenquiry',
     'subscription',
-    
     'backend',
     'dashboard',
 

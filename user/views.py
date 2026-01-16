@@ -7,7 +7,7 @@ import requests
 
 from user.models import CustomUser
 from user.signals import User
-from .forms import UserRegisterForm, UserUpdateForm
+from .forms import UserCreateForm, UserRegisterForm, UserUpdateForm
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from backend.permissions import IsAdminUser, IsAdminOrReadOnly
@@ -119,6 +119,8 @@ def password_reset_confirm_view(request, uidb64, token):
     return render(request, 'user/password_reset_confirm.html', context)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Admin Views for User Management
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def admin_view_user_profile(request, user_id):
     """
@@ -140,3 +142,27 @@ def edit_user(request, user_id):
         form = UserUpdateForm(instance=user)
     
     return render(request, 'dashboard/edit_user.html', {'form': form, 'user': user})
+
+def delete_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if request.method == "POST":
+        user.delete()
+        #messages.success(request, "User deleted successfully.")
+        return redirect('users')
+
+    return render(request, 'dashboard/delete_user.html', {'user': user})
+
+def add_user(request):
+    if request.method == 'POST':
+        form = UserCreateForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.save()
+            messages.success(request, f"User {user.username} created successfully!")
+            return redirect('users')
+    else:
+        form = UserCreateForm()
+
+    return render(request, 'dashboard/add_user.html', {'form': form})
