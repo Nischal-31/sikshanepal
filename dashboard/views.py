@@ -1,6 +1,7 @@
 from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
+import requests
 
 from backend.models import Course
 from blog.forms import PostForm
@@ -118,3 +119,36 @@ def dashboard_contact_change_status(request, id, new_status):
     enquiry.status = new_status
     enquiry.save()
     return redirect('dashboard_contact_detail', id=id)
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+# cOUrse/models.py code for reference
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_course_list_view(request):
+    # Retrieve token from session
+    token = request.session.get('auth_token')  # Check the correct key here
+    if not token:
+        print("No token found in session.")
+        return JsonResponse({'error': 'Authentication required, please login first.'}, status=401)
+
+    headers = {
+        'Authorization': f'Token {token}'  # Include token in headers
+    }
+
+    print(f"Sending request with headers: {headers}")  # Debugging
+    
+    # Make the API request with the token
+    api_url = 'http://127.0.0.1:8000/backend/course-list/'
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        courses = response.json()  # API response with courses
+        print("API Response:", courses)  # Debugging
+    elif response.status_code == 401:
+        print("Unauthorized access, check your token.")
+        courses = []
+    else:
+        print(f"Error fetching courses: {response.status_code}, {response.text}")  # Debugging
+        courses = []
+
+    return render(request, 'dashboard/manage_courses.html', {'courses': courses})
