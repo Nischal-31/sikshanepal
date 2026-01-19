@@ -1367,7 +1367,6 @@ def note_list_view(request, chapter_id):
         'chapter': chapter
     })
 
-
 @login_required
 def note_detail_view(request, note_id):
     token = request.session.get('auth_token')
@@ -1395,7 +1394,6 @@ def note_detail_view(request, note_id):
         'chapter_id': chapter_id,
         'is_pdf': is_pdf,
     })
-
 
 @login_required
 def note_create_view(request, chapter_id):
