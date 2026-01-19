@@ -41,6 +41,12 @@ urlpatterns=[
     path('syllabus-update/<str:syllabus_id>/', views.dashboard_syllabus_update_view, name='dashboard_syllabus_update'),
     path('syllabus-delete/<str:syllabus_id>/', views.dashboard_syllabus_delete_view, name='dashboard_syllabus_delete'),
 
+    ## Past Question Management URLs
+    path('subject/<str:subject_id>/pastQuestions/', views.dashboard_pastQuestion_list_view, name='dashboard_manage_pastQuestions'),
+    path('pastQuestion-detail/<str:pastQuestion_id>/', views.dashboard_pastQuestion_detail_view, name='dashboard_pastQuestion_detail'),
+    path('pastQuestion-create/<str:subject_id>/', views.dashboard_pastQuestion_create_view, name='dashboard_pastQuestion_create'),
+    path('pastQuestion-update/<str:pastQuestion_id>/', views.dashboard_pastQuestion_update_view, name='dashboard_pastQuestion_update'),
+    path('pastQuestion-delete/<str:pastQuestion_id>/', views.dashboard_pastQuestion_delete_view, name='dashboard_pastQuestion_delete'),
 
     ## User Management URLs
     path('users/',views.manage_users,name='users'),

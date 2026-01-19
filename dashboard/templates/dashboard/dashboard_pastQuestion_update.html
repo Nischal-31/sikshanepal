@@ -1,0 +1,96 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Update Past Question | SikshaNepal{% endblock %}
+{% block page_heading %}Update Past Question{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'dashboard_manage_pastQuestions' subject.id %}" 
+           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Past Question List
+        </a>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600">Dashboard</a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-gray-500">{{ subject.name }}</span>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-gray-700">Update Past Question</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Form Card -->
+    <div class="bg-white shadow-sm rounded-xl p-6">
+        <h2 class="text-xl font-semibold mb-6">Update PastQuestion: {{ pastQuestion.title }}</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Year -->
+            <div class="mb-4">
+                <label for="year" class="block text-gray-700 font-medium mb-2">Past Question Year</label>
+                <input type="text" name="year" id="year" 
+                       class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                       value="{{ pastQuestion.year }}" required>
+            </div>
+
+            <!-- Title -->
+            <div class="mb-4">
+                <label for="title" class="block text-gray-700 font-medium mb-2">Past Question Title</label>
+                <input type="text" name="title" id="title" 
+                       class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                       value="{{ pastQuestion.title }}" required>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <label for="description" class="block text-gray-700 font-medium mb-2">Description</label>
+                <textarea name="description" id="description" rows="4"
+                          class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ pastQuestion.description }}</textarea>
+            </div>
+
+            <!-- File Upload -->
+            <div class="mb-6">
+                <label for="file" class="block text-gray-700 font-medium mb-2">Past Question File</label>
+                {% if pastQuestion.file %}
+                    <p class="mb-2 text-gray-600">Current File: <a href="{{ pastQuestion.file }}" target="_blank" class="text-blue-600 hover:underline">{{ pastQuestion.file}}</a></p>
+                {% endif %}
+                <input type="file" name="file" id="file" 
+                       class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+                <button type="submit" 
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition">
+                    Update Past Question
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

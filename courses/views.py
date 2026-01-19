@@ -996,7 +996,6 @@ def syllabus_list_view(request, subject_id):
         'subject_id': subject_id
     })
 
-
 @login_required
 def syllabus_detail_view(request, syllabus_id):
     token = request.session.get('auth_token')
@@ -1026,7 +1025,6 @@ def syllabus_detail_view(request, syllabus_id):
         'subject_id': subject_id,
         'is_pdf': is_pdf,
     })
-
 
 @login_required
 def syllabus_create_view(request, subject_id):

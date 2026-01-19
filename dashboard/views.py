@@ -1029,3 +1029,219 @@ def dashboard_syllabus_delete_view(request, syllabus_id):
 # Past Questions views can be added similarly
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
+def dashboard_pastQuestion_list_view(request, subject_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    print(f"Sending request with headers: {headers}")  # Debugging
+    api_url = f'http://127.0.0.1:8000/backend/pastQuestion-list/{subject_id}/'  # Adjust the URL as per your API endpoint
+     # Make the API request with the token
+    response = requests.get(api_url,headers=headers)
+
+    if response.status_code == 200:
+        pastQuestions = response.json()
+        print("API Response:", pastQuestions)  # Debugging
+    elif response.status_code == 401:
+        print("Unauthorized access, check your token.")
+        pastQuestions = []
+    else:
+        print(f"Error fetching pastQuestions: {response.status_code}, {response.text}")  # Debugging
+        pastQuestions = []
+     # ✅ Proper way to get subject_id
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        semester_id = subject.semester_id
+    except Subject.DoesNotExist:
+        subject = None
+        semester_id = None  # fallback
+    return render(request, 'dashboard/manage_pastQuestion.html', {'pastQuestions': pastQuestions, 'semester_id': semester_id, 'subject_id': subject_id,'subject': subject})
+
+def dashboard_pastQuestion_detail_view(request, pastQuestion_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f"http://127.0.0.1:8000/backend/pastQuestion-detail/{pastQuestion_id}/"
+
+    response = requests.get(api_url, headers=headers)
+    if response.status_code == 200:
+        pastQuestion = response.json()
+        file_url = pastQuestion.get('file', '')
+        is_pdf = file_url.lower().endswith('.pdf') if file_url else False
+    else:
+        return HttpResponseNotFound("Past Question not found")
+    
+    try:
+        subject_id = pastQuestion.get('subject')
+        subject = Subject.objects.get(id=subject_id)
+        semester_id = subject.semester_id
+    except Subject.DoesNotExist:
+        subject = None
+        semester_id = None  # fallback
+
+    return render(request, 'dashboard/dashboard_pastQuestion_detail.html', {
+        'pastQuestion': pastQuestion,
+        'is_pdf': is_pdf,
+        'subject': subject,
+        'semester_id': semester_id,
+    })
+
+def dashboard_pastQuestion_create_view(request, subject_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create past questions.")
+
+    # ✅ Fetch the subject for template context
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+
+        data = {
+            "title": request.POST.get("title"),
+            "year": request.POST.get("year"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,  # include subject id in data if API requires it
+        }
+
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files['file'] = file_upload
+
+        api_url = f"http://127.0.0.1:8000/backend/pastQuestion-create/{subject_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, data=data, files=files, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("dashboard_manage_pastQuestions", subject_id=subject_id)
+        else:
+            # ✅ Optional: handle API errors
+            error_message = "Failed to create past question. Please try again."
+            return render(request, "dashboard/dashboard_pastQuestion_create.html", {
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": error_message
+            })
+
+    return render(request, "dashboard/dashboard_pastQuestion_create.html", {
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+def dashboard_pastQuestion_update_view(request, pastQuestion_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update past questions.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+
+    # ✅ Fetch past question details
+    api_url = f"http://127.0.0.1:8000/backend/pastQuestion-detail/{pastQuestion_id}/"
+    response = requests.get(api_url, headers=headers)
+    pastQuestion = response.json() if response.status_code == 200 else {}
+
+    if not pastQuestion:
+        return HttpResponseNotFound("Past Question not found")
+
+    subject_id = pastQuestion.get('subject')
+
+    # ✅ Fetch subject for template breadcrumbs
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
+
+    if request.method == "POST":
+        data = {
+            "title": request.POST.get("title"),
+            "year": request.POST.get("year"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,
+        }
+
+        # Handle optional file upload
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files['file'] = file_upload
+
+        update_url = f"http://127.0.0.1:8000/backend/pastQuestion-update/{pastQuestion_id}/"
+        update_response = requests.post(update_url, data=data, files=files, headers=headers)
+
+        if update_response.status_code == 200:
+            return redirect("dashboard_manage_pastQuestions", subject_id=subject_id)
+        else:
+            return render(request, "dashboard/dashboard_pastQuestion_update.html", {
+                "pastQuestion": pastQuestion,
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": "Failed to update past question. Please try again."
+            })
+
+    return render(request, "dashboard/dashboard_pastQuestion_update.html", {
+        "pastQuestion": pastQuestion,
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+def dashboard_pastQuestion_delete_view(request, pastQuestion_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete past questions.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+
+    # ✅ Fetch past question details
+    url = f"http://127.0.0.1:8000/backend/pastQuestion-detail/{pastQuestion_id}/"
+    response = requests.get(url, headers=headers)
+    pastQuestion = response.json() if response.status_code == 200 else {}
+
+    if not pastQuestion:
+        return HttpResponseNotFound("Past Question not found")
+
+    subject_id = pastQuestion.get('subject')  # For redirect/back link
+
+    # ✅ Fetch subject for template breadcrumbs
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
+
+    if request.method == 'POST':
+        delete_url = f"http://127.0.0.1:8000/backend/pastQuestion-delete/{pastQuestion_id}/"
+        delete_response = requests.delete(delete_url, headers=headers)
+
+        if delete_response.status_code in [200, 204]:
+            return redirect('dashboard_manage_pastQuestions', subject_id=subject_id)
+        else:
+            error_message = "Failed to delete past question. Please try again."
+            return render(request, 'dashboard/dashboard_pastQuestion_delete.html', {
+                'pastQuestion': pastQuestion,
+                'subject': subject,
+                'subject_id': subject_id,
+                'error': error_message
+            })
+
+    return render(request, 'dashboard/dashboard_pastQuestion_delete.html', {
+        'pastQuestion': pastQuestion,
+        'subject': subject,
+        'subject_id': subject_id
+    })
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# Chapter views can be added similarly
+#-------------------------------------------------------------------------------------------------------------------------------------------------
