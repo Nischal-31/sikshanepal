@@ -849,7 +849,6 @@ def pastQuestion_create_view(request, subject_id):
         "subject_id": subject_id
     })
 
-
 @login_required
 def pastQuestion_update_view(request, pastQuestion_id):
     if not is_admin(request):
@@ -910,7 +909,6 @@ def pastQuestion_update_view(request, pastQuestion_id):
         "subject_id": subject_id
     })
 
-
 @login_required
 def pastQuestion_delete_view(request, pastQuestion_id):
     if not is_admin(request):
@@ -958,8 +956,7 @@ def pastQuestion_delete_view(request, pastQuestion_id):
         'subject': subject,
         'subject_id': subject_id
     })
-
-   
+ 
 #-------------------------------------------------------------------------------------------------------------------
 #                       SYLLABUS VIEWS 
 #-------------------------------------------------------------------------------------------------------------------

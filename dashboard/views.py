@@ -1245,3 +1245,202 @@ def dashboard_pastQuestion_delete_view(request, pastQuestion_id):
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # Chapter views can be added similarly
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_chapter_list_view(request, subject_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    print(f"Sending request with headers: {headers}")
+
+    api_url = f"http://127.0.0.1:8000/backend/chapter-list/{subject_id}/"
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        chapters = response.json()
+        print("API Response:", chapters)
+    elif response.status_code == 401:
+        print("Unauthorized access, check your token.")
+        chapters = []
+    else:
+        print(f"Error fetching chapters: {response.status_code}, {response.text}")
+        chapters = []
+
+    # ✅ Fetch subject info for template
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        semester_id = subject.semester_id
+    except Subject.DoesNotExist:
+        subject = None
+        semester_id = None
+
+    return render(request, 'dashboard/manage_chapters.html', {
+        'chapters': chapters,
+        'subject': subject,
+        'semester_id': semester_id,
+        'subject_id': subject_id,
+    })
+
+def dashboard_chapter_detail_view(request, chapter_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    print(f"Sending request with headers: {headers}")
+
+    chapter_url = f"http://127.0.0.1:8000/backend/chapter-detail/{chapter_id}/"
+    response = requests.get(chapter_url, headers=headers)
+    if response.status_code == 200:
+        chapter = response.json()
+    else:
+        return HttpResponseNotFound("Chapter not found")
+    # ✅ Get subject_id from chapter data
+    subject_id = chapter.get('subject')
+    if not subject_id:
+        return HttpResponseNotFound("Subject not found for this chapter")
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        semester_id = subject.semester_id
+    except Subject.DoesNotExist:
+        subject = None
+        semester_id = None
+
+    return render(request, 'dashboard/dashboard_chapter_detail.html', {
+        'chapter': chapter,
+        'subject_id': subject_id,
+        'subject': subject,
+        'semester_id': semester_id,
+    })
+
+def dashboard_chapter_create_view(request, subject_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create chapters.")
+
+    # ✅ Fetch the subject to show context in template
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+        
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "order": int(request.POST.get("order", 1))  # Convert to int, default to 1
+        }
+        
+        # ✅ Fixed API URL - should be chapter-create, not chapter-update
+        api_url = f"http://127.0.0.1:8000/backend/chapter-create/{subject_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, json=data, headers=headers)   
+
+        if response.status_code == 201:
+            return redirect("dashboard_manage_chapters", subject_id=subject_id)
+        else:
+            # ✅ Handle API errors (optional)
+            error_message = "Failed to create chapter. Please try again."
+            return render(request, "dashboard/dashboard_chapter_create.html", {
+                "subject_id": subject_id,
+                "subject": subject,
+                "error": error_message
+            })
+    
+    return render(request, "dashboard/dashboard_chapter_create.html", {
+        "subject_id": subject_id,
+        "subject": subject,  # ✅ Send subject to template for breadcrumb
+    })
+    
+def dashboard_chapter_update_view(request, chapter_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update chapters.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    api_url = f"http://127.0.0.1:8000/backend/chapter-detail/{chapter_id}/"
+    response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
+    chapter = response.json() if response.status_code == 200 else {}
+
+    subject_id = chapter.get('subject')
+
+    # ✅ DEFINE DEFAULTS (IMPORTANT)
+    subject = None
+    semester_id = None
+
+    if subject_id:
+        try:
+            subject = Subject.objects.get(id=subject_id)
+            semester_id = subject.semester_id
+        except Subject.DoesNotExist:
+            pass
+
+    if request.method == "POST":
+        order_value = request.POST.get("order")
+
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,
+            "order": int(order_value) if order_value else 0,
+        }
+
+        update_url = f"http://127.0.0.1:8000/backend/chapter-update/{chapter_id}/"
+        update_response = requests.post(
+            update_url,
+            json=data,
+            headers={'Authorization': f'Token {token}'}
+        )
+
+        if update_response.status_code == 200:
+            return redirect("dashboard_manage_chapters", subject_id=subject_id)
+
+    return render(
+        request,
+        "dashboard/dashboard_chapter_update.html",
+        {
+            "chapter": chapter,
+            "subject_id": subject_id,
+            "subject": subject,
+            "semester_id": semester_id,
+        }
+    )
+
+def dashboard_chapter_delete_view(request, chapter_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete chapters.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    api_url = f"http://127.0.0.1:8000/backend/chapter-detail/{chapter_id}/"
+    response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
+    chapter = response.json() if response.status_code == 200 else {}
+
+    if not chapter:
+        return HttpResponseNotFound("Chapter not found")
+
+    subject_id = chapter.get('subject')  # ✅ Get subject_id before deletion
+
+    if request.method == "POST":
+        delete_url = f"http://127.0.0.1:8000/backend/chapter-delete/{chapter_id}/"
+        delete_response = requests.delete(delete_url, headers={'Authorization': f'Token {token}'})
+
+        if delete_response.status_code in [200, 204]:
+            return redirect("dashboard_manage_chapters", subject_id=subject_id)
+
+    return render(request, "dashboard/dashboard_chapter_delete.html", {
+        "chapter": chapter,
+        "subject_id": subject_id  # ✅ Include for cancel/back link
+    })
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# Notes views can be added similarly
+#-------------------------------------------------------------------------------------------------------------------------------------------------

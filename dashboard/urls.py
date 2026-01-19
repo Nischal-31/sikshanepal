@@ -48,6 +48,13 @@ urlpatterns=[
     path('pastQuestion-update/<str:pastQuestion_id>/', views.dashboard_pastQuestion_update_view, name='dashboard_pastQuestion_update'),
     path('pastQuestion-delete/<str:pastQuestion_id>/', views.dashboard_pastQuestion_delete_view, name='dashboard_pastQuestion_delete'),
 
+    ## Chapter Management URLs
+    path('subject/<str:subject_id>/chapters/', views.dashboard_chapter_list_view, name='dashboard_manage_chapters'),
+    path('chapter-detail/<str:chapter_id>/', views.dashboard_chapter_detail_view, name='dashboard_chapter_detail'),
+    path('chapter-create/<str:subject_id>/', views.dashboard_chapter_create_view, name='dashboard_chapter_create'),
+    path('chapter-update/<str:chapter_id>/', views.dashboard_chapter_update_view, name='dashboard_chapter_update'),
+    path('chapter-delete/<str:chapter_id>/', views.dashboard_chapter_delete_view, name='dashboard_chapter_delete'),
+
     ## User Management URLs
     path('users/',views.manage_users,name='users'),
     path('users/<int:user_id>/profile/', user_views.admin_view_user_profile, name='admin_view_user_profile'),
