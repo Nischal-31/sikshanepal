@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseForbidden, HttpResponseNotFound, JsonResponse
 import requests
 
-from backend.models import Course, Semester, Subject
+from backend.models import Chapter, Course, Semester, Subject
 from blog.forms import PostForm
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
@@ -1444,3 +1444,210 @@ def dashboard_chapter_delete_view(request, chapter_id):
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # Notes views can be added similarly
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_note_list_view(request, chapter_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    print(f"Sending request with headers: {headers}")  # Debugging
+
+    api_url = f'http://127.0.0.1:8000/backend/note-list/{chapter_id}/'
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        notes = response.json()
+        print("API Response:", notes)  # Debugging
+    elif response.status_code == 401:
+        print("Unauthorized access, check your token.")
+        notes = []
+    else:
+        print(f"Error fetching notes: {response.status_code}, {response.text}")  # Debugging
+        notes = []
+
+    # ✅ Fetch subject_id from chapter
+    try:
+        chapter = Chapter.objects.get(id=chapter_id)
+        subject_id = chapter.subject_id
+    except Chapter.DoesNotExist:
+        chapter = None
+        subject_id = None
+
+    return render(request, 'dashboard/manage_notes.html', {
+        'notes': notes,
+        'chapter_id': chapter_id,
+        'subject_id': subject_id,
+        'chapter': chapter
+    })
+
+def dashboard_note_detail_view(request, note_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
+
+    response = requests.get(api_url, headers=headers)
+    if response.status_code != 200:
+        return HttpResponseNotFound("Note not found")
+
+    note = response.json()
+
+    # File handling
+    file_url = note.get('file', '')
+    is_pdf = file_url.lower().endswith('.pdf') if file_url else False
+
+    # ✅ Get chapter_id from note API
+    chapter_id = note.get('chapter')
+    if not chapter_id:
+        return HttpResponseNotFound("Chapter not found for this note")
+
+    # ✅ Fetch Chapter object correctly
+    try:
+        chapter = Chapter.objects.select_related('subject').get(id=chapter_id)
+        subject = chapter.subject
+        semester_id = subject.semester_id if subject else None
+    except Chapter.DoesNotExist:
+        return HttpResponseNotFound("Chapter does not exist")
+
+    return render(
+        request,
+        'dashboard/dashboard_note_detail.html',
+        {
+            'note': note,
+            'chapter': chapter,
+            'chapter_id': chapter_id,
+            'subject': subject,
+            'semester_id': semester_id,
+            'is_pdf': is_pdf,
+        }
+    )
+
+def dashboard_note_create_view(request, chapter_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create notes.")
+
+    # ✅ Fetch Chapter + Subject in ONE query
+    try:
+        chapter = Chapter.objects.select_related('subject').get(id=chapter_id)
+        subject = chapter.subject
+        semester_id = subject.semester_id if subject else None
+    except Chapter.DoesNotExist:
+        return HttpResponseNotFound("Chapter not found.")
+
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "chapter": chapter_id,
+        }
+
+        files = {}
+        if 'file' in request.FILES:
+            files['file'] = request.FILES['file']
+
+        api_url = f"http://127.0.0.1:8000/backend/note-create/{chapter_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, data=data, files=files, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("dashboard_manage_notes", chapter_id=chapter_id)
+
+        return render(
+            request,
+            "dashboard/dashboard_note_create.html",
+            {
+                "chapter": chapter,
+                "subject": subject,
+                "semester_id": semester_id,
+                "error": "Failed to create note. Please try again.",
+            }
+        )
+
+    return render(
+        request,
+        "dashboard/dashboard_note_create.html",
+        {
+            "chapter": chapter,
+            "subject": subject,
+            "semester_id": semester_id,
+        }
+    )
+
+def dashboard_note_update_view(request, note_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update notes.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+
+    # ✅ Get note details
+    api_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
+    response = requests.get(api_url, headers=headers)
+    note = response.json() if response.status_code == 200 else {}
+
+    chapter_id = note.get('chapter')  # For redirecting after update
+
+    if request.method == "POST":
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "chapter": chapter_id,
+        }
+
+        # Handle optional file upload
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files["file"] = (file_upload.name, file_upload, file_upload.content_type)
+
+        update_url = f"http://127.0.0.1:8000/backend/note-update/{note_id}/"
+        update_response = requests.post(update_url, data=data, files=files, headers=headers)
+
+        if update_response.status_code == 200:
+            return redirect("dashboard_manage_notes", chapter_id=chapter_id)
+
+    return render(request, "dashboard/dashboard_note_update.html", {"note": note, "chapter_id": chapter_id})
+
+def dashboard_note_delete_view(request, note_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete notes.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+
+    # ✅ Fetch note data
+    detail_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
+    response = requests.get(detail_url, headers=headers)
+    note = response.json() if response.status_code == 200 else {}
+
+    if not note:
+        return HttpResponseNotFound("Note not found")
+
+    chapter_id = note.get('chapter')  # ✅ Get chapter_id before deletion
+
+    if request.method == 'POST':
+        # DELETE request
+        delete_url = f"http://127.0.0.1:8000/backend/note-delete/{note_id}/"
+        delete_response = requests.delete(delete_url, headers=headers)
+
+        if delete_response.status_code in [200, 204]:
+            return redirect('dashboard_manage_notes', chapter_id=chapter_id)
+
+    return render(request, 'dashboard/dashboard_note_delete.html', {
+        'note': note,
+        'chapter_id': chapter_id
+    })
+

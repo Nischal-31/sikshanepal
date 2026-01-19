@@ -55,6 +55,13 @@ urlpatterns=[
     path('chapter-update/<str:chapter_id>/', views.dashboard_chapter_update_view, name='dashboard_chapter_update'),
     path('chapter-delete/<str:chapter_id>/', views.dashboard_chapter_delete_view, name='dashboard_chapter_delete'),
 
+    # Note URLs
+    path('chapter/<str:chapter_id>/notes', views.dashboard_note_list_view, name='dashboard_manage_notes'),
+    path('note-detail/<str:note_id>/', views.dashboard_note_detail_view, name='dashboard_note_detail'),
+    path('note-create/<int:chapter_id>', views.dashboard_note_create_view, name='dashboard_note_create'),
+    path('note-update/<str:note_id>/', views.dashboard_note_update_view, name='dashboard_note_update'),
+    path('note-delete/<str:note_id>/', views.dashboard_note_delete_view, name='dashboard_note_delete'),
+
     ## User Management URLs
     path('users/',views.manage_users,name='users'),
     path('users/<int:user_id>/profile/', user_views.admin_view_user_profile, name='admin_view_user_profile'),
