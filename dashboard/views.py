@@ -1,12 +1,13 @@
 from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseForbidden, HttpResponseNotFound, JsonResponse
 import requests
 
-from backend.models import Course
+from backend.models import Course, Semester
 from blog.forms import PostForm
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
+from courses.views import is_admin
 from user.signals import User
 # Create your views here.
 
@@ -152,3 +153,483 @@ def dashboard_course_list_view(request):
         courses = []
 
     return render(request, 'dashboard/manage_courses.html', {'courses': courses})
+
+def dashboard_course_detail_view(request, course_id):
+    token = request.user.auth_token.key  # if using DRF token auth
+
+    headers = {
+        'Authorization': f'Token {token}',
+    }
+
+    course_api_url = f"http://127.0.0.1:8000/backend/course-detail/{course_id}/"
+    course_response = requests.get(course_api_url, headers=headers)
+    course = course_response.json() if course_response.status_code == 200 else None
+
+    semester_api_url = "http://127.0.0.1:8000/backend/semester-list/"
+    semester_response = requests.get(semester_api_url, headers=headers)
+    semesters = semester_response.json() if semester_response.status_code == 200 else []
+    filtered_semesters = [s for s in semesters if s['course'] == course_id]
+
+    # Fix image URLs as before
+    if course and course.get('image'):
+        course['image'] = request.build_absolute_uri(course['image'])
+    if course and course.get('instructor') and course['instructor'].get('image'):
+        course['instructor']['image'] = request.build_absolute_uri(course['instructor']['image'])
+
+    return render(request, 'dashboard/dashboard_course_detail.html', {'course': course, 'semesters': filtered_semesters})
+
+def dashboard_course_create_view(request):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create courses.")
+    if request.method == "POST":
+        # Make sure to include token for authentication if your API requires it
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+        data = {
+            "name": request.POST.get("name"),
+            "description": request.POST.get("description"),
+        }
+        files = {
+            'image': request.FILES.get('image')
+        } if 'image' in request.FILES else {}
+
+        api_url = "http://127.0.0.1:8000/backend/course-create/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, data=data, files=files, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("courses")
+        
+    return render(request, "dashboard/dashboard_course_create.html")
+
+def dashboard_course_update_view(request, course_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update courses.")
+    
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    # Get current course data
+    api_url = f"http://127.0.0.1:8000/backend/course-detail/{course_id}/"
+    response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
+
+    if response.status_code == 200:
+        course = response.json()
+    else:
+        return redirect("course-list")
+
+    if request.method == "POST":
+        # Separate text fields and file
+        data = {
+            "name": request.POST.get("name"),
+            "description": request.POST.get("description"),
+        }
+
+        files = {}
+        image_file = request.FILES.get("image")
+        if image_file:
+            files["image"] = (image_file.name, image_file, image_file.content_type)
+
+        # Send multipart/form-data request
+        update_url = f"http://127.0.0.1:8000/backend/course-update/{course_id}/"
+        update_response = requests.post(update_url, data=data, files=files, headers={'Authorization': f'Token {token}'})
+
+        if update_response.status_code == 200:
+            return redirect("courses")
+        else:
+            return render(request, "dashboard/dashboard_course_update.html", {
+                "course": course,
+                "error": f"Failed to update course. {update_response.text}"
+            })
+
+    return render(request, "dashboard/dashboard_course_update.html", {"course": course})
+
+def dashboard_course_delete_view(request, course_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete courses.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+    # Get the course to be deleted
+    api_url = f"http://127.0.0.1:8000/backend/course-detail/{course_id}/"
+    response = requests.get(api_url,headers={'Authorization': f'Token {token}'})
+
+    if response.status_code == 200:
+        course = response.json()
+    else:
+        return redirect("courses")
+
+    if request.method == "POST":
+        # Send DELETE request to delete the course
+        delete_url = f"http://127.0.0.1:8000/backend/course-delete/{course_id}/"
+        delete_response = requests.delete(delete_url, headers={'Authorization': f'Token {token}'})
+
+        if delete_response.status_code == 204:
+            return redirect("courses")
+        else:
+            return render(request, "dashboard/dashboard_course_delete.html", {"course": course, "error": "Failed to delete course."})
+
+    return render(request, "dashboard/dashboard_course_delete.html", {"course": course})
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+# semester/views.py code for reference
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_semester_list_view(request, course_id):
+    # Retrieve token from session
+    token = request.session.get('auth_token')  # Check the correct key here
+    if not token:
+        print("No token found in session.")
+        return JsonResponse({'error': 'Authentication required, please login first.'}, status=401)
+
+    headers = {
+        'Authorization': f'Token {token}'  # Include token in headers
+    }
+
+    print(f"Sending request with headers: {headers}")  # Debugging
+    # Fetch semesters only for the selected course
+    semester_api_url = f"http://127.0.0.1:8000/backend/semester-list/{course_id}"
+    response = requests.get(semester_api_url, headers=headers)
+    # Check the response status
+    if response.status_code == 200:
+        semesters = response.json()  # API response with courses
+        print("API Response:", semesters)  # Debugging
+    elif response.status_code == 401:
+        print("Unauthorized access, check your token.")
+        semesters = []
+    else:
+        print(f"Error fetching semesters: {response.status_code}, {response.text}")  # Debugging
+        semesters = []
+
+    return render(request, 'dashboard/manage_semester.html', {'semesters': semesters, 'course_id': course_id})
+
+def dashboard_semester_detail_view(request, semester_id):
+    token = request.user.auth_token.key  # Assuming DRF Token Auth
+
+    headers = {
+        'Authorization': f'Token {token}',
+    }
+    url = f"http://127.0.0.1:8000/backend/semester-detail/{semester_id}/"
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        semester = response.json()
+        course_id = semester.get('course')  # ✅ Get course ID from API data
+
+        return render(request, 'dashboard/dashboard_semester_detail.html', {
+            'semester': semester,
+            'course_id': course_id  # ✅ Pass to template
+        })
+    else:
+        return render(request, 'dashboard/dashboard_semester_detail.html', {
+            'error': 'Semester not found'
+        })
+
+def dashboard_semester_create_view(request, course_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create semesters.")
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+        data = {
+            "number": request.POST.get("number"),
+            "description": request.POST.get("description"),
+            "course": course_id  # include course id in data if API requires it
+        }
+        api_url = f"http://127.0.0.1:8000/backend/semester-create/{course_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, json=data, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("dashboard_manage_semesters", course_id=course_id)
+        else:
+            # You can handle errors here or pass message to template
+            pass
+
+    return render(request, "dashboard/dashboard_semester_create.html", {
+        "course_id": course_id,
+    })
+
+def dashboard_semester_update_view(request, semester_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update semester.")
+    
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f"http://127.0.0.1:8000/backend/semester-detail/{semester_id}/"
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        semester = response.json()
+        course_id = semester.get('course')  # ✅ Extract course_id from API
+    else:
+        return redirect("courses")  # fallback redirect if fetch fails
+
+    if request.method == "POST":
+        data = {
+            "number": request.POST.get("number"),
+            "description": request.POST.get("description"),
+        }
+
+        update_url = f"http://127.0.0.1:8000/backend/semester-update/{semester_id}/"
+        update_response = requests.post(update_url, json=data, headers=headers)
+
+        if update_response.status_code == 200:
+            return redirect("dashboard_manage_semesters", course_id=course_id)  # ✅ Pass course_id to reverse
+        else:
+            return render(request, "dashboard/dashboard_semester_update.html", {
+                "semester": semester,
+                "course_id": course_id,
+                "error": "Failed to update semester."
+            })
+
+    return render(request, "dashboard/dashboard_semester_update.html", {
+        "semester": semester,
+        "course_id": course_id
+    })
+ 
+def dashboard_semester_delete_view(request, semester_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete semester.")
+    
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+    
+    headers = {'Authorization': f'Token {token}'}
+
+    # Fetch semester data
+    url = f"http://127.0.0.1:8000/backend/semester-detail/{semester_id}/"
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        return render(request, 'dashboard/dashboard_semester_delete.html', {
+            'error': 'Semester not found.',
+            'semester': None
+        })
+
+    semester = response.json()
+    course_id = semester.get('course')
+
+    if request.method == 'POST':
+        # DELETE only happens on POST
+        delete_url = f"http://127.0.0.1:8000/backend/semester-delete/{semester_id}/"
+        delete_response = requests.delete(delete_url, headers=headers)
+
+        if delete_response.status_code in [200, 204]:
+            return redirect('dashboard_manage_semesters', course_id=course_id)
+        else:
+            return render(request, 'dashboard/dashboard_semester_delete.html', {
+                'error': 'Failed to delete semester.',
+                'semester': semester,
+                'course_id': course_id
+            })
+
+    # GET request: just render confirmation page
+    return render(request, 'dashboard/dashboard_semester_delete.html', {
+        'semester': semester,
+        'course_id': course_id
+    })
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+# subject/views.py code for reference
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_subject_list_view(request,semester_id):
+    # Retrieve token from session
+    token = request.session.get('auth_token')  # Check the correct key here
+    if not token:
+        print("No token found in session.")
+        return JsonResponse({'error': 'Authentication required, please login first.'}, status=401)
+
+    headers = {
+        'Authorization': f'Token {token}'  # Include token in headers
+    }
+    print(f"Sending request with headers: {headers}")  # Debugging
+
+    api_url = f'http://127.0.0.1:8000/backend/subject-list/{semester_id}/'  # Adjust the URL as per your API endpoint
+    # Make the API request with the token
+    response = requests.get(api_url,headers=headers)
+
+    if response.status_code == 200:
+        subjects = response.json()
+        print("API Response:", subjects)  # Debugging
+    elif response.status_code == 401:
+        print("Unauthorized access, check your token.")
+        subjects = []
+    else:
+        print(f"Error fetching subjects: {response.status_code}, {response.text}")  # Debugging
+        subjects = []
+     # ✅ Proper way to get course_id
+    try:
+        semester = Semester.objects.get(id=semester_id)
+        course_id = semester.course_id
+    except Semester.DoesNotExist:
+        course_id = None  # fallback
+    return render(request, 'dashboard/manage_subject.html', {'subjects': subjects, 'semester_id': semester_id, 'course_id': course_id})
+
+def dashboard_subject_detail_view(request, subject_id):
+    # Retrieve token from session
+    token = request.session.get('auth_token')  # Check the correct key here
+    if not token:
+        print("No token found in session.")
+        return JsonResponse({'error': 'Authentication required, please login first.'}, status=401)
+
+    headers = {
+        'Authorization': f'Token {token}'  # Include token in headers
+    }
+    print(f"Sending request with headers: {headers}")  # Debugging
+
+    # Adjust the API URL for the subject
+    subject_url = f"http://127.0.0.1:8000/backend/subject-detail/{subject_id}/"  # Adjust as per your API endpoint
+    notes_url = f"http://127.0.0.1:8000/backend/note-list/{subject_id}"  # API for notes
+    past_questions_url = f"http://127.0.0.1:8000/backend/pastQuestion-list/{subject_id}"  # API for past questions
+    syllabus_url = f"http://127.0.0.1:8000/backend/syllabus-detail-by-subject/{subject_id}/" #API for Syllabus
+    lab_url = f"http://127.0.0.1:8000/backend/lab-list/{subject_id}" #API for Labs
+
+    # Fetch subject details
+    subject_response = requests.get(subject_url, headers=headers)
+    if subject_response.status_code == 200:
+        subject = subject_response.json()  # Fetch subject data
+    else:
+        return render(request, 'dashboard/dashboard_subject_detail.html', {'error': 'Subject not found'})
+
+    # Fetch semester_id from subject data
+    semester_id = subject.get('semester')
+    if not semester_id:
+        return render(request, 'dashboard/dashboard_subject_detail.html', {'error': 'Semester not found for this subject'})
+    
+    # Fetch syllabus
+    syllabus = None
+    syllabus_response = requests.get(syllabus_url, headers=headers)
+    if syllabus_response.status_code == 200:
+        syllabus = syllabus_response.json()
+
+    # Fetch notes
+    notes_response = requests.get(notes_url)
+    notes = notes_response.json() if notes_response.status_code == 200 else []
+
+    # Fetch past questions
+    past_questions_response = requests.get(past_questions_url)
+    past_questions = past_questions_response.json() if past_questions_response.status_code == 200 else []
+
+    # Fetch labs
+    lab_response = requests.get(lab_url)
+    labs = lab_response.json() if lab_response.status_code == 200 else []
+
+    # Fix file URLs for notes
+    for note in notes:
+        note['file'] = request.build_absolute_uri(note['file'])
+
+    for pq in past_questions:
+        pq['file'] = request.build_absolute_uri(pq['file'])
+
+    for lab in labs:
+        lab['file'] = request.build_absolute_uri(lab['file'])
+
+
+
+    return render(request, 'dashboard/dashboard_subject_detail.html', {
+        'subject': subject,
+        'notes': notes,
+        'past_questions': past_questions,
+        'syllabus':syllabus,
+        'semester_id': semester_id, # ✅ Pass semester_id to template
+        'labs': labs
+    })
+
+def subject_create_view(request, semester_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create subjects.")
+
+    # ✅ Fetch all semesters to show in the dropdown
+    semesters = Semester.objects.all()
+
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+
+        data = {
+            "name": request.POST.get("name"),
+            "code": request.POST.get("code"),
+        }
+
+        api_url = f"http://127.0.0.1:8000/backend/subject-create/{semester_id}/"  # Adjust if needed
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, json=data, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("subject-list", semester_id=semester_id)
+
+    return render(request, "subjects/subject_create.html", {
+        "semester_id": semester_id,
+        "semesters": semesters,  # ✅ send this to template
+    })
+
+def subject_update_view(request, subject_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update semester.")
+    
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+    
+    api_url = f"http://127.0.0.1:8000/backend/subject-detail/{subject_id}/"
+    response = requests.get(api_url,headers={'Authorization': f'Token {token}'})
+    subject = response.json() if response.status_code == 200 else {}
+
+    semester_id = subject.get('semester')  
+
+    if request.method == "POST":
+        credits_value = request.POST.get("credits")
+        data = {
+            "name": request.POST.get("name"),
+            "code": request.POST.get("code"),
+            "credits": int(credits_value) if credits_value else 0,  # Convert or set default
+            "description": request.POST.get("description"),
+            "semester": semester_id
+        }
+        update_url = f"http://127.0.0.1:8000/backend/subject-update/{subject_id}/"
+        response = requests.post(update_url, json=data,headers={'Authorization': f'Token {token}'})
+
+        if response.status_code == 200:
+            return redirect("subject-list", semester_id=semester_id)
+
+    return render(request, "subjects/subject_update.html", {"subject": subject, "semester_id": semester_id})
+
+def subject_delete_view(request, subject_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete subject.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    api_url = f"http://127.0.0.1:8000/backend/subject-detail/{subject_id}/"
+    response = requests.get(api_url, headers={'Authorization': f'Token {token}'})
+    subject = response.json() if response.status_code == 200 else {}
+    
+    if not subject:
+        return HttpResponseNotFound("Subject not found")
+
+    semester_id = subject.get('semester')  # ✅ Get semester_id before deletion
+
+    if request.method == "POST":
+        delete_url = f"http://127.0.0.1:8000/backend/subject-delete/{subject_id}/"
+        response = requests.delete(delete_url, headers={'Authorization': f'Token {token}'})
+
+        if response.status_code == 204:
+            return redirect("subject-list", semester_id=semester_id)
+
+    return render(request, "subjects/subject_delete.html", {
+        "subject": subject,
+        "semester_id": semester_id  # ✅ Include in context for cancel button
+    })

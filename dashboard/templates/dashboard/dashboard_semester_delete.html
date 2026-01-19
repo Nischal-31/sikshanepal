@@ -1,0 +1,60 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Delete Semester {{ semester.number }} | {{ course.name }}{% endblock %}
+{% block page_heading %}Delete Semester {{ semester.number }} - {{ course.name }}{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<nav class="flex mb-6 text-sm" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center space-x-1 md:space-x-3">
+    <li class="inline-flex items-center">
+      <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600">Dashboard</a>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <a href="{% url 'dashboard_manage_semesters' course_id %}" class="text-gray-600 hover:text-blue-600">Semesters</a>
+      </div>
+    </li>
+    <li aria-current="page">
+      <div class="flex items-center">
+        <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-gray-400">Delete Semester {{ semester.number }}</span>
+      </div>
+    </li>
+  </ol>
+</nav>
+
+<!-- Delete Confirmation Card -->
+<div class="max-w-md mx-auto bg-white shadow-lg rounded-xl border border-gray-200 p-6 text-center animate-fadeInUp">
+  <svg class="mx-auto mb-4 w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+  </svg>
+
+  <h2 class="text-xl font-semibold text-gray-800 mb-2">Are you sure?</h2>
+  <p class="text-gray-600 mb-6">You are about to delete Semester <strong>{{ semester.number }}</strong> for course <strong>{{ course.name }}</strong>. This action cannot be undone.</p>
+
+  {% if error %}
+    <p class="text-red-600 mb-4">{{ error }}</p>
+  {% endif %}
+
+  <form method="POST" class="flex justify-center gap-3">
+    {% csrf_token %}
+    <a href="{% url 'dashboard_manage_semesters' course_id %}" 
+       class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
+       Cancel
+    </a>
+    <button type="submit" 
+            class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition">
+      Delete
+    </button>
+</form>
+
+</div>
+
+{% endblock %}

@@ -5,7 +5,24 @@ from user import views as user_views
 
 urlpatterns=[
     path('',views.dashboard_home,name='home'),
+
+    ## Course Management URLs
     path('courses/',views.manage_courses,name='courses'),
+    path('course-detail/<str:course_id>/', views.dashboard_course_detail_view, name='dashboard_course_detail'),
+    path('course-create/', views.dashboard_course_create_view, name='dashboard_course_create'),
+    path('course-update/<str:course_id>/', views.dashboard_course_update_view, name='dashboard_course_update'),
+    path('course-delete/<str:course_id>/', views.dashboard_course_delete_view, name='dashboard_course_delete'),
+
+    ## Semester Management URLs
+    path('course/<str:course_id>/semesters/', views.dashboard_semester_list_view, name='dashboard_manage_semesters'),
+    path('semester-detail/<str:semester_id>/', views.dashboard_semester_detail_view, name='dashboard_semester_detail'),
+    path('semester-create/<int:course_id>', views.dashboard_semester_create_view, name='dashboard_semester_create'),
+    path('semester-update/<str:semester_id>/', views.dashboard_semester_update_view, name='dashboard_semester_update'),
+    path('semester-delete/<str:semester_id>/', views.dashboard_semester_delete_view, name='dashboard_semester_delete'),
+
+    ## Subject Management URLs
+    path('semester/<str:semester_id>/subjects/', views.dashboard_subject_list_view, name='dashboard_manage_subjects'),
+    path('subject-detail/<str:subject_id>/', views.dashboard_subject_detail_view, name='dashboard_subject_detail'),
 
     ## User Management URLs
     path('users/',views.manage_users,name='users'),

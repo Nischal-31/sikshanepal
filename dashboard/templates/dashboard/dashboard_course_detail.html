@@ -1,0 +1,125 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{{ course.name }} | Course Detail{% endblock %}
+{% block page_heading %}Course Detail{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+  <!-- Breadcrumb -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600">
+          Dashboard
+        </a>
+      </li>
+      <li class="flex items-center">
+        <svg class="w-5 h-5 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <a href="{% url 'courses' %}" class="text-gray-600 hover:text-blue-600">
+          Courses
+        </a>
+      </li>
+      <li class="flex items-center">
+        <svg class="w-5 h-5 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-gray-400">{{ course.name }}</span>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Course Card -->
+  <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+    <div class="flex flex-col md:flex-row gap-6">
+
+      <!-- Course Image -->
+      <div class="md:w-1/3">
+        {% if course.image %}
+          <img
+            src="{{ course.image }}"
+            alt="{{ course.name }}"
+            class="w-full h-48 object-cover rounded-lg border">
+        {% else %}
+          <div class="w-full h-48 flex items-center justify-center bg-gray-100 rounded-lg border text-gray-400">
+            No Image
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Course Info -->
+      <div class="md:w-2/3">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">
+          {{ course.name }}
+        </h2>
+
+        <p class="text-gray-600 mb-4">
+          {{ course.description|default:"No description provided." }}
+        </p>
+
+        {% if course.instructor %}
+          <div class="flex items-center gap-3 mt-4">
+            {% if course.instructor.image %}
+              <img
+                src="{{ course.instructor.image }}"
+                class="w-10 h-10 rounded-full object-cover border">
+            {% endif %}
+            <div>
+              <p class="text-sm font-semibold text-gray-700">
+                {{ course.instructor.name }}
+              </p>
+              <p class="text-xs text-gray-500">
+                Instructor
+              </p>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="mt-6 flex gap-3">
+          <a
+            href="{% url 'dashboard_course_update' course.id %}"
+            class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 text-sm font-medium">
+            Edit
+          </a>
+
+          <a
+            href="{% url 'dashboard_course_delete' course.id %}"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
+            Delete
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Semesters Section -->
+  <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+      Semesters
+    </h3>
+
+    {% if semesters %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for semester in semesters %}
+          <div class="border rounded-lg p-4 hover:shadow transition">
+            <h4 class="font-semibold text-gray-700">
+              {{ semester.name }}
+            </h4>
+            <p class="text-sm text-gray-500">
+              {{ semester.description|default:"No description" }}
+            </p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-500 text-sm">
+        No semesters added for this course yet.
+      </p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

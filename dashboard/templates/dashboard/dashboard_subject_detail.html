@@ -1,0 +1,124 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{{ subject.name }} | Subject Details{% endblock %}
+{% block page_heading %}Subject Details{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<nav class="flex mb-6 text-sm" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center space-x-1 md:space-x-3">
+    <li class="inline-flex items-center">
+      <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600 inline-flex items-center">
+        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+        </svg>
+        Dashboard
+      </a>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <a href="{% url 'dashboard_manage_subjects' semester_id %}" class="text-gray-600 hover:text-blue-600">
+          Subjects
+        </a>
+      </div>
+    </li>
+    <li aria-current="page">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-gray-400">{{ subject.name }}</span>
+      </div>
+    </li>
+  </ol>
+</nav>
+
+<!-- Header -->
+<div class="flex justify-between items-center mb-6">
+  <h2 class="text-xl font-semibold">{{ subject.name }}</h2>
+  <div class="flex gap-2">
+    <a href="#" 
+       class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+      </svg>
+      Edit Subject
+    </a>
+    <a href="#" 
+       class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      Manage Chapters
+    </a>
+  </div>
+</div>
+
+<!-- Syllabus Section -->
+{% if syllabus %}
+<div class="mb-6">
+  <h3 class="text-lg font-medium mb-2">Syllabus</h3>
+  <ul class="list-disc pl-5 text-gray-700">
+    {% for item in syllabus %}
+      <li>{{ item.title|default:"-" }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<!-- Notes Section -->
+<div class="mb-6">
+  <h3 class="text-lg font-medium mb-2">Notes</h3>
+  {% if notes %}
+  <ul class="space-y-2">
+    {% for note in notes %}
+      <li class="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-lg">
+        <span>{{ note.title }}</span>
+        <a href="{{ note.file }}" class="text-blue-600 hover:underline" target="_blank">Download</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p class="text-gray-400">No notes added yet.</p>
+  {% endif %}
+</div>
+
+<!-- Past Questions Section -->
+<div class="mb-6">
+  <h3 class="text-lg font-medium mb-2">Past Questions</h3>
+  {% if past_questions %}
+  <ul class="space-y-2">
+    {% for pq in past_questions %}
+      <li class="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-lg">
+        <span>{{ pq.title }}</span>
+        <a href="{{ pq.file }}" class="text-blue-600 hover:underline" target="_blank">Download</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p class="text-gray-400">No past questions added yet.</p>
+  {% endif %}
+</div>
+
+<!-- Labs Section -->
+<div class="mb-6">
+  <h3 class="text-lg font-medium mb-2">Labs</h3>
+  {% if labs %}
+  <ul class="space-y-2">
+    {% for lab in labs %}
+      <li class="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-lg">
+        <span>{{ lab.title }}</span>
+        <a href="{{ lab.file }}" class="text-blue-600 hover:underline" target="_blank">Download</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p class="text-gray-400">No labs added yet.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
