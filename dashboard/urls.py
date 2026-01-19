@@ -23,6 +23,24 @@ urlpatterns=[
     ## Subject Management URLs
     path('semester/<str:semester_id>/subjects/', views.dashboard_subject_list_view, name='dashboard_manage_subjects'),
     path('subject-detail/<str:subject_id>/', views.dashboard_subject_detail_view, name='dashboard_subject_detail'),
+    path('subject-create/<str:semester_id>/', views.dashboard_subject_create_view, name='dashboard_subject_create'),
+    path('subject-update/<str:subject_id>/', views.dashboard_subject_update_view, name='dashboard_subject_update'),
+    path('subject-delete/<str:subject_id>/', views.dashboard_subject_delete_view, name='dashboard_subject_delete'),
+
+    ## Lab Management URLs
+    path('subject/<str:subject_id>/labs/', views.dashboard_lab_list_view, name='dashboard_manage_labs'),
+    path('lab-detail/<str:lab_id>/', views.dashboard_lab_detail_view, name='dashboard_lab_detail'),
+    path('lab-create/<str:subject_id>/', views.dashboard_lab_create_view, name='dashboard_lab_create'),
+    path('lab-update/<str:lab_id>/', views.dashboard_lab_update_view, name='dashboard_lab_update'),
+    path('lab-delete/<str:lab_id>/', views.dashboard_lab_delete_view, name='dashboard_lab_delete'),
+
+    ## Syllabus Management URLs
+    path('subject/<str:subject_id>/syllabuses/', views.dashboard_syllabus_list_view, name='dashboard_manage_syllabus'),
+    path('syllabus-detail/<str:syllabus_id>/', views.dashboard_syllabus_detail_view, name='dashboard_syllabus_detail'),
+    path('syllabus-create/<str:subject_id>/', views.dashboard_syllabus_create_view, name='dashboard_syllabus_create'),
+    path('syllabus-update/<str:syllabus_id>/', views.dashboard_syllabus_update_view, name='dashboard_syllabus_update'),
+    path('syllabus-delete/<str:syllabus_id>/', views.dashboard_syllabus_delete_view, name='dashboard_syllabus_delete'),
+
 
     ## User Management URLs
     path('users/',views.manage_users,name='users'),

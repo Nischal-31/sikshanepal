@@ -1,0 +1,70 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Lab Details | SikshaNepal{% endblock %}
+{% block page_heading %}Lab Details{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="#" 
+           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Lab List
+        </a>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600">Dashboard</a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-gray-500">{{ subject.name }}</span>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-gray-700">{{ lab.title }}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Lab Info Card -->
+    <div class="bg-white shadow-sm rounded-xl p-6">
+        <h2 class="text-2xl font-semibold mb-4">{{ lab.title }}</h2>
+
+        {% if lab.description %}
+            <p class="text-gray-700 mb-4">{{ lab.description }}</p>
+        {% endif %}
+
+        {% if lab.file %}
+            {% if is_pdf %}
+                <div class="mt-4 border rounded overflow-hidden">
+                    <iframe src="{{ lab.file }}" class="w-full h-[600px]" frameborder="0"></iframe>
+                </div>
+            {% else %}
+                <a href="{{ lab.file }}" target="_blank" 
+                   class="inline-block mt-4 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Download Lab File
+                </a>
+            {% endif %}
+        {% else %}
+            <p class="text-gray-400 mt-4">No file uploaded for this lab.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

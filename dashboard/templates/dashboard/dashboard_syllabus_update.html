@@ -1,0 +1,95 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Update Syllabus | {{ subject.name }}{% endblock %}
+{% block page_heading %}Update Syllabus{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-sm text-gray-500 mb-8 space-x-2">
+        <a href="{% url 'home' %}" class="hover:text-gray-700 font-medium">Dashboard</a>
+        <span>/</span>
+        <a href="#" class="hover:text-gray-700 font-medium">
+            Subjects: {{ semester.name }}
+        </a>
+        <span>/</span>
+        <a href="#" class="hover:text-gray-700 font-medium">
+            Syllabus
+        </a>
+        <span>/</span>
+        <span class="text-gray-400 font-semibold">Update</span>
+    </nav>
+
+    <div class="bg-white shadow-md rounded-xl border border-gray-100 overflow-hidden">
+
+        <!-- Header -->
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-lg font-semibold text-gray-800">Update Syllabus</h2>
+            <p class="text-sm text-gray-500">Modify the syllabus details below</p>
+        </div>
+
+        <!-- Update Form -->
+        <form method="POST" enctype="multipart/form-data" class="px-6 py-6 space-y-6">
+            {% csrf_token %}
+
+            {% if error %}
+            <div class="bg-red-50 text-red-700 px-4 py-3 rounded-lg">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- Objectives -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Objectives
+                </label>
+                <textarea
+                    name="objectives"
+                    rows="4"
+                    class="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2
+                           focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+                    placeholder="Enter syllabus objectives"
+                >{{ syllabus.objectives }}</textarea>
+            </div>
+
+            <!-- File Upload -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Upload Syllabus File (PDF)
+                </label>
+                {% if syllabus.file %}
+                    <p class="text-gray-500 mb-2">
+                        Current file: 
+                        <a href="{{ syllabus.file }}" target="_blank" class="hover:underline text-gray-700">
+                            View / Download
+                        </a>
+                    </p>
+                {% endif %}
+                <input
+                    type="file"
+                    name="file"
+                    class="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2"
+                >
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-between pt-6 border-t">
+                <a href="#"
+                   class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                   Cancel
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

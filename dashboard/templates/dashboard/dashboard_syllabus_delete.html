@@ -1,0 +1,55 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Delete Syllabus | {{ subject.name }}{% endblock %}
+{% block page_heading %}Delete Syllabus{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-sm text-gray-500 mb-8 space-x-2">
+        <a href="{% url 'home' %}" class="hover:text-gray-700 font-medium">Dashboard</a>
+        <span>/</span>
+        <a href="{% url 'dashboard_manage_subjects' semester.id %}" class="hover:text-gray-700 font-medium">
+            Subjects: {{ semester.name }}
+        </a>
+        <span>/</span>
+        <a href="{% url 'dashboard_manage_syllabus' subject.id %}" class="hover:text-gray-700 font-medium">
+            Syllabus
+        </a>
+        <span>/</span>
+        <span class="text-gray-400 font-semibold">Delete</span>
+    </nav>
+
+    <div class="bg-white shadow-md rounded-xl border border-gray-100 p-8 text-center">
+
+        <!-- Warning -->
+        <svg class="mx-auto mb-4 w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"/>
+        </svg>
+
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Are you sure?</h2>
+        <p class="text-gray-500 mb-6">This will permanently delete the syllabus for <strong>{{ subject.name }}</strong>. This action cannot be undone.</p>
+
+        <!-- Actions -->
+        <div class="flex justify-center gap-4">
+            <a href="{% url 'dashboard_manage_syllabus' subject.id %}"
+               class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+               Cancel
+            </a>
+
+            <form method="POST" action="" onsubmit="return confirm('Are you really sure?');">
+                {% csrf_token %}
+                <button type="submit"
+                        class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-red-600">
+                    Delete Syllabus
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

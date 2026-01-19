@@ -602,7 +602,6 @@ def lab_detail_view(request, lab_id):
         'is_pdf': is_pdf,
     })
 
-
 @login_required
 def lab_create_view(request, subject_id):
     if not is_admin(request):
@@ -647,7 +646,6 @@ def lab_create_view(request, subject_id):
         "subject": subject,
         "subject_id": subject_id
     })
-
 
 @login_required
 def lab_update_view(request, lab_id):
@@ -703,7 +701,6 @@ def lab_update_view(request, lab_id):
         "subject_id": subject_id
     })
 
-
 @login_required
 def lab_delete_view(request, lab_id):
     if not is_admin(request):
@@ -747,8 +744,6 @@ def lab_delete_view(request, lab_id):
         'subject': subject,
         'subject_id': subject_id
     })
-
-
 
 #-------------------------------------------------------------------------------------------------------------------
 #                       PAST QUESTIONS VIEWS 

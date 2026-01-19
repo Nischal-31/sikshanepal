@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseForbidden, HttpResponseNotFound, JsonResponse
 import requests
 
-from backend.models import Course, Semester
+from backend.models import Course, Semester, Subject
 from blog.forms import PostForm
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
@@ -28,7 +28,6 @@ def dashboard_home(request):
         ]
     }
     return render(request, 'dashboard/home.html', context)
-
 
 def manage_courses(request):
     courses = Course.objects.all()
@@ -545,7 +544,7 @@ def dashboard_subject_detail_view(request, subject_id):
         'labs': labs
     })
 
-def subject_create_view(request, semester_id):
+def dashboard_subject_create_view(request, semester_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to create subjects.")
 
@@ -567,14 +566,14 @@ def subject_create_view(request, semester_id):
         response = requests.post(api_url, json=data, headers=headers)
 
         if response.status_code == 201:
-            return redirect("subject-list", semester_id=semester_id)
+            return redirect("dashboard_manage_subjects", semester_id=semester_id)
 
-    return render(request, "subjects/subject_create.html", {
+    return render(request, "dashboard/dashboard_subject_create.html", {
         "semester_id": semester_id,
         "semesters": semesters,  # ✅ send this to template
     })
 
-def subject_update_view(request, subject_id):
+def dashboard_subject_update_view(request, subject_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to update semester.")
     
@@ -601,11 +600,11 @@ def subject_update_view(request, subject_id):
         response = requests.post(update_url, json=data,headers={'Authorization': f'Token {token}'})
 
         if response.status_code == 200:
-            return redirect("subject-list", semester_id=semester_id)
+            return redirect("dashboard_manage_subjects", semester_id=semester_id)
 
-    return render(request, "subjects/subject_update.html", {"subject": subject, "semester_id": semester_id})
+    return render(request, "dashboard/dashboard_subject_update.html", {"subject": subject, "semester_id": semester_id})
 
-def subject_delete_view(request, subject_id):
+def dashboard_subject_delete_view(request, subject_id):
     if not is_admin(request):
         return HttpResponseForbidden("You do not have permission to delete subject.")
 
@@ -627,9 +626,406 @@ def subject_delete_view(request, subject_id):
         response = requests.delete(delete_url, headers={'Authorization': f'Token {token}'})
 
         if response.status_code == 204:
-            return redirect("subject-list", semester_id=semester_id)
+            return redirect("dashboard_manage_subjects", semester_id=semester_id)
 
-    return render(request, "subjects/subject_delete.html", {
+    return render(request, "dashboard/dashboard_subject_delete.html", {
         "subject": subject,
         "semester_id": semester_id  # ✅ Include in context for cancel button
     })
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# labs views can be added similarly
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_lab_list_view(request, subject_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f'http://127.0.0.1:8000/backend/lab-list/{subject_id}/'
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        labs = response.json()
+    elif response.status_code == 401:
+        labs = []
+    else:
+        labs = []
+
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        semester_id = subject.semester_id
+    except Subject.DoesNotExist:
+        subject = None
+        semester_id = None
+
+    return render(request, 'dashboard/manage_labs.html', {
+        'labs': labs,
+        'semester_id': semester_id,
+        'subject_id': subject_id,
+        'subject': subject
+    })
+
+def dashboard_lab_detail_view(request, lab_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        lab = response.json()
+        file_url = lab.get('file', '')
+        is_pdf = file_url.lower().endswith('.pdf') if file_url else False
+    else:
+        return HttpResponseNotFound("Lab not found")
+
+    return render(request, 'dashboard/dashboard_lab_detail.html', {
+        'lab': lab,
+        'is_pdf': is_pdf,
+    })
+
+def dashboard_lab_create_view(request, subject_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create labs.")
+
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,
+        }
+
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files['file'] = file_upload
+
+        api_url = f"http://127.0.0.1:8000/backend/lab-create/{subject_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, data=data, files=files, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("dashboard_manage_labs", subject_id=subject_id)
+        else:
+            error_message = "Failed to create lab. Please try again."
+            return render(request, "dashboard/dashboard_lab_create.html", {
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": error_message
+            })
+
+    return render(request, "dashboard/dashboard_lab_create.html", {
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+def dashboard_lab_update_view(request, lab_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update labs.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
+    response = requests.get(api_url, headers=headers)
+    lab = response.json() if response.status_code == 200 else {}
+
+    if not lab:
+        return HttpResponseNotFound("Lab not found")
+
+    subject_id = lab.get('subject')
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
+
+    if request.method == "POST":
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "subject": subject_id,
+        }
+
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files['file'] = file_upload
+
+        update_url = f"http://127.0.0.1:8000/backend/lab-update/{lab_id}/"
+        update_response = requests.post(update_url, data=data, files=files, headers=headers)
+
+        if update_response.status_code == 200:
+            return redirect("dashboard_manage_labs", subject_id=subject_id)
+        else:
+            return render(request, "dashboard/dashboard_lab_update.html", {
+                "lab": lab,
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": "Failed to update lab. Please try again."
+            })
+
+    return render(request, "dashboard/dashboard_lab_update.html", {
+        "lab": lab,
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+def dashboard_lab_delete_view(request, lab_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete labs.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
+    response = requests.get(url, headers=headers)
+    lab = response.json() if response.status_code == 200 else {}
+
+    if not lab:
+        return HttpResponseNotFound("Lab not found")
+
+    subject_id = lab.get('subject')
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        subject = None
+
+    if request.method == 'POST':
+        delete_url = f"http://127.0.0.1:8000/backend/lab-delete/{lab_id}/"
+        delete_response = requests.delete(delete_url, headers=headers)
+
+        if delete_response.status_code in [200, 204]:
+            return redirect('dashboard_manage_labs', subject_id=subject_id)
+        else:
+            error_message = "Failed to delete lab. Please try again."
+            return render(request, 'dashboard/dashboard_lab_delete.html', {
+                'lab': lab,
+                'subject': subject,
+                'subject_id': subject_id,
+                'error': error_message
+            })
+
+    return render(request, 'dashboard/dashboard_lab_delete.html', {
+        'lab': lab,
+        'subject': subject,
+        'subject_id': subject_id
+    })
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# Syllabus views can be added similarly
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_syllabus_list_view(request, subject_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    api_url = f'http://127.0.0.1:8000/backend/syllabus-list/{subject_id}/'  # list endpoint
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        result = response.json()
+        # If API returns a list, grab first element or None
+        syllabus = result[0] if isinstance(result, list) and result else None
+        print("API Response:", result)
+    else:
+        syllabus = None
+
+    # Fetch subject for template breadcrumbs
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        semester_id = subject.semester_id
+    except Subject.DoesNotExist:
+        subject = None
+        semester_id = None
+
+    return render(request, 'dashboard/manage_syllabus.html', {
+        'syllabus': syllabus,
+        'subject': subject,
+        'semester_id': semester_id,
+        'subject_id': subject_id
+    })
+
+def dashboard_syllabus_detail_view(request, syllabus_id):
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    syllabus_url = f"http://127.0.0.1:8000/backend/syllabus-detail/{syllabus_id}/"
+
+    response = requests.get(syllabus_url, headers=headers)
+    if response.status_code == 200:
+        syllabus = response.json()
+    else:
+        return HttpResponseNotFound("Syllabus not found")
+
+    # Get subject_id for back button / breadcrumbs
+    subject_id = syllabus.get('subject')
+    if not subject_id:
+        return HttpResponseNotFound("Subject not found for this syllabus")
+
+    # Determine if the uploaded file is a PDF
+    file_url = syllabus.get('file', '')
+    is_pdf = file_url.lower().endswith('.pdf') if file_url else False
+
+    return render(request, 'dashboard/dashboard_syllabus_detail.html', {
+        'syllabus': syllabus,
+        'subject_id': subject_id,
+        'is_pdf': is_pdf,
+    })
+
+def dashboard_syllabus_create_view(request, subject_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to create syllabus.")
+
+    # ✅ Fetch subject for template breadcrumbs
+    try:
+        subject = Subject.objects.get(id=subject_id)
+    except Subject.DoesNotExist:
+        return HttpResponseNotFound("Subject not found.")
+
+    # ✅ Check if syllabus already exists
+    if hasattr(subject, "syllabus"):
+        return redirect("dashboard_syllabus_update", syllabus_id=subject.syllabus.id)
+
+    if request.method == "POST":
+        token = request.session.get('auth_token')
+        if not token:
+            return HttpResponseForbidden("Authentication token missing.")
+
+        data = {
+            "objectives": request.POST.get("objectives"),
+            "subject": subject_id,
+        }
+
+        # ✅ Handle optional file upload
+        files = {}
+        file_upload = request.FILES.get('file')
+        if file_upload:
+            files['file'] = file_upload
+
+        api_url = f"http://127.0.0.1:8000/backend/syllabus-create/{subject_id}/"
+        headers = {'Authorization': f'Token {token}'}
+        response = requests.post(api_url, data=data, files=files, headers=headers)
+
+        if response.status_code == 201:
+            return redirect("dashboard_manage_syllabus", subject_id=subject_id)
+        else:
+            error_message = "Failed to create syllabus. Please try again."
+            return render(request, "dashboard/dashboard_syllabus_create.html", {
+                "subject": subject,
+                "subject_id": subject_id,
+                "error": error_message
+            })
+
+    return render(request, "dashboard/dashboard_syllabus_create.html", {
+        "subject": subject,
+        "subject_id": subject_id
+    })
+
+def dashboard_syllabus_update_view(request, syllabus_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to update syllabus.")
+    
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+    
+    # Fetch existing syllabus data
+    api_url = f"http://127.0.0.1:8000/backend/syllabus-detail/{syllabus_id}/"
+    response = requests.get(api_url, headers=headers)
+    syllabus = response.json() if response.status_code == 200 else {}
+
+    if not syllabus:
+        return HttpResponseNotFound("Syllabus not found.")
+
+    subject_id = syllabus.get('subject')
+
+    if request.method == "POST":
+        data = {
+            "objectives": request.POST.get("objectives", ""),
+            "subject": subject_id,
+        }
+
+        files = {}
+        file_upload = request.FILES.get("file")
+        if file_upload:
+            files["file"] = (file_upload.name, file_upload, file_upload.content_type)
+
+        update_url = f"http://127.0.0.1:8000/backend/syllabus-update/{syllabus_id}/"
+        update_response = requests.post(update_url, data=data, files=files, headers=headers)
+
+        if update_response.status_code == 200:
+            return redirect("dashboard_manage_syllabus", subject_id=subject_id)
+        else:
+            error_message = "Failed to update syllabus. Please try again."
+            return render(request, "dashboard/dashboard_syllabus_update.html", {
+                "syllabus": syllabus,
+                "subject_id": subject_id,
+                "error": error_message
+            })
+
+    return render(request, "dashboard/dashboard_syllabus_update.html", {
+        "syllabus": syllabus,
+        "subject_id": subject_id
+    })
+
+def dashboard_syllabus_delete_view(request, syllabus_id):
+    if not is_admin(request):
+        return HttpResponseForbidden("You do not have permission to delete syllabus.")
+
+    token = request.session.get('auth_token')
+    if not token:
+        return HttpResponseForbidden("Authentication token missing.")
+
+    headers = {'Authorization': f'Token {token}'}
+
+    # Fetch syllabus data
+    url = f"http://127.0.0.1:8000/backend/syllabus-detail/{syllabus_id}/"
+    response = requests.get(url, headers=headers)
+    syllabus = response.json() if response.status_code == 200 else {}
+
+    if not syllabus:
+        return HttpResponseNotFound("Syllabus not found")
+    
+    subject_id = syllabus.get('subject')  # ✅ Get subject_id before deletion
+
+    if request.method == 'POST':
+        # Correct DELETE URL using syllabus_id
+        delete_url = f"http://127.0.0.1:8000/backend/syllabus-delete/{syllabus_id}/"
+        delete_response = requests.delete(delete_url, headers=headers)
+
+        if delete_response.status_code in [200, 204]:
+            return redirect('dashboard_manage_syllabus', subject_id=subject_id)
+
+    return render(request, 'dashboard/dashboard_syllabus_delete.html', {
+        'error': 'Failed to delete syllabus.',
+        'syllabus': syllabus,
+        'subject_id': subject_id
+    })
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+# Past Questions views can be added similarly
+#----------------------------------------------------------------------------------------------------------------------------------------------
+

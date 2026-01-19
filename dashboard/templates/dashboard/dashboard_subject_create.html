@@ -1,0 +1,55 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Add New Subject{% endblock %}
+{% block page_heading %}Create Subject{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 bg-white rounded shadow">
+
+  {% if error %}
+    <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Subject Name -->
+    <div class="mb-4">
+      <label for="name" class="block font-semibold mb-1">Subject Name</label>
+      <input type="text" name="name" id="name" value="{{ subject.name|default:'' }}"
+             class="w-full border px-3 py-2 rounded" required>
+    </div>
+
+    <!-- Subject Code -->
+    <div class="mb-4">
+      <label for="code" class="block font-semibold mb-1">Subject Code</label>
+      <input type="text" name="code" id="code" value="{{ subject.code|default:'' }}"
+             class="w-full border px-3 py-2 rounded" required>
+    </div>
+
+    <!-- Credits -->
+    <div class="mb-4">
+      <label for="credits" class="block font-semibold mb-1">Credits</label>
+      <input type="number" name="credits" id="credits" value="{{ subject.credits|default:0 }}"
+             class="w-full border px-3 py-2 rounded" min="0">
+    </div>
+
+    <!-- Description -->
+    <div class="mb-4">
+      <label for="description" class="block font-semibold mb-1">Description</label>
+      <textarea name="description" id="description" rows="4"
+                class="w-full border px-3 py-2 rounded">{{ subject.description|default:'' }}</textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="mt-6">
+      <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+        Create Subject
+      </button>
+      <a href="{% url 'semester-list' semester_id %}" class="ml-4 text-gray-600 hover:underline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
