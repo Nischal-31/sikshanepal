@@ -30,6 +30,7 @@ urlpatterns = [
 	path('user/', include('user.urls')),
     path('backend/', include('backend.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('quiz/',include('quiz.urls',namespace="quiz")),
 
     #path('user_api/', include('user_api.urls')),  # Separate user API
 ]

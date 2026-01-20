@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'subscription',
     'backend',
     'dashboard',
+    'quiz',
 
 ]
 

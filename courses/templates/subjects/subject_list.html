@@ -268,24 +268,28 @@
             </div>
           </div>
           <div class="subject-actions">
-            <a href="{% url 'chapter-list' subject.id %}" class="btn-modern btn-outline-primary-modern">
-              <i class="fas fa-book-open me-1"></i> Chapters
-            </a>
-            <a href="{% url 'subject-detail' subject.id %}" class="btn-modern btn-outline-primary-modern">
-              <i class="fas fa-info-circle me-1"></i> Details
-            </a>
-            {% if user.is_authenticated and user.user_type == 'admin' %}
-              <a href="{% url 'subject-update' subject.id %}" class="btn-modern btn-outline-warning-modern">
-                <i class="fas fa-edit me-1"></i> Edit
-              </a>
-              <form action="{% url 'subject-delete' subject.id %}" method="post" class="d-inline" onsubmit="return confirm('Delete this subject?');">
-                {% csrf_token %}
-                <button type="submit" class="btn-modern btn-outline-danger-modern">
-                  <i class="fas fa-trash-alt me-1"></i> Delete
-                </button>
-              </form>
-            {% endif %}
-          </div>
+  <a href="{% url 'chapter-list' subject.id %}" class="btn-modern btn-outline-primary-modern">
+    <i class="fas fa-book-open me-1"></i> Chapters
+  </a>
+  <a href="{% url 'subject-detail' subject.id %}" class="btn-modern btn-outline-primary-modern">
+    <i class="fas fa-info-circle me-1"></i> Details
+  </a>
+  <a href="{% url 'quiz:subject_quizzes' subject.id %}" class="btn-modern btn-outline-primary-modern">
+    <i class="fas fa-question-circle me-1"></i> Quizzes
+  </a>
+  {% if user.is_authenticated and user.user_type == 'admin' %}
+    <a href="{% url 'subject-update' subject.id %}" class="btn-modern btn-outline-warning-modern">
+      <i class="fas fa-edit me-1"></i> Edit
+    </a>
+    <form action="{% url 'subject-delete' subject.id %}" method="post" class="d-inline" onsubmit="return confirm('Delete this subject?');">
+      {% csrf_token %}
+      <button type="submit" class="btn-modern btn-outline-danger-modern">
+        <i class="fas fa-trash-alt me-1"></i> Delete
+      </button>
+    </form>
+  {% endif %}
+</div>
+
         </div>
         </a>
       </div>

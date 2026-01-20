@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Edit Quiz - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2>Edit Quiz: {{ quiz.title }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="{% url 'quiz:subject_quizzes' quiz.subject.id %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

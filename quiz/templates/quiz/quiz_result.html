@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }} - Result{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <br><br>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <!-- Result Card -->
+      <div class="subject-card text-center p-4">
+        <div class="subject-content">
+          <!-- Quiz Title -->
+          <h2 class="subject-title" style="font-size:2rem; margin-bottom:1rem;">
+            {{ quiz.title }} - Result
+          </h2>
+
+          <!-- Score -->
+          <h2 class="subject-title" style="font-size:2rem; margin-bottom:1rem;">
+  {{ quiz.title }} - Result
+</h2>
+
+<div class="subject-meta" style="margin-bottom:2rem;">
+  <p style="font-size:1.5rem;">
+    Your Score: <strong>{{ attempt.score }}</strong> / {{ quiz.total_marks }}
+  </p>
+  <p style="font-size:1.2rem;">Percentage: <strong>{{ percentage }}%</strong></p>
+</div>
+
+
+         <!-- Pass/Fail Message -->
+{% if passed %}
+  <div class="alert alert-success" role="alert" style="font-size:1.2rem;">
+    🎉 Congratulations! You passed the quiz.
+  </div>
+{% else %}
+  <div class="alert alert-danger" role="alert" style="font-size:1.2rem;">
+    ❌ You did not pass this time. Keep trying!
+  </div>
+{% endif %}
+
+          <!-- Action Buttons -->
+          <div class="subject-actions mt-3">
+            <a href="{% url 'quiz:attempt_quiz' quiz.id %}" class="btn-modern btn-outline-primary-modern">
+              <i class="fas fa-redo me-1"></i> Retake Quiz
+            </a>
+            <a href="{% url 'quiz:subject_quizzes' quiz.subject.id %}" class="btn-modern btn-success-modern">
+              <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Optional: Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+
+{% endblock %}

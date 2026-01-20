@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Add Question - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2>Add Question for Quiz: {{ quiz.title }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label>Question Text</label>
+      <textarea name="question_text" class="form-control" required></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label>Marks</label>
+      <input type="number" name="marks" class="form-control" value="1">
+    </div>
+
+    <div class="mb-3">
+      <label>Options</label>
+      <input type="text" name="option_text[]" class="form-control mb-1" placeholder="Option 1" required>
+      <input type="text" name="option_text[]" class="form-control mb-1" placeholder="Option 2" required>
+      <input type="text" name="option_text[]" class="form-control mb-1" placeholder="Option 3">
+      <input type="text" name="option_text[]" class="form-control mb-1" placeholder="Option 4">
+    </div>
+
+    <div class="mb-3">
+      <label>Correct Option (0-indexed)</label>
+      <input type="number" name="correct_option" class="form-control" value="0" min="0">
+      <small class="text-muted">Enter 0 for first option, 1 for second, etc.</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Question</button>
+  </form>
+
+  <hr>
+  <h4>Existing Questions</h4>
+  <ul>
+    {% for q in quiz.questions.all %}
+      <li>{{ q.question_text }} ({{ q.marks }} marks)
+        <ul>
+          {% for opt in q.options.all %}
+            <li>{{ opt.option_text }} {% if opt.is_correct %}✅{% endif %}</li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% empty %}
+      <li>No questions yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

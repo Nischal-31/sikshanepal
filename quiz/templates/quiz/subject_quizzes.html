@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Quizzes for {{ subject.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <br><br><br><br>
+  <h2 class="mb-4">{{ subject.name }} - Quizzes</h2>
+
+  {% if quizzes %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for quiz in quizzes %}
+        <div class="col">
+          <div class="subject-card">
+            <div class="subject-content">
+              <h3 class="subject-title">{{ quiz.title }}</h3>
+              <div class="subject-meta">
+                <p><strong>Total Marks:</strong> {{ quiz.total_marks }}</p>
+                {% if quiz.time_limit %}
+                  <p><strong>Time Limit:</strong> {{ quiz.time_limit }} minutes</p>
+                {% endif %}
+              </div>
+
+              <div class="subject-actions">
+                <!-- Student Attempt -->
+                <a href="{% url 'quiz:attempt_quiz' quiz.id %}" class="btn-modern btn-outline-primary-modern">
+                  <i class="fas fa-play me-1"></i> Attempt Quiz
+                </a>
+
+                {% if user.is_authenticated and user.user_type == 'admin' %}
+                  <!-- Admin: Add Questions -->
+                  <a href="{% url 'quiz:add_question' quiz.id %}" class="btn-modern btn-outline-warning-modern">
+                    <i class="fas fa-plus me-1"></i> Add Questions
+                  </a>
+
+                  <!-- Admin: Edit Quiz -->
+                  <a href="{% url 'quiz:quiz_edit' quiz.id %}" class="btn-modern btn-outline-info-modern">
+                    <i class="fas fa-edit me-1"></i> Edit Quiz
+                  </a>
+
+                  <!-- Admin: Delete Quiz -->
+                  <form action="{% url 'quiz:quiz_delete' quiz.id %}" method="post" class="d-inline" onsubmit="return confirm('Delete this quiz?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-modern btn-outline-danger-modern">
+                      <i class="fas fa-trash-alt me-1"></i> Delete Quiz
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Admin: Create New Quiz -->
+    {% if user.is_authenticated and user.user_type == 'admin' %}
+      <div class="mt-5 text-center">
+        <a href="{% url 'quiz:quiz_create' subject.id %}" class="btn-modern btn-success-modern">
+          <i class="fas fa-plus me-2"></i> Create New Quiz
+        </a>
+      </div>
+    {% endif %}
+
+  {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <i class="fas fa-question-circle"></i>
+      </div>
+      <h3 class="empty-state-title">No Quizzes Available</h3>
+      <p class="empty-state-text">This subject doesn't have any quizzes yet.</p>
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+        <a href="{% url 'quiz:quiz_create' subject.id %}" class="btn-modern btn-success-modern">
+          <i class="fas fa-plus me-2"></i> Create First Quiz
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<!-- Optional: Include Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+
+{% endblock %}
