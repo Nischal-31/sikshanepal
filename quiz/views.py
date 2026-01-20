@@ -1,9 +1,17 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render,get_object_or_404
 from backend.models import Subject
+from quiz.forms import QuizForm
 from quiz.models import Option, Question, Quiz, QuizAttempt
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django import forms
+
+def is_admin(user):
+    return getattr(user, "user_type", None) == "admin"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Quiz Logic
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def subject_quizzes(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
@@ -51,9 +59,9 @@ def quiz_result(request, quiz_id):
         "passed": passed
     })
 
-
-def is_admin(user):
-    return getattr(user, "user_type", None) == "admin"
+#--------------------------------------------------------------------------------------------------------------------------
+# Quiz CRUD
+#-----------------------------------------------------------------------------------------------------------------------------------
 
 @login_required
 @user_passes_test(is_admin)
@@ -61,20 +69,50 @@ def quiz_create(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
 
     if request.method == "POST":
-        title = request.POST.get("title")
-        total_marks = request.POST.get("total_marks") or 0
-        time_limit = request.POST.get("time_limit") or None
-        is_active = request.POST.get("is_active") == "on"
-        quiz = Quiz.objects.create(
-            subject=subject,
-            title=title,
-            total_marks=total_marks,
-            time_limit=time_limit,
-            is_active=is_active
-        )
-        return redirect("quiz:subject_quizzes", subject_id=subject.id)
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            quiz = form.save(commit=False)
+            quiz.subject = subject   # IMPORTANT
+            quiz.save()
+            return redirect("quiz:subject_quizzes", subject_id=subject.id)
+    else:
+        form = QuizForm()
 
-    return render(request, "quiz/quiz_create.html", {"subject": subject})
+    return render(request, "quiz/quiz_create.html", {
+        "form": form,
+        "subject": subject
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def quiz_edit(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    if request.method == "POST":
+        form = QuizForm(request.POST, instance=quiz)
+        if form.is_valid():
+            form.save()
+            return redirect("quiz:subject_quizzes", subject_id=quiz.subject.id)
+    else:
+        form = QuizForm(instance=quiz)
+
+    return render(request, "quiz/quiz_edit.html", {"form": form, "quiz": quiz})
+
+
+@login_required
+@user_passes_test(is_admin)
+def quiz_delete(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    subject_id = quiz.subject.id
+    if request.method == "POST":
+        quiz.delete()
+        return redirect("quiz:subject_quizzes", subject_id=subject_id)
+
+    return render(request, "quiz/quiz_delete_confirm.html", {"quiz": quiz})
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Question CRUD
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def add_question(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
@@ -95,34 +133,66 @@ def add_question(request, quiz_id):
 
     return render(request, "quiz/add_question.html", {"quiz": quiz})
 
-# ---------------- Edit Quiz ----------------
-class QuizForm(forms.ModelForm):
-    class Meta:
-        model = Quiz
-        fields = ['title', 'total_marks', 'time_limit', 'is_active']
+@login_required
+@user_passes_test(is_admin)
+def edit_question(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+    quiz = question.quiz
+    options = question.options.all()
+
+    if request.method == "POST":
+        # Update question text and marks
+        question.question_text = request.POST.get("question_text")
+        question.marks = int(request.POST.get("marks") or 1)
+        question.save()
+
+        # Update options
+        option_texts = request.POST.getlist("option_text[]")
+        correct_index = int(request.POST.get("correct_option"))
+
+        # Delete old options and recreate
+        question.options.all().delete()
+        for idx, text in enumerate(option_texts):
+            Option.objects.create(
+                question=question,
+                option_text=text,
+                is_correct=(idx == correct_index)
+            )
+
+        return redirect("quiz:add_question", quiz_id=quiz.id)  # Redirect to quiz question page
+
+    return render(request, "quiz/edit_question.html", {
+        "quiz": quiz,
+        "question": question,
+        "options": options
+    })
 
 @login_required
 @user_passes_test(is_admin)
-def quiz_edit(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id)
+def delete_question(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+    quiz_id = question.quiz.id
+
     if request.method == "POST":
-        form = QuizForm(request.POST, instance=quiz)
-        if form.is_valid():
-            form.save()
-            return redirect("quiz:subject_quizzes", subject_id=quiz.subject.id)
-    else:
-        form = QuizForm(instance=quiz)
+        question.delete()
+        return redirect("quiz:add_question", quiz_id=quiz_id)
 
-    return render(request, "quiz/quiz_edit.html", {"form": form, "quiz": quiz})
+    return render(request, "quiz/delete_question.html", {
+        "question": question
+    })
 
-# ---------------- Delete Quiz ----------------
-@login_required
-@user_passes_test(is_admin)
-def quiz_delete(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id)
-    subject_id = quiz.subject.id
+
+def edit_option(request, option_id):
+    option = get_object_or_404(Option, id=option_id)
     if request.method == "POST":
-        quiz.delete()
-        return redirect("quiz:subject_quizzes", subject_id=subject_id)
+        option.option_text = request.POST.get("option_text")
+        option.is_correct = "is_correct" in request.POST
+        option.save()
+        return redirect("quiz:add_question", quiz_id=option.question.quiz.id)
+    return render(request, "quiz/edit_option.html", {"option": option})
 
-    return render(request, "quiz/quiz_delete_confirm.html", {"quiz": quiz})
+def delete_option(request, option_id):
+    option = get_object_or_404(Option, id=option_id)
+    quiz_id = option.question.quiz.id
+    option.delete()
+    return redirect("quiz:add_question", quiz_id=quiz_id)

@@ -8,6 +8,8 @@ from blog.forms import PostForm
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
 from courses.views import is_admin
+from quiz.forms import QuizForm
+from quiz.models import Quiz
 from user.signals import User
 # Create your views here.
 
@@ -45,7 +47,11 @@ def manage_blogs(request):
     blogs = Post.objects.all()
     return render(request, 'dashboard/manage_blogs.html', {'blogs': blogs})
 
-# Additional views for other dashboard functionalities can be added here  
+def manage_quizzes(request):
+    quizzes = Quiz.objects.all()
+    return render(request,'dashboard/manage_quizzes.html',{'quizzes': quizzes})
+
+
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # blog/views.py code for reference
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -89,6 +95,33 @@ def dashboard_blog_delete(request, id):
         return redirect('blogs')
     
     return render(request, 'dashboard/dashboard_blog_delete.html', {'post': post})
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Quizzes/views.py code for reference
+# -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def dashboard_quiz_edit(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    if request.method == "POST":
+        form = QuizForm(request.POST, instance=quiz)
+        if form.is_valid():
+            form.save()
+            return redirect("quizzes")
+    else:
+        form = QuizForm(instance=quiz)
+
+    return render(request, "dashboard/dashboard_quiz_edit.html", {"form": form, "quiz": quiz})
+
+def dashboard_quiz_delete(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    subject_id = quiz.subject.id
+    if request.method == "POST":
+        quiz.delete()
+        return redirect("quizzes")
+
+    return render(request, "dashboard/dashboard_quiz_delete.html", {"quiz": quiz})
+
+
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------

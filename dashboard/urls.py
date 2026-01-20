@@ -82,4 +82,9 @@ urlpatterns=[
     path('blogs/<int:id>/edit/', views.dashboard_blog_edit, name='dashboard_blog_edit'),
     path('blogs/<int:id>/delete/', views.dashboard_blog_delete, name='dashboard_blog_delete'),
 
+    # Quizzes Management Urls
+    path('quizzes/',views.manage_quizzes,name='quizzes'),
+    path('quizzes/<int:quiz_id>/edit/', views.dashboard_quiz_edit, name='dashboard_quiz_edit'),
+    path('quizzes/<int:quiz_id>/delete/', views.dashboard_quiz_delete, name='dashboard_quiz_delete'),
+
 ]
