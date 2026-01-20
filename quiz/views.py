@@ -109,7 +109,7 @@ def quiz_edit(request, quiz_id):
         form = QuizForm(request.POST, instance=quiz)
         if form.is_valid():
             form.save()
-            return redirect("quiz:subject-quizzes", subject_id=quiz.subject.id)
+            return redirect("quiz:subject_quizzes", subject_id=quiz.subject.id)
     else:
         form = QuizForm(instance=quiz)
 
@@ -123,6 +123,6 @@ def quiz_delete(request, quiz_id):
     subject_id = quiz.subject.id
     if request.method == "POST":
         quiz.delete()
-        return redirect("quiz:subject-quizzes", subject_id=subject_id)
+        return redirect("quiz:subject_quizzes", subject_id=subject_id)
 
     return render(request, "quiz/quiz_delete_confirm.html", {"quiz": quiz})

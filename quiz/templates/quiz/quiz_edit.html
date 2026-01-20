@@ -2,13 +2,222 @@
 {% block title %}Edit Quiz - {{ quiz.title }}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-  <h2>Edit Quiz: {{ quiz.title }}</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a href="{% url 'quiz:subject_quizzes' quiz.subject.id %}" class="btn btn-secondary">Cancel</a>
-  </form>
+<style>
+  .edit-quiz-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e9ecef;
+  }
+
+  .page-header h2 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .breadcrumb-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-text a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .breadcrumb-text a:hover {
+    text-decoration: underline;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.75rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group textarea,
+  .form-group select,
+  .form-group input[type="number"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+  }
+
+  .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  .help-text {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: block;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    margin-top: 2rem;
+  }
+
+  .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-secondary {
+    background: white;
+    color: #6c757d;
+    border: 2px solid #e1e8ed;
+    flex: 0.5;
+  }
+
+  .btn-secondary:hover {
+    background: #f8f9fa;
+    border-color: #6c757d;
+    color: #495057;
+  }
+
+  .form-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 576px) {
+    .form-actions {
+      flex-direction: column-reverse;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="edit-quiz-container">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+  <div class="page-header">
+    <h2>
+      <svg class="form-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+      </svg>
+      Edit Quiz
+    </h2>
+    <div class="breadcrumb-text">
+      <a href="{% url 'quiz:subject_quizzes' quiz.subject.id %}">{{ quiz.subject.name }}</a> / {{ quiz.title }}
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+      
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">
+            {{ field.label }}
+            {% if field.field.required %}
+              <span style="color: #dc3545;">*</span>
+            {% endif %}
+          </label>
+          {{ field }}
+          
+          {% if field.help_text %}
+            <small class="help-text">{{ field.help_text }}</small>
+          {% endif %}
+          
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <span class="error-message">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <a href="{% url 'quiz:subject_quizzes' quiz.subject.id %}" class="btn btn-secondary">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <svg class="form-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

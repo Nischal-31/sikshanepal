@@ -2,60 +2,264 @@
 {% block title %}{{ quiz.title }} - Result{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-  <br><br>
-  <div class="row justify-content-center">
-    <div class="col-md-8">
+<style>
+  .result-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+  }
 
-      <!-- Result Card -->
-      <div class="subject-card text-center p-4">
-        <div class="subject-content">
-          <!-- Quiz Title -->
-          <h2 class="subject-title" style="font-size:2rem; margin-bottom:1rem;">
-            {{ quiz.title }} - Result
-          </h2>
+  .result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    text-align: center;
+    border: 1px solid #e9ecef;
+  }
 
-          <!-- Score -->
-          <h2 class="subject-title" style="font-size:2rem; margin-bottom:1rem;">
-  {{ quiz.title }} - Result
-</h2>
+  .quiz-title {
+    color: #2c3e50;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
 
-<div class="subject-meta" style="margin-bottom:2rem;">
-  <p style="font-size:1.5rem;">
-    Your Score: <strong>{{ attempt.score }}</strong> / {{ quiz.total_marks }}
-  </p>
-  <p style="font-size:1.2rem;">Percentage: <strong>{{ percentage }}%</strong></p>
-</div>
+  .score-display {
+    margin: 2.5rem 0;
+  }
 
+  .score-circle {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 2rem;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #e9ecef;
+    background: #f8f9fa;
+  }
 
-         <!-- Pass/Fail Message -->
-{% if passed %}
-  <div class="alert alert-success" role="alert" style="font-size:1.2rem;">
-    🎉 Congratulations! You passed the quiz.
-  </div>
-{% else %}
-  <div class="alert alert-danger" role="alert" style="font-size:1.2rem;">
-    ❌ You did not pass this time. Keep trying!
-  </div>
-{% endif %}
+  .score-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
 
-          <!-- Action Buttons -->
-          <div class="subject-actions mt-3">
-            <a href="{% url 'quiz:attempt_quiz' quiz.id %}" class="btn-modern btn-outline-primary-modern">
-              <i class="fas fa-redo me-1"></i> Retake Quiz
-            </a>
-            <a href="{% url 'quiz:subject_quizzes' quiz.subject.id %}" class="btn-modern btn-success-modern">
-              <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
-            </a>
-          </div>
-        </div>
+  .score-total {
+    font-size: 1.1rem;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .percentage-text {
+    font-size: 1.25rem;
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .result-message {
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .result-message.success {
+    background: #f0f9ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+  }
+
+  .result-message.fail {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  .result-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 2.5rem 0;
+  }
+
+  .stat-item {
+    background: #f8f9fa;
+    padding: 1.25rem;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .btn-action {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .btn-retake {
+    background: #2c3e50;
+    color: white;
+    border: 2px solid #2c3e50;
+  }
+
+  .btn-retake:hover {
+    background: #1a252f;
+    border-color: #1a252f;
+    color: white;
+  }
+
+  .btn-back {
+    background: white;
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+  }
+
+  .btn-back:hover {
+    background: #f8f9fa;
+    color: #495057;
+    border-color: #adb5bd;
+  }
+
+  @media (max-width: 768px) {
+    .result-card {
+      padding: 2rem 1.5rem;
+    }
+
+    .quiz-title {
+      font-size: 1.5rem;
+    }
+
+    .score-circle {
+      width: 150px;
+      height: 150px;
+    }
+
+    .score-number {
+      font-size: 2.5rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .btn-action {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="result-container">
+  <br>
+  <br>
+  <br>
+  <br>
+
+  <div class="result-card">
+    
+    <h1 class="quiz-title">{{ quiz.title }}</h1>
+
+    <div class="score-display">
+      <div class="score-circle">
+        <div class="score-number">{{ attempt.score }}</div>
+        <div class="score-total">/ {{ quiz.total_marks }}</div>
       </div>
 
+      <div class="percentage-text">{{ percentage }}%</div>
     </div>
+
+    {% if passed %}
+      <div class="result-message success">
+        <div class="result-icon">✓</div>
+        <div>Congratulations! You passed the quiz.</div>
+        <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">Great job! Keep up the excellent work!</div>
+      </div>
+    {% else %}
+      <div class="result-message fail">
+        <div class="result-icon">✕</div>
+        <div>You didn't pass this time.</div>
+        <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">Review the material and try again!</div>
+      </div>
+    {% endif %}
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-label">Score</div>
+        <div class="stat-value">{{ attempt.score }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Total</div>
+        <div class="stat-value">{{ quiz.total_marks }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Percent</div>
+        <div class="stat-value">{{ percentage }}%</div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <a href="{% url 'quiz:attempt_quiz' quiz.id %}" class="btn-action btn-retake">
+        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Retake Quiz
+      </a>
+      <a href="{% url 'quiz:subject_quizzes' quiz.subject.id %}" class="btn-action btn-back">
+        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Quizzes
+      </a>
+    </div>
+
   </div>
 </div>
-
-<!-- Optional: Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
 
 {% endblock %}

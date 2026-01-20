@@ -1,14 +1,266 @@
-<h2>{{ quiz.title }}</h2>
-<form method="post">
-  {% csrf_token %}
-  {% for question in quiz.questions.all %}
-    <p>{{ forloop.counter }}. {{ question.question_text }}</p>
-    {% for option in question.options.all %}
-      <label>
-        <input type="radio" name="{{ question.id }}" value="{{ option.id }}">
-        {{ option.option_text }}
-      </label><br>
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+<style>
+  .quiz-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .quiz-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .quiz-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .quiz-meta {
+    display: flex;
+    gap: 2rem;
+    font-size: 0.95rem;
+    opacity: 0.95;
+    flex-wrap: wrap;
+  }
+
+  .quiz-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .quiz-meta-item svg {
+    width: 18px;
+    height: 18px;
+  }
+
+
+
+  .question-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .question-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  .question-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+
+  .question-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+
+  .question-text {
+    flex: 1;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .option-label {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+  }
+
+  .option-label:hover {
+    border-color: #667eea;
+    background: white;
+    transform: translateX(4px);
+  }
+
+  .option-label input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 1rem;
+    cursor: pointer;
+    accent-color: #667eea;
+  }
+
+  .option-label input[type="radio"]:checked + .option-text {
+    font-weight: 600;
+    color: #667eea;
+  }
+
+  .option-label:has(input[type="radio"]:checked) {
+    border-color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  }
+
+  .option-text {
+    flex: 1;
+    color: #2c3e50;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .submit-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+
+  .submit-info {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-submit:active {
+    transform: translateY(0);
+  }
+
+
+
+  @media (max-width: 768px) {
+    .quiz-header {
+      padding: 2rem 1.5rem;
+    }
+
+    .quiz-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .question-card {
+      padding: 1.5rem;
+    }
+
+    .question-text {
+      font-size: 1rem;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem 2rem;
+    }
+  }
+</style>
+
+<div class="quiz-container">
+    <br>
+    <br>
+    <br>
+    <br>
+  <div class="quiz-header">
+    <h2>{{ quiz.title }}</h2>
+    <div class="quiz-meta">
+      <div class="quiz-meta-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        {{ quiz.questions.all|length }} Questions
+      </div>
+      {% if quiz.time_limit %}
+      <div class="quiz-meta-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        {{ quiz.time_limit }} minutes
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+
+
+  <form method="post">
+    {% csrf_token %}
+    
+    {% for question in quiz.questions.all %}
+    <div class="question-card">
+      <div class="question-header">
+        <div class="question-number">{{ forloop.counter }}</div>
+        <div class="question-text">{{ question.question_text }}</div>
+      </div>
+      
+      <div class="options-container">
+        {% for option in question.options.all %}
+        <label class="option-label">
+          <input 
+            type="radio" 
+            name="{{ question.id }}" 
+            value="{{ option.id }}">
+          <span class="option-text">{{ option.option_text }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
     {% endfor %}
-  {% endfor %}
-  <button type="submit">Submit Quiz</button>
-</form>
+
+    <div class="submit-section">
+      <div class="submit-info">
+        Review your answers before submitting.
+      </div>
+      <button type="submit" class="btn-submit">
+        <svg style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Submit Quiz
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

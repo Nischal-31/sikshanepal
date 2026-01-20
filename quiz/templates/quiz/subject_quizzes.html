@@ -2,46 +2,225 @@
 {% block title %}Quizzes for {{ subject.name }}{% endblock %}
 
 {% block content %}
+<style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --info-gradient: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+    --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --card-shadow-hover: 0 12px 40px rgba(0,0,0,0.15);
+    --border-radius: 16px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Card Styles */
+  .quiz-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .quiz-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .quiz-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: var(--transition);
+  }
+
+  .quiz-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .quiz-badge {
+    display: inline-block;
+    background: var(--primary-gradient);
+    color: white;
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+  }
+
+  .quiz-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+  }
+
+  .quiz-meta {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin-bottom: 1rem;
+  }
+
+  .quiz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .btn-modern {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 2px solid transparent;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .btn-outline-primary-modern {
+    background: white;
+    color: #667eea;
+    border-color: #667eea;
+  }
+  .btn-outline-primary-modern:hover {
+    background: var(--primary-gradient);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-outline-warning-modern {
+    background: white;
+    color: #f59e0b;
+    border-color: #f59e0b;
+  }
+  .btn-outline-warning-modern:hover {
+    background: var(--warning-gradient);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+
+  .btn-outline-danger-modern {
+    background: white;
+    color: #ef4444;
+    border-color: #ef4444;
+  }
+  .btn-outline-danger-modern:hover {
+    background: var(--danger-gradient);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+
+  .btn-outline-info-modern {
+    background: white;
+    color: #0ea5e9;
+    border-color: #0ea5e9;
+  }
+  .btn-outline-info-modern:hover {
+    background: var(--info-gradient);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+  }
+
+  .btn-success-modern {
+    background: var(--success-gradient);
+    color: white;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-top: 2rem;
+  }
+  .empty-state-icon {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1.5rem;
+  }
+  .empty-state-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 1rem;
+  }
+  .empty-state-text {
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .quiz-actions {
+      flex-direction: column;
+    }
+    .btn-modern {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
 <div class="container py-5">
   <br><br><br><br>
-  <h2 class="mb-4">{{ subject.name }} - Quizzes</h2>
+  <h2 class="mb-4" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+    {{ subject.name }} - Quizzes
+  </h2>
 
   {% if quizzes %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       {% for quiz in quizzes %}
         <div class="col">
-          <div class="subject-card">
-            <div class="subject-content">
-              <h3 class="subject-title">{{ quiz.title }}</h3>
-              <div class="subject-meta">
-                <p><strong>Total Marks:</strong> {{ quiz.total_marks }}</p>
-                {% if quiz.time_limit %}
-                  <p><strong>Time Limit:</strong> {{ quiz.time_limit }} minutes</p>
-                {% endif %}
-              </div>
+          <div class="quiz-card">
+            <div class="subject-content text-center p-4">
+              <span class="quiz-badge">{{ quiz.total_marks }} pts</span>
+              <h3 class="quiz-title">{{ quiz.title }}</h3>
+              {% if quiz.time_limit %}
+                <div class="quiz-meta">{{ quiz.time_limit }} minutes</div>
+              {% endif %}
 
-              <div class="subject-actions">
-                <!-- Student Attempt -->
+              <div class="quiz-actions">
+                <!-- Attempt -->
                 <a href="{% url 'quiz:attempt_quiz' quiz.id %}" class="btn-modern btn-outline-primary-modern">
-                  <i class="fas fa-play me-1"></i> Attempt Quiz
+                  <i class="fas fa-play me-1"></i> Attempt
                 </a>
 
                 {% if user.is_authenticated and user.user_type == 'admin' %}
-                  <!-- Admin: Add Questions -->
+                  <!-- Add Question -->
                   <a href="{% url 'quiz:add_question' quiz.id %}" class="btn-modern btn-outline-warning-modern">
-                    <i class="fas fa-plus me-1"></i> Add Questions
+                    <i class="fas fa-plus me-1"></i> Add Qs
                   </a>
 
-                  <!-- Admin: Edit Quiz -->
+                  <!-- Edit -->
                   <a href="{% url 'quiz:quiz_edit' quiz.id %}" class="btn-modern btn-outline-info-modern">
-                    <i class="fas fa-edit me-1"></i> Edit Quiz
+                    <i class="fas fa-edit me-1"></i> Edit
                   </a>
 
-                  <!-- Admin: Delete Quiz -->
+                  <!-- Delete -->
                   <form action="{% url 'quiz:quiz_delete' quiz.id %}" method="post" class="d-inline" onsubmit="return confirm('Delete this quiz?');">
                     {% csrf_token %}
                     <button type="submit" class="btn-modern btn-outline-danger-modern">
-                      <i class="fas fa-trash-alt me-1"></i> Delete Quiz
+                      <i class="fas fa-trash-alt me-1"></i> Delete
                     </button>
                   </form>
                 {% endif %}
@@ -52,7 +231,6 @@
       {% endfor %}
     </div>
 
-    <!-- Admin: Create New Quiz -->
     {% if user.is_authenticated and user.user_type == 'admin' %}
       <div class="mt-5 text-center">
         <a href="{% url 'quiz:quiz_create' subject.id %}" class="btn-modern btn-success-modern">
@@ -62,11 +240,8 @@
     {% endif %}
 
   {% else %}
-    <!-- Empty State -->
     <div class="empty-state">
-      <div class="empty-state-icon">
-        <i class="fas fa-question-circle"></i>
-      </div>
+      <div class="empty-state-icon"><i class="fas fa-question-circle"></i></div>
       <h3 class="empty-state-title">No Quizzes Available</h3>
       <p class="empty-state-text">This subject doesn't have any quizzes yet.</p>
       {% if user.is_authenticated and user.user_type == 'admin' %}
@@ -78,7 +253,7 @@
   {% endif %}
 </div>
 
-<!-- Optional: Include Font Awesome -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
 
 {% endblock %}
