@@ -45,9 +45,6 @@ def manage_blogs(request):
     blogs = Post.objects.all()
     return render(request, 'dashboard/manage_blogs.html', {'blogs': blogs})
 
-def manage_settings(request):
-    return render(request, 'dashboard/manage_settings.html')
-
 # Additional views for other dashboard functionalities can be added here  
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # blog/views.py code for reference
@@ -704,8 +701,6 @@ def dashboard_lab_detail_view(request, lab_id):
         'semester_id': semester_id,
         'is_pdf': is_pdf,
     })
-
-
 
 def dashboard_lab_create_view(request, subject_id):
     if not is_admin(request):

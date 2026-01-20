@@ -82,5 +82,4 @@ urlpatterns=[
     path('blogs/<int:id>/edit/', views.dashboard_blog_edit, name='dashboard_blog_edit'),
     path('blogs/<int:id>/delete/', views.dashboard_blog_delete, name='dashboard_blog_delete'),
 
-    path('settings/',views.manage_settings,name='settings'),
 ]
