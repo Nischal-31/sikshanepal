@@ -6,17 +6,6 @@
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-    <!-- Back Button -->
-    <div class="mb-4">
-        <a href="#" 
-           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Back to Lab List
-        </a>
-    </div>
-
     <!-- Breadcrumb -->
     <nav class="flex mb-6 text-sm" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -64,6 +53,17 @@
         {% else %}
             <p class="text-gray-400 mt-4">No file uploaded for this lab.</p>
         {% endif %}
+    </div>
+
+        <!-- Back Button --><br><br>
+    <div class="mb-4">
+        <a href="{% url 'dashboard_manage_labs' subject.id%}" 
+           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Lab List
+        </a>
     </div>
 
 </div>

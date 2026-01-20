@@ -6,17 +6,6 @@
 {% block content %}
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-    <!-- Back Button -->
-    <div class="mb-4">
-        <a href="{% url 'dashboard_manage_pastQuestions' subject.id %}" 
-           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Back to Past Question List
-        </a>
-    </div>
-
     <!-- Breadcrumb -->
     <nav class="flex mb-6 text-sm" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -44,23 +33,27 @@
 
     <!-- Form Card -->
     <div class="bg-white shadow-sm rounded-xl p-6">
-        <h2 class="text-xl font-semibold mb-6">Update PastQuestion: {{ pastQuestion.title }}</h2>
+
+        <h2 class="text-xl font-semibold mb-6">Update Past Question: {{ pastQuestion.title }}</h2>
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+
             <!-- Year -->
             <div class="mb-4">
-                <label for="year" class="block text-gray-700 font-medium mb-2">Past Question Year</label>
-                <input type="text" name="year" id="year" 
-                       class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                <label for="year" class="block text-gray-700 font-medium mb-2">Year</label>
+                <input type="text" name="year" id="year"
+                       class="w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2
+                              focus:ring-blue-500 focus:border-blue-500 transition"
                        value="{{ pastQuestion.year }}" required>
             </div>
 
             <!-- Title -->
             <div class="mb-4">
-                <label for="title" class="block text-gray-700 font-medium mb-2">Past Question Title</label>
-                <input type="text" name="title" id="title" 
-                       class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                <label for="title" class="block text-gray-700 font-medium mb-2">Title</label>
+                <input type="text" name="title" id="title"
+                       class="w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2
+                              focus:ring-blue-500 focus:border-blue-500 transition"
                        value="{{ pastQuestion.title }}" required>
             </div>
 
@@ -68,28 +61,50 @@
             <div class="mb-4">
                 <label for="description" class="block text-gray-700 font-medium mb-2">Description</label>
                 <textarea name="description" id="description" rows="4"
-                          class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ pastQuestion.description }}</textarea>
+                          class="w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2
+                                 focus:ring-blue-500 focus:border-blue-500 transition">{{ pastQuestion.description }}</textarea>
             </div>
 
-            <!-- File Upload -->
+             <!-- File Upload -->
             <div class="mb-6">
-                <label for="file" class="block text-gray-700 font-medium mb-2">Past Question File</label>
+                <label for="file" class="block text-gray-700 font-medium mb-2">File</label>
                 {% if pastQuestion.file %}
-                    <p class="mb-2 text-gray-600">Current File: <a href="{{ pastQuestion.file }}" target="_blank" class="text-blue-600 hover:underline">{{ pastQuestion.file}}</a></p>
+                    <p class="mb-2 text-gray-600">
+                        Current File: 
+                        <a href="{{ pastQuestion.file }}" target="_blank" class="text-blue-600 hover:underline">
+                            {{ pastQuestion.file }}
+                        </a>
+                    </p>
                 {% endif %}
-                <input type="file" name="file" id="file" 
-                       class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <input type="file" name="file" id="file"
+                       class="w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2
+                              focus:ring-blue-500 focus:border-blue-500 transition">
             </div>
 
-            <!-- Submit Button -->
-            <div class="flex justify-end">
-                <button type="submit" 
-                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition">
-                    Update Past Question
-                </button>
-            </div>
+            <!-- Action Footer: Back + Update on same line -->
+<div class="flex justify-between pt-4 border-t mt-6">
+    
+    <!-- Back Button -->
+    <a href="{% url 'dashboard_manage_pastQuestions' subject.id %}" 
+       class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg
+              hover:bg-gray-200 transition font-medium">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to Past Questions
+    </a>
+
+    <!-- Submit Button -->
+    <button type="submit"
+            class="inline-flex items-center px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium
+                   hover:bg-blue-700 transition focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Update Past Question
+    </button>
+</div>
+
 
         </form>
+
     </div>
 
 </div>

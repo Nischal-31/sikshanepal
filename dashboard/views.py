@@ -559,6 +559,8 @@ def dashboard_subject_create_view(request, semester_id):
         data = {
             "name": request.POST.get("name"),
             "code": request.POST.get("code"),
+            "credits": request.POST.get("credits") or 0,
+            "description": request.POST.get("description"),
         }
 
         api_url = f"http://127.0.0.1:8000/backend/subject-create/{semester_id}/"  # Adjust if needed
@@ -673,20 +675,37 @@ def dashboard_lab_detail_view(request, lab_id):
         return HttpResponseForbidden("Authentication token missing.")
 
     headers = {'Authorization': f'Token {token}'}
-    api_url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
-    response = requests.get(api_url, headers=headers)
 
-    if response.status_code == 200:
-        lab = response.json()
-        file_url = lab.get('file', '')
-        is_pdf = file_url.lower().endswith('.pdf') if file_url else False
-    else:
+    # Fetch lab details
+    lab_url = f"http://127.0.0.1:8000/backend/lab-detail/{lab_id}/"
+    response = requests.get(lab_url, headers=headers)
+
+    if response.status_code != 200:
         return HttpResponseNotFound("Lab not found")
+
+    lab = response.json()
+    file_url = lab.get('file', '')
+    is_pdf = file_url.lower().endswith('.pdf') if file_url else False
+
+    # Fetch the subject related to the lab
+    subject_id = lab.get('subject')
+    subject = {}
+    semester_id = None
+    if subject_id:
+        subject_url = f"http://127.0.0.1:8000/backend/subject-detail/{subject_id}/"
+        subject_response = requests.get(subject_url, headers=headers)
+        if subject_response.status_code == 200:
+            subject = subject_response.json()
+            semester_id = subject.get('semester')  # ✅ Fetch semester_id from subject
 
     return render(request, 'dashboard/dashboard_lab_detail.html', {
         'lab': lab,
+        'subject': subject,
+        'semester_id': semester_id,
         'is_pdf': is_pdf,
     })
+
+
 
 def dashboard_lab_create_view(request, subject_id):
     if not is_admin(request):
@@ -1591,11 +1610,18 @@ def dashboard_note_update_view(request, note_id):
     headers = {'Authorization': f'Token {token}'}
 
     # ✅ Get note details
-    api_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
-    response = requests.get(api_url, headers=headers)
+    note_url = f"http://127.0.0.1:8000/backend/note-detail/{note_id}/"
+    response = requests.get(note_url, headers=headers)
     note = response.json() if response.status_code == 200 else {}
 
-    chapter_id = note.get('chapter')  # For redirecting after update
+    # Get chapter details for template
+    chapter_id = note.get('chapter')
+    chapter = {}
+    if chapter_id:
+        chapter_url = f"http://127.0.0.1:8000/backend/chapter-detail/{chapter_id}/"
+        chapter_response = requests.get(chapter_url, headers=headers)
+        if chapter_response.status_code == 200:
+            chapter = chapter_response.json()
 
     if request.method == "POST":
         data = {
@@ -1616,7 +1642,14 @@ def dashboard_note_update_view(request, note_id):
         if update_response.status_code == 200:
             return redirect("dashboard_manage_notes", chapter_id=chapter_id)
 
-    return render(request, "dashboard/dashboard_note_update.html", {"note": note, "chapter_id": chapter_id})
+    return render(
+        request,
+        "dashboard/dashboard_note_update.html",
+        {
+            "note": note,
+            "chapter": chapter,  # Pass chapter object to template
+        }
+    )
 
 def dashboard_note_delete_view(request, note_id):
     if not is_admin(request):
