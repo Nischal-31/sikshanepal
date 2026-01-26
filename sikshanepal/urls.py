@@ -32,6 +32,9 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('quiz/',include('quiz.urls',namespace="quiz")),
 
+    # ✅ Add analytics APIs here
+    path("", include("analytics.urls")),
+    
     #path('user_api/', include('user_api.urls')),  # Separate user API
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

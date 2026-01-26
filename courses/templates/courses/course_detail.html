@@ -72,6 +72,34 @@
     </div>
   </div>
 </section>
+<!-- Related Courses -->
+<section class="container my-5">
+  <h3 class="mb-4">Related Courses</h3>
+
+  {% if related_courses %}
+    <div class="row">
+      {% for c in related_courses %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            {% if c.image %}
+              <img src="{{ c.image }}" class="card-img-top" alt="{{ c.name }}" style="height:180px; object-fit:cover;">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ c.name }}</h5>
+              <p class="card-text">{{ c.description|default:""|truncatechars:100 }}</p>
+            </div>
+            <div class="card-footer bg-white border-0">
+              <a class="btn btn-outline-primary w-100" href="{% url 'course-detail' c.id %}">View Course</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">No related courses yet.</p>
+  {% endif %}
+</section>
+
 
 <!-- FontAwesome CDN for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />

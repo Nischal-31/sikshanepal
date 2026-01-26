@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'backend',
     'dashboard',
     'quiz',
+    'analytics',
 
 ]
 
@@ -229,3 +230,6 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'  # or 'ALLOWALL' (not recommended for production)
 
 # settings.py
 from . import firebase   # this will run firebase.py once
+
+BACKEND_BASE_URL = "http://127.0.0.1:8000"
+RECO_SERVICE_TOKEN = "3b4ff08d866be63b779a2fafabede5de47eb2bd4"

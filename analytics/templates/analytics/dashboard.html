@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .card { max-width: 900px; margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+
+  <h2>Analytics Dashboard</h2>
+
+  <div class="card">
+    <h3>Most Viewed Courses (Top 10)</h3>
+    <canvas id="mostViewedChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Daily Course Views (Last 30 Days)</h3>
+    <canvas id="dailyViewsChart"></canvas>
+  </div>
+
+<script>
+async function renderMostViewed() {
+  const res = await fetch("/api/analytics/most-viewed-courses/?days=30&limit=10");
+  const data = await res.json();
+
+  const labels = data.map(x => x.name);
+  const values = data.map(x => x.views);
+
+  new Chart(document.getElementById("mostViewedChart"), {
+    type: "bar",
+    data: { labels, datasets: [{ label: "Views", data: values }] }
+  });
+}
+
+async function renderDailyViews() {
+  const res = await fetch("/api/analytics/daily-course-views/?days=30");
+  const data = await res.json();
+
+  const labels = data.map(x => x.date);
+  const values = data.map(x => x.views);
+
+  new Chart(document.getElementById("dailyViewsChart"), {
+    type: "line",
+    data: { labels, datasets: [{ label: "Views", data: values }] }
+  });
+}
+
+renderMostViewed();
+renderDailyViews();
+</script>
+
+</body>
+</html>

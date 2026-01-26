@@ -4,6 +4,8 @@ import requests  # For making HTTP requests
 from django.http import Http404, HttpResponseForbidden, HttpResponseNotFound, JsonResponse
 import requests
 from django.contrib.auth.decorators import login_required
+from analytics.models import SimilarCourse, UserEvent
+from analytics.utils import log_event
 from backend.models import Chapter, Semester, Subject
 from sikshanepal.firebase import send_course_notification 
 
@@ -46,6 +48,8 @@ def course_list_view(request):
 
 @login_required
 def course_detail_view(request, course_id):
+    # ✅ LOG VIEW EVENT
+    log_event(request, UserEvent.VIEW, "course", course_id)
     token = request.user.auth_token.key  # if using DRF token auth
 
     headers = {
@@ -66,8 +70,27 @@ def course_detail_view(request, course_id):
         course['image'] = request.build_absolute_uri(course['image'])
     if course and course.get('instructor') and course['instructor'].get('image'):
         course['instructor']['image'] = request.build_absolute_uri(course['instructor']['image'])
+    
+    # ✅ Related Courses (TF-IDF)
+    related_ids = list(
+        SimilarCourse.objects.filter(course_id=course_id)
+        .order_by("-score")
+        .values_list("similar_course_id", flat=True)[:6]
+    )
 
-    return render(request, 'courses/course_detail.html', {'course': course, 'semesters': filtered_semesters})
+    related_courses = []
+    for rid in related_ids:
+        u = f"http://127.0.0.1:8000/backend/course-detail/{rid}/"
+        rr = requests.get(u, headers=headers)
+        if rr.status_code == 200:
+            c = rr.json()
+            if c.get("image"):
+                c["image"] = request.build_absolute_uri(c["image"])
+            related_courses.append(c)
+
+    return render(request, 'courses/course_detail.html', {'course': course, 
+                                                          'semesters': filtered_semesters,
+                                                          'related_courses': related_courses})
 
 @login_required
 def course_create_view(request):
