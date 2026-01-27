@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserEvent, SimilarCourse
+from .models import AlsoViewedCourse, UserEvent, SimilarCourse
 
 @admin.register(UserEvent)
 class UserEventAdmin(admin.ModelAdmin):
@@ -17,3 +17,9 @@ class SimilarCourseAdmin(admin.ModelAdmin):
     @admin.display(description="Score")
     def score_4dp(self, obj):
         return f"{obj.score:.4f}"
+    
+@admin.register(AlsoViewedCourse)
+class AlsoViewedCourseAdmin(admin.ModelAdmin):
+    list_display = ("course_id", "also_viewed_course_id", "score")
+    list_filter = ("course_id",)
+    ordering = ("-score",)

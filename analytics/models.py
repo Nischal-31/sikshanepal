@@ -55,3 +55,14 @@ class SimilarCourse(models.Model):
         indexes = [
             models.Index(fields=["course_id", "-score"]),
         ]
+
+class AlsoViewedCourse(models.Model):
+    course_id = models.PositiveIntegerField(db_index=True)
+    also_viewed_course_id = models.PositiveIntegerField(db_index=True)
+    score = models.FloatField(default=0.0)
+
+    class Meta:
+        unique_together = ("course_id", "also_viewed_course_id")
+        indexes = [
+            models.Index(fields=["course_id", "-score"]),
+        ]

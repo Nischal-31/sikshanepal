@@ -10,26 +10,80 @@ from contactenquiry.models import contactEnquiry
 from courses.views import is_admin
 from quiz.forms import QuizForm
 from quiz.models import Quiz
+from user.models import CustomUser
 from user.signals import User
 # Create your views here.
+
+from django.http import HttpResponseForbidden
+from django.shortcuts import render
+from django.utils import timezone
+
+from analytics.models import UserEvent
+from backend.models import Course  # adjust if your Course model is elsewhere
+
 
 def dashboard_home(request):
     if not request.user.is_authenticated or not request.user.is_admin_user:
         return HttpResponseForbidden("You do not have permission to access this page.")
-    
+
+    # ✅ Users dynamic (your CustomUser roles)
+    total_users = CustomUser.objects.count()
+    total_paid_users = CustomUser.objects.filter(user_type="paid").count()
+    total_normal_users = CustomUser.objects.filter(user_type="normal").count()
+    total_admin_users = CustomUser.objects.filter(user_type="admin").count()
+
+    # ✅ Courses dynamic
+    total_courses = Course.objects.count()
+
+    # ✅ Enquiries dynamic (today)
+    today = timezone.localdate()
+    new_enquiries = contactEnquiry.objects.filter(created_at__date=today).count()
+
+    # ✅ Revenue dynamic (needs your payment/order model)
+    revenue = 0  # placeholder until you tell me your payment model
+
+    # ✅ Recent activities dynamic from UserEvent
+    events = UserEvent.objects.select_related("user").order_by("-created_at")[:15]
+
+    course_ids = [e.item_id for e in events if e.item_type == "course"]
+    course_map = {c.id: c.name for c in Course.objects.filter(id__in=course_ids).only("id", "name")}
+
+    recent_activities = []
+    for e in events:
+        uname = e.user.username if e.user else "Guest"
+
+        if e.item_type == "course":
+            item_label = course_map.get(e.item_id, f"Course #{e.item_id}")
+        else:
+            item_label = f"{e.item_type} #{e.item_id}"
+
+        action_text = {
+            "view": "viewed",
+            "enroll": "enrolled in",
+            "download": "downloaded",
+            "click_recommendation": "clicked recommendation for",
+        }.get(e.action, e.action)
+
+        recent_activities.append({
+            "message": f"{uname} {action_text} {item_label}",
+            "time": e.created_at,
+        })
+
     context = {
-        'total_users': 1234,
-        'total_courses': 56,
-        'new_enquiries': 78,
-        'revenue': 12345,
-        'recent_activities': [
-            "User John Doe signed up",
-            "New course 'Python Basics' added",
-            "Enquiry from student: nischal123@gmail.com",
-            "Revenue of $200 received from course purchase",
-        ]
+        "total_users": total_users,
+        "total_courses": total_courses,
+        "new_enquiries": new_enquiries,
+        "revenue": revenue,
+
+        # extra role breakdown (optional to show)
+        "total_paid_users": total_paid_users,
+        "total_normal_users": total_normal_users,
+        "total_admin_users": total_admin_users,
+
+        "recent_activities": recent_activities,
     }
-    return render(request, 'dashboard/home.html', context)
+    return render(request, "dashboard/home.html", context)
+
 
 def manage_courses(request):
     courses = Course.objects.all()

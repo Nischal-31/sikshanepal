@@ -4,7 +4,7 @@ import requests  # For making HTTP requests
 from django.http import Http404, HttpResponseForbidden, HttpResponseNotFound, JsonResponse
 import requests
 from django.contrib.auth.decorators import login_required
-from analytics.models import SimilarCourse, UserEvent
+from analytics.models import AlsoViewedCourse, SimilarCourse, UserEvent
 from analytics.utils import log_event
 from backend.models import Chapter, Semester, Subject
 from sikshanepal.firebase import send_course_notification 
@@ -87,10 +87,27 @@ def course_detail_view(request, course_id):
             if c.get("image"):
                 c["image"] = request.build_absolute_uri(c["image"])
             related_courses.append(c)
+    # ✅ Students also viewed (Collaborative)
+    also_ids = list(
+        AlsoViewedCourse.objects.filter(course_id=course_id)
+        .order_by("-score")
+        .values_list("also_viewed_course_id", flat=True)[:6]
+    )
+    also_viewed_courses = []
+    for aid in also_ids:
+        u = f"http://127.0.0.1:8000/backend/course-detail/{aid}/"
+        rr = requests.get(u, headers=headers)
+        if rr.status_code == 200:
+            c = rr.json()
+            if c.get("image"):
+                c["image"] = request.build_absolute_uri(c["image"])
+        also_viewed_courses.append(c)
 
     return render(request, 'courses/course_detail.html', {'course': course, 
                                                           'semesters': filtered_semesters,
-                                                          'related_courses': related_courses})
+                                                          'related_courses': related_courses,
+                                                          'also_viewed_courses': also_viewed_courses
+})
 
 @login_required
 def course_create_view(request):
