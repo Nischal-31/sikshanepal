@@ -13,11 +13,11 @@ class CustomUser(AbstractUser):
     # Define the roles for users
     USER_TYPE_CHOICES = [
         ('admin', 'Admin'),
-        ('normal', 'Normal User'),
-        ('paid', 'Paid User'),
+        ('student', 'Student'),
+        ('instructor', 'Instructor'),
     ]
     
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='normal')
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='student')
     
     def __str__(self):
         return self.username
@@ -28,13 +28,13 @@ class CustomUser(AbstractUser):
         return self.user_type == 'admin'
 
     @property
-    def is_normal_user(self):
-        return self.user_type == 'normal'
+    def is_student_user(self):
+        return self.user_type == 'student'
     
     @property
-    def is_paid_user(self):
-        return self.user_type == 'paid'
-    
+    def is_instructor_user(self):
+        return self.user_type == 'instructor'
+
     def save(self, *args, **kwargs):
         # If the user is a superuser, set user_type to 'admin'
         if self.is_superuser and self.user_type != 'admin':

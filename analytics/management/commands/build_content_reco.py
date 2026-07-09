@@ -3,106 +3,193 @@ from django.conf import settings
 from django.db import transaction
 import requests
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+# Import custom recommendation algorithms
+from analytics.recommendation.tfidf import compute_tfidf
+from analytics.recommendation.cosine import similarity_matrix
 
+# Import recommendation model
 from analytics.models import SimilarCourse
 
+
 class Command(BaseCommand):
+    """
+    Build content-based course recommendations using
+    TF-IDF Vectorization and Cosine Similarity.
+    """
+
     help = "Build content-based recommendations using TF-IDF + Cosine Similarity"
 
     def add_arguments(self, parser):
+        # Number of similar courses to store for each course
         parser.add_argument("--topk", type=int, default=10)
 
     def handle(self, *args, **opts):
+
         topk = opts["topk"]
 
-        # ✅ your backend API endpoint
+        # --------------------------------------------------------
+        # Step 1: Fetch course data from the backend API
+        # --------------------------------------------------------
+
         base = getattr(settings, "BACKEND_BASE_URL", "http://127.0.0.1:8000")
         url = f"{base}/backend/course-list/"
 
         token = getattr(settings, "RECO_SERVICE_TOKEN", "")
+
         if not token:
-            self.stdout.write(self.style.ERROR("RECO_SERVICE_TOKEN not set in settings.py"))
+            self.stdout.write(
+                self.style.ERROR("RECO_SERVICE_TOKEN not set in settings.py")
+            )
             return
 
-        headers = {"Authorization": f"Token {token}"}
-        r = requests.get(url, headers=headers)
+        headers = {
+            "Authorization": f"Token {token}"
+        }
 
-        if r.status_code != 200:
-            self.stdout.write(self.style.ERROR(f"Failed to fetch courses: {r.status_code}"))
-            self.stdout.write(r.text[:300])
+        response = requests.get(url, headers=headers)
+
+        if response.status_code != 200:
+            self.stdout.write(
+                self.style.ERROR(
+                    f"Failed to fetch courses: {response.status_code}"
+                )
+            )
+            self.stdout.write(response.text[:300])
             return
 
-        courses = r.json()
-        self.stdout.write(f"type(courses) = {type(courses)}")
-        try:
-            self.stdout.write(f"len(courses) = {len(courses)}")
-        except Exception:
-            pass
-        self.stdout.write(str(courses)[:300])
+        courses = response.json()
+
+        self.stdout.write(f"Fetched {len(courses)} courses.")
 
         if len(courses) < 2:
-            self.stdout.write("Not enough courses to build recommendations.")
+            self.stdout.write(
+                self.style.ERROR(
+                    "Not enough courses available to build recommendations."
+                )
+            )
             return
 
-        # ✅ your fields: name + description
-        # ✅ build ids + texts safely
+        # --------------------------------------------------------
+        # Step 2: Prepare course IDs and text documents
+        # --------------------------------------------------------
+
         ids = []
         texts = []
 
-        for c in courses:
-            cid = c.get("id")
-            name = (c.get("name") or "").strip()
-            desc = (c.get("description") or "").strip()
+        for course in courses:
 
-            if not cid:
+            course_id = course.get("id")
+            name = (course.get("name") or "").strip()
+            description = (course.get("description") or "").strip()
+
+            # Skip courses without an ID
+            if not course_id:
                 continue
 
-            if not desc:
-                desc = name
+            # Use course title if description is empty
+            if not description:
+                description = name
 
-            ids.append(cid)
-            texts.append(f"{name}. {desc}")
+            ids.append(course_id)
 
-        self.stdout.write(f"ids={len(ids)} texts={len(texts)}")
+            # Combine title and description into one document
+            texts.append(f"{name}. {description}")
+
+        self.stdout.write(f"Valid courses processed: {len(ids)}")
+
         if len(texts) < 2:
-            self.stdout.write(self.style.ERROR("Need at least 2 courses with text to compute similarity."))
+            self.stdout.write(
+                self.style.ERROR(
+                    "At least two valid courses are required."
+                )
+            )
             return
 
-        vectorizer = TfidfVectorizer(
-            stop_words="english",
-            ngram_range=(1, 2),
-            token_pattern=r"(?u)\b[a-zA-Z0-9][a-zA-Z0-9\-\_]+\b"
+        # --------------------------------------------------------
+        # Step 3: Generate TF-IDF vectors
+        # Each course description is converted into a numerical
+        # vector based on term importance.
+        # --------------------------------------------------------
+
+        vectors = compute_tfidf(texts)
+
+        # --------------------------------------------------------
+        # Step 4: Calculate Cosine Similarity
+        # Compare every course vector with every other course
+        # to measure content similarity.
+        # --------------------------------------------------------
+
+        sim = similarity_matrix(vectors)
+
+        self.stdout.write(
+            f"Similarity Matrix Size: {len(sim)} x {len(sim[0])}"
         )
 
-        X = vectorizer.fit_transform(texts)
-        sim = cosine_similarity(X)
-
-        self.stdout.write(f"sim shape = {sim.shape}")
-        if sim.shape[0] != len(ids):
-            self.stdout.write(self.style.ERROR(f"Mismatch: sim rows={sim.shape[0]} ids={len(ids)}"))
+        if len(sim) != len(ids):
+            self.stdout.write(
+                self.style.ERROR(
+                    f"Mismatch: similarity rows={len(sim)}, course ids={len(ids)}"
+                )
+            )
             return
 
+        # --------------------------------------------------------
+        # Step 5: Store the most similar courses
+        # --------------------------------------------------------
+
         with transaction.atomic():
+
+            # Remove previous recommendations
             SimilarCourse.objects.all().delete()
 
-            bulk = []
+            recommendations = []
+
+            # Process every course
             for i, course_id in enumerate(ids):
-                best = sim[i].argsort()[::-1]
-                added = 0
-                for j in best:
+
+                # Rank courses by similarity score
+                ranked = sorted(
+                    range(len(sim[i])),
+                    key=lambda j: sim[i][j],
+                    reverse=True
+                )
+
+                count = 0
+
+                for j in ranked:
+
+                    # Skip comparing a course with itself
                     if ids[j] == course_id:
                         continue
-                    bulk.append(SimilarCourse(
-                        course_id=course_id,
-                        similar_course_id=ids[j],
-                        score=float(sim[i][j]),
-                    ))
-                    added += 1
-                    if added >= topk:
+
+                    recommendations.append(
+
+                        SimilarCourse(
+                            course_id=course_id,
+                            similar_course_id=ids[j],
+                            score=round(float(sim[i][j]), 6)
+                        )
+
+                    )
+
+                    count += 1
+
+                    # Save only Top-K recommendations
+                    if count >= topk:
                         break
 
-            SimilarCourse.objects.bulk_create(bulk, batch_size=500)
+            # Store recommendations efficiently
+            SimilarCourse.objects.bulk_create(
+                recommendations,
+                batch_size=500
+            )
 
-        self.stdout.write(self.style.SUCCESS(f"✅ Built TF-IDF recommendations for {len(ids)} courses."))
+        # --------------------------------------------------------
+        # Step 6: Display completion message
+        # --------------------------------------------------------
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully generated recommendations for {len(ids)} courses."
+            )
+        )
