@@ -1,0 +1,67 @@
+{
+  "quizzes": [
+    {
+      "subject_code": "CSC101",
+      "title": "Introduction to Programming Quiz",
+      "description": "Test your basic programming knowledge.",
+      "total_marks": 10,
+      "time_limit": 20,
+      "is_active": true,
+      "is_paid": false,
+
+      "questions": [
+
+        {
+          "question_text": "Python is a ______ language.",
+          "marks": 1,
+          "question_type": "single",
+
+          "options": [
+            {
+              "option_text": "Programming",
+              "is_correct": true
+            },
+            {
+              "option_text": "Database",
+              "is_correct": false
+            },
+            {
+              "option_text": "Operating System",
+              "is_correct": false
+            },
+            {
+              "option_text": "Web Browser",
+              "is_correct": false
+            }
+          ]
+        },
+
+        {
+          "question_text": "Which keyword is used to define a function in Python?",
+          "marks": 1,
+          "question_type": "single",
+
+          "options": [
+            {
+              "option_text": "def",
+              "is_correct": true
+            },
+            {
+              "option_text": "func",
+              "is_correct": false
+            },
+            {
+              "option_text": "define",
+              "is_correct": false
+            },
+            {
+              "option_text": "method",
+              "is_correct": false
+            }
+          ]
+        }
+
+      ]
+    }
+  ]
+}

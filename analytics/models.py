@@ -88,12 +88,16 @@ class SimilarCourse(models.Model):
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name="similar_courses"
     )
 
     similar_course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name="recommended_for"
     )
 
@@ -121,15 +125,18 @@ class AlsoViewedCourse(models.Model):
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name="also_viewed"
     )
 
     also_viewed_course = models.ForeignKey(
-        Course,
-        on_delete=models.CASCADE,
-        related_name="viewed_with"
-    )
-
+    Course,
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True,
+    related_name="viewed_with"
+)
     score = models.FloatField(default=0.0)
 
     class Meta:

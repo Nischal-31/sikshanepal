@@ -124,3 +124,6 @@ class Command(BaseCommand):
                 f"Successfully generated 'Also Viewed' recommendations for {len(recommendations)} courses."
             )
         )
+
+#Run
+#python manage.py build_also_viewed

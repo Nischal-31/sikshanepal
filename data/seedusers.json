@@ -1,0 +1,224 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@sikshanepal.com",
+      "password": "admin123",
+      "first_name": "System",
+      "last_name": "Administrator",
+      "phone_no": "9800000001",
+      "user_type": "admin",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "instructor1",
+      "email": "instructor1@gmail.com",
+      "password": "password123",
+      "first_name": "Hari",
+      "last_name": "Adhikari",
+      "phone_no": "9800000002",
+      "user_type": "instructor",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "instructor2",
+      "email": "instructor2@gmail.com",
+      "password": "password123",
+      "first_name": "Suman",
+      "last_name": "Shrestha",
+      "phone_no": "9800000003",
+      "user_type": "instructor",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "instructor3",
+      "email": "instructor3@gmail.com",
+      "password": "password123",
+      "first_name": "Anita",
+      "last_name": "Karki",
+      "phone_no": "9800000004",
+      "user_type": "instructor",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student1",
+      "email": "student1@gmail.com",
+      "password": "password123",
+      "first_name": "Ram",
+      "last_name": "Sharma",
+      "phone_no": "9800000005",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student2",
+      "email": "student2@gmail.com",
+      "password": "password123",
+      "first_name": "Sita",
+      "last_name": "Thapa",
+      "phone_no": "9800000006",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student3",
+      "email": "student3@gmail.com",
+      "password": "password123",
+      "first_name": "Bikash",
+      "last_name": "Rai",
+      "phone_no": "9800000007",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student4",
+      "email": "student4@gmail.com",
+      "password": "password123",
+      "first_name": "Sabina",
+      "last_name": "Gurung",
+      "phone_no": "9800000008",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student5",
+      "email": "student5@gmail.com",
+      "password": "password123",
+      "first_name": "Kiran",
+      "last_name": "Lama",
+      "phone_no": "9800000009",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student6",
+      "email": "student6@gmail.com",
+      "password": "password123",
+      "first_name": "Prakash",
+      "last_name": "Basnet",
+      "phone_no": "9800000010",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student7",
+      "email": "student7@gmail.com",
+      "password": "password123",
+      "first_name": "Asha",
+      "last_name": "KC",
+      "phone_no": "9800000011",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student8",
+      "email": "student8@gmail.com",
+      "password": "password123",
+      "first_name": "Roshan",
+      "last_name": "Poudel",
+      "phone_no": "9800000012",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student9",
+      "email": "student9@gmail.com",
+      "password": "password123",
+      "first_name": "Mina",
+      "last_name": "Bhandari",
+      "phone_no": "9800000013",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student10",
+      "email": "student10@gmail.com",
+      "password": "password123",
+      "first_name": "Nabin",
+      "last_name": "Maharjan",
+      "phone_no": "9800000014",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student11",
+      "email": "student11@gmail.com",
+      "password": "password123",
+      "first_name": "Sarita",
+      "last_name": "Shahi",
+      "phone_no": "9800000015",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student12",
+      "email": "student12@gmail.com",
+      "password": "password123",
+      "first_name": "Rabin",
+      "last_name": "Pandey",
+      "phone_no": "9800000016",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student13",
+      "email": "student13@gmail.com",
+      "password": "password123",
+      "first_name": "Sunita",
+      "last_name": "Acharya",
+      "phone_no": "9800000017",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student14",
+      "email": "student14@gmail.com",
+      "password": "password123",
+      "first_name": "Dipesh",
+      "last_name": "Joshi",
+      "phone_no": "9800000018",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student15",
+      "email": "student15@gmail.com",
+      "password": "password123",
+      "first_name": "Pooja",
+      "last_name": "Regmi",
+      "phone_no": "9800000019",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    },
+    {
+      "username": "student16",
+      "email": "student16@gmail.com",
+      "password": "password123",
+      "first_name": "Suresh",
+      "last_name": "Dhakal",
+      "phone_no": "9800000020",
+      "user_type": "student",
+      "terms_agree": true,
+      "remember_me": false
+    }
+  ]
+}

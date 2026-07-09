@@ -1,0 +1,244 @@
+{
+  "events": [
+    {
+      "user_id": 34,
+      "item_type": "course",
+      "item_id": 1,
+      "action": "view"
+    },
+    {
+      "user_id": 34,
+      "item_type": "course",
+      "item_id": 2,
+      "action": "view"
+    },
+    {
+      "user_id": 34,
+      "item_type": "course",
+      "item_id": 2,
+      "action": "enroll"
+    },
+    {
+      "user_id": 34,
+      "item_type": "course",
+      "item_id": 14,
+      "action": "view"
+    },
+    {
+      "user_id": 35,
+      "item_type": "course",
+      "item_id": 1,
+      "action": "view"
+    },
+    {
+      "user_id": 35,
+      "item_type": "course",
+      "item_id": 15,
+      "action": "view"
+    },
+    {
+      "user_id": 35,
+      "item_type": "course",
+      "item_id": 15,
+      "action": "enroll"
+    },
+    {
+      "user_id": 36,
+      "item_type": "course",
+      "item_id": 5,
+      "action": "view"
+    },
+    {
+      "user_id": 36,
+      "item_type": "course",
+      "item_id": 14,
+      "action": "view"
+    },
+    {
+      "user_id": 36,
+      "item_type": "course",
+      "item_id": 14,
+      "action": "click_recommendation"
+    },
+    {
+      "user_id": 37,
+      "item_type": "course",
+      "item_id": 16,
+      "action": "view"
+    },
+    {
+      "user_id": 37,
+      "item_type": "course",
+      "item_id": 17,
+      "action": "view"
+    },
+    {
+      "user_id": 37,
+      "item_type": "course",
+      "item_id": 17,
+      "action": "enroll"
+    },
+    {
+      "user_id": 38,
+      "item_type": "course",
+      "item_id": 18,
+      "action": "view"
+    },
+    {
+      "user_id": 38,
+      "item_type": "course",
+      "item_id": 19,
+      "action": "view"
+    },
+    {
+      "user_id": 38,
+      "item_type": "course",
+      "item_id": 20,
+      "action": "view"
+    },
+    {
+      "user_id": 39,
+      "item_type": "course",
+      "item_id": 21,
+      "action": "view"
+    },
+    {
+      "user_id": 39,
+      "item_type": "course",
+      "item_id": 20,
+      "action": "view"
+    },
+    {
+      "user_id": 39,
+      "item_type": "course",
+      "item_id": 20,
+      "action": "enroll"
+    },
+    {
+      "user_id": 40,
+      "item_type": "course",
+      "item_id": 14,
+      "action": "view"
+    },
+    {
+      "user_id": 40,
+      "item_type": "course",
+      "item_id": 15,
+      "action": "view"
+    },
+    {
+      "user_id": 40,
+      "item_type": "course",
+      "item_id": 16,
+      "action": "view"
+    },
+    {
+      "user_id": 41,
+      "item_type": "course",
+      "item_id": 5,
+      "action": "view"
+    },
+    {
+      "user_id": 41,
+      "item_type": "course",
+      "item_id": 5,
+      "action": "enroll"
+    },
+    {
+      "user_id": 42,
+      "item_type": "course",
+      "item_id": 17,
+      "action": "view"
+    },
+    {
+      "user_id": 42,
+      "item_type": "course",
+      "item_id": 18,
+      "action": "view"
+    },
+    {
+      "user_id": 43,
+      "item_type": "course",
+      "item_id": 19,
+      "action": "view"
+    },
+    {
+      "user_id": 43,
+      "item_type": "course",
+      "item_id": 21,
+      "action": "view"
+    },
+    {
+      "user_id": 43,
+      "item_type": "course",
+      "item_id": 21,
+      "action": "click_recommendation"
+    },
+    {
+      "user_id": 45,
+      "item_type": "course",
+      "item_id": 1,
+      "action": "view"
+    },
+    {
+      "user_id": 45,
+      "item_type": "course",
+      "item_id": 2,
+      "action": "view"
+    },
+    {
+      "user_id": 45,
+      "item_type": "course",
+      "item_id": 2,
+      "action": "enroll"
+    },
+    {
+      "user_id": 46,
+      "item_type": "course",
+      "item_id": 18,
+      "action": "view"
+    },
+    {
+      "user_id": 46,
+      "item_type": "course",
+      "item_id": 19,
+      "action": "view"
+    },
+    {
+      "user_id": 47,
+      "item_type": "course",
+      "item_id": 20,
+      "action": "view"
+    },
+    {
+      "user_id": 47,
+      "item_type": "course",
+      "item_id": 21,
+      "action": "view"
+    },
+    {
+      "user_id": 48,
+      "item_type": "course",
+      "item_id": 15,
+      "action": "view"
+    },
+    {
+      "user_id": 48,
+      "item_type": "course",
+      "item_id": 16,
+      "action": "view"
+    },
+    {
+      "user_id": 49,
+      "item_type": "course",
+      "item_id": 1,
+      "action": "view"
+    },
+    {
+      "user_id": 49,
+      "item_type": "course",
+      "item_id": 14,
+      "action": "view"
+    }
+  ]
+}

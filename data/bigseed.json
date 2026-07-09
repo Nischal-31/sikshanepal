@@ -1,0 +1,2224 @@
+{
+  "courses": [
+    {
+      "name": "BSc CSIT",
+      "description": "Bachelor in Computer Science and Information Technology",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BSc CSIT Subject 1.1",
+              "code": "CSC101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BSc CSIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CSC101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CSC101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CSC101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CSC101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CSC101 Practical",
+                  "description": "Hands-on practical for CSC101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CSC101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CSC101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BSc CSIT Subject 1.2",
+              "code": "CSC102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BSc CSIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CSC102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CSC102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CSC102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CSC102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CSC102 Practical",
+                  "description": "Hands-on practical for CSC102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CSC102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CSC102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BSc CSIT Subject 2.1",
+              "code": "CSC201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BSc CSIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CSC201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CSC201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CSC201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CSC201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CSC201 Practical",
+                  "description": "Hands-on practical for CSC201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CSC201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CSC201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BSc CSIT Subject 2.2",
+              "code": "CSC202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BSc CSIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CSC202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CSC202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CSC202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CSC202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CSC202 Practical",
+                  "description": "Hands-on practical for CSC202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CSC202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CSC202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BCA",
+      "description": "Bachelor in Computer Application",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BCA Subject 1.1",
+              "code": "BCA101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BCA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BCA101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BCA101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BCA101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BCA101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BCA101 Practical",
+                  "description": "Hands-on practical for BCA101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BCA101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BCA101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BCA Subject 1.2",
+              "code": "BCA102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BCA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BCA102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BCA102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BCA102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BCA102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BCA102 Practical",
+                  "description": "Hands-on practical for BCA102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BCA102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BCA102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BCA Subject 2.1",
+              "code": "BCA201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BCA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BCA201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BCA201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BCA201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BCA201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BCA201 Practical",
+                  "description": "Hands-on practical for BCA201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BCA201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BCA201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BCA Subject 2.2",
+              "code": "BCA202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BCA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BCA202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BCA202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BCA202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BCA202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BCA202 Practical",
+                  "description": "Hands-on practical for BCA202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BCA202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BCA202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BIT",
+      "description": "Bachelor in Information Technology",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BIT Subject 1.1",
+              "code": "BIT101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BIT101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BIT101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BIT101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BIT101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BIT101 Practical",
+                  "description": "Hands-on practical for BIT101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BIT101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BIT101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BIT Subject 1.2",
+              "code": "BIT102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BIT102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BIT102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BIT102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BIT102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BIT102 Practical",
+                  "description": "Hands-on practical for BIT102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BIT102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BIT102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BIT Subject 2.1",
+              "code": "BIT201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BIT201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BIT201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BIT201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BIT201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BIT201 Practical",
+                  "description": "Hands-on practical for BIT201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BIT201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BIT201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BIT Subject 2.2",
+              "code": "BIT202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BIT",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BIT202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BIT202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BIT202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BIT202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BIT202 Practical",
+                  "description": "Hands-on practical for BIT202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BIT202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BIT202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BE Computer",
+      "description": "Bachelor of Engineering in Computer Engineering",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BE Computer Subject 1.1",
+              "code": "COMP101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BE Computer",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for COMP101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of COMP101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for COMP101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of COMP101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - COMP101 Practical",
+                  "description": "Hands-on practical for COMP101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - COMP101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - COMP101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BE Computer Subject 1.2",
+              "code": "COMP102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BE Computer",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for COMP102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of COMP102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for COMP102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of COMP102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - COMP102 Practical",
+                  "description": "Hands-on practical for COMP102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - COMP102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - COMP102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BE Computer Subject 2.1",
+              "code": "COMP201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BE Computer",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for COMP201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of COMP201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for COMP201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of COMP201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - COMP201 Practical",
+                  "description": "Hands-on practical for COMP201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - COMP201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - COMP201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BE Computer Subject 2.2",
+              "code": "COMP202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BE Computer",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for COMP202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of COMP202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for COMP202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of COMP202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - COMP202 Practical",
+                  "description": "Hands-on practical for COMP202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - COMP202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - COMP202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BSc Physics",
+      "description": "Bachelor of Science in Physics",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BSc Physics Subject 1.1",
+              "code": "PHY101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BSc Physics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for PHY101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of PHY101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for PHY101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of PHY101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - PHY101 Practical",
+                  "description": "Hands-on practical for PHY101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - PHY101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - PHY101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BSc Physics Subject 1.2",
+              "code": "PHY102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BSc Physics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for PHY102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of PHY102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for PHY102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of PHY102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - PHY102 Practical",
+                  "description": "Hands-on practical for PHY102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - PHY102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - PHY102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BSc Physics Subject 2.1",
+              "code": "PHY201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BSc Physics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for PHY201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of PHY201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for PHY201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of PHY201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - PHY201 Practical",
+                  "description": "Hands-on practical for PHY201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - PHY201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - PHY201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BSc Physics Subject 2.2",
+              "code": "PHY202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BSc Physics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for PHY202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of PHY202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for PHY202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of PHY202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - PHY202 Practical",
+                  "description": "Hands-on practical for PHY202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - PHY202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - PHY202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BBA",
+      "description": "Bachelor of Business Administration",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BBA Subject 1.1",
+              "code": "BBA101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BBA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBA101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBA101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBA101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBA101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBA101 Practical",
+                  "description": "Hands-on practical for BBA101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBA101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBA101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BBA Subject 1.2",
+              "code": "BBA102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BBA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBA102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBA102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBA102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBA102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBA102 Practical",
+                  "description": "Hands-on practical for BBA102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBA102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBA102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BBA Subject 2.1",
+              "code": "BBA201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BBA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBA201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBA201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBA201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBA201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBA201 Practical",
+                  "description": "Hands-on practical for BBA201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBA201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBA201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BBA Subject 2.2",
+              "code": "BBA202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BBA",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBA202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBA202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBA202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBA202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBA202 Practical",
+                  "description": "Hands-on practical for BBA202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBA202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBA202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BBS",
+      "description": "Bachelor of Business Studies",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BBS Subject 1.1",
+              "code": "BBS101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BBS",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBS101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBS101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBS101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBS101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBS101 Practical",
+                  "description": "Hands-on practical for BBS101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBS101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBS101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BBS Subject 1.2",
+              "code": "BBS102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BBS",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBS102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBS102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBS102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBS102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBS102 Practical",
+                  "description": "Hands-on practical for BBS102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBS102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBS102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BBS Subject 2.1",
+              "code": "BBS201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BBS",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBS201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBS201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBS201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBS201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBS201 Practical",
+                  "description": "Hands-on practical for BBS201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBS201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBS201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BBS Subject 2.2",
+              "code": "BBS202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BBS",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for BBS202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of BBS202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for BBS202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of BBS202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - BBS202 Practical",
+                  "description": "Hands-on practical for BBS202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - BBS202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - BBS202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BSc Chemistry",
+      "description": "Bachelor of Science in Chemistry",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BSc Chemistry Subject 1.1",
+              "code": "CHEM101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BSc Chemistry",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CHEM101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CHEM101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CHEM101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CHEM101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CHEM101 Practical",
+                  "description": "Hands-on practical for CHEM101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CHEM101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CHEM101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BSc Chemistry Subject 1.2",
+              "code": "CHEM102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BSc Chemistry",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CHEM102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CHEM102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CHEM102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CHEM102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CHEM102 Practical",
+                  "description": "Hands-on practical for CHEM102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CHEM102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CHEM102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BSc Chemistry Subject 2.1",
+              "code": "CHEM201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BSc Chemistry",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CHEM201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CHEM201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CHEM201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CHEM201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CHEM201 Practical",
+                  "description": "Hands-on practical for CHEM201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CHEM201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CHEM201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BSc Chemistry Subject 2.2",
+              "code": "CHEM202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BSc Chemistry",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for CHEM202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of CHEM202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for CHEM202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of CHEM202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - CHEM202 Practical",
+                  "description": "Hands-on practical for CHEM202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - CHEM202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - CHEM202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BA Economics",
+      "description": "Bachelor of Arts in Economics",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BA Economics Subject 1.1",
+              "code": "ECO101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BA Economics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ECO101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ECO101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ECO101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ECO101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ECO101 Practical",
+                  "description": "Hands-on practical for ECO101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ECO101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ECO101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BA Economics Subject 1.2",
+              "code": "ECO102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BA Economics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ECO102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ECO102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ECO102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ECO102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ECO102 Practical",
+                  "description": "Hands-on practical for ECO102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ECO102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ECO102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BA Economics Subject 2.1",
+              "code": "ECO201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BA Economics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ECO201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ECO201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ECO201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ECO201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ECO201 Practical",
+                  "description": "Hands-on practical for ECO201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ECO201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ECO201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BA Economics Subject 2.2",
+              "code": "ECO202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BA Economics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ECO202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ECO202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ECO202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ECO202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ECO202 Practical",
+                  "description": "Hands-on practical for ECO202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ECO202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ECO202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BE Electronics",
+      "description": "Bachelor of Engineering in Electronics and Communication",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "Semester 1",
+          "subjects": [
+            {
+              "name": "BE Electronics Subject 1.1",
+              "code": "ELEC101",
+              "credits": 3,
+              "description": "Core subject 1 for semester 1 of BE Electronics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ELEC101",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ELEC101",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ELEC101",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ELEC101",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ELEC101 Practical",
+                  "description": "Hands-on practical for ELEC101"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ELEC101",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ELEC101",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BE Electronics Subject 1.2",
+              "code": "ELEC102",
+              "credits": 3,
+              "description": "Core subject 2 for semester 1 of BE Electronics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 1"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ELEC102",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ELEC102",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ELEC102",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ELEC102",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ELEC102 Practical",
+                  "description": "Hands-on practical for ELEC102"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ELEC102",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ELEC102",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Semester 2",
+          "subjects": [
+            {
+              "name": "BE Electronics Subject 2.1",
+              "code": "ELEC201",
+              "credits": 3,
+              "description": "Core subject 1 for semester 2 of BE Electronics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 1, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ELEC201",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ELEC201",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ELEC201",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ELEC201",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ELEC201 Practical",
+                  "description": "Hands-on practical for ELEC201"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ELEC201",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ELEC201",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "BE Electronics Subject 2.2",
+              "code": "ELEC202",
+              "credits": 3,
+              "description": "Core subject 2 for semester 2 of BE Electronics",
+              "syllabus": {
+                "objectives": "Understand core concepts of subject 2, semester 2"
+              },
+              "chapters": [
+                {
+                  "title": "Chapter 1 - Introduction",
+                  "description": "Introductory chapter for ELEC202",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Basics of ELEC202",
+                      "description": "Foundational concepts and definitions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Chapter 2 - Core Concepts",
+                  "description": "Deeper concepts for ELEC202",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 2 - Advanced topics of ELEC202",
+                      "description": "Extended concepts and applications"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - ELEC202 Practical",
+                  "description": "Hands-on practical for ELEC202"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023 - ELEC202",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022 - ELEC202",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

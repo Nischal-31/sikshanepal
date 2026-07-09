@@ -1,0 +1,116 @@
+{
+  "courses": [
+    {
+      "name": "BCA",
+      "description": "Bachelor in Computer Application",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "First semester",
+          "subjects": [
+            {
+              "name": "Computer Fundamentals",
+              "code": "BCA101",
+              "credits": 3,
+              "description": "Basics of computer hardware and software",
+              "syllabus": {
+                "objectives": "Understand computer architecture, I/O devices, memory"
+              },
+              "chapters": [
+                {
+                  "title": "Introduction to Computers",
+                  "description": "History, generations, and types of computers",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - History of Computers",
+                      "description": "Evolution from first to fifth generation"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - MS Office Basics",
+                  "description": "Word, Excel, PowerPoint basics"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "Mathematics I",
+              "code": "BCA102",
+              "credits": 3,
+              "description": "Calculus and linear algebra fundamentals",
+              "syllabus": {
+                "objectives": "Understand limits, derivatives, matrices"
+              },
+              "chapters": [
+                {
+                  "title": "Limits and Continuity",
+                  "description": "Basic concepts of limits",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Limits",
+                      "description": "Definition and properties of limits"
+                    }
+                  ]
+                }
+              ],
+              "labs": [],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Second semester",
+          "subjects": [
+            {
+              "name": "Digital Systems",
+              "code": "BCA201",
+              "credits": 3,
+              "description": "Digital electronics and logic design",
+              "syllabus": {
+                "objectives": "Understand boolean algebra and combinational circuits"
+              },
+              "chapters": [
+                {
+                  "title": "Boolean Algebra",
+                  "description": "Laws and theorems of boolean algebra",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Boolean Laws",
+                      "description": "De Morgan's theorem and simplification"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - Logic Circuits",
+                  "description": "Building simple logic circuits"
+                }
+              ],
+              "past_questions": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

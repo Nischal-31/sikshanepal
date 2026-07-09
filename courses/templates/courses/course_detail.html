@@ -27,7 +27,7 @@
         </div>
         <p>{{ course.description }}</p>
       </div>
-      <span class="fs-4 fw-bold text-primary">${{ course.price|default:"49.99" }}</span>
+      <span class="fs-4 fw-bold text-primary">${{ course.price|default:"FREE" }}</span>
     </div>
 
     <h3>Instructor</h3>
@@ -41,7 +41,7 @@
 
     <hr>
     <h3>Course Overview</h3>
-    <p>{{ course.overview|default:"Lorem ipsum dolor sit amet consectetur adipisicing elit..." }}</p>
+    <p>{{ course.overview|default:"This course is designed to provide students with comprehensive theoretical knowledge and practical skills in its respective field of study. It follows a structured curriculum that promotes critical thinking, problem-solving, and hands-on learning through lectures, assignments, projects, and assessments. Students will develop subject-specific expertise while enhancing communication, teamwork, and analytical abilities, preparing them for academic advancement, professional careers, and lifelong learning." }}</p>
 
     <hr>
     <h3>What you'll learn</h3>
@@ -49,7 +49,7 @@
       {% for item in course.learning_points %}
         <p><i class="far fa-check-circle text-success me-2"></i> {{ item }}</p>
       {% empty %}
-        <p><i class="far fa-check-circle text-success me-2"></i> Javascript from scratch - beginner to advanced</p>
+        <p><i class="far fa-check-circle text-success me-2"></i> Courses from scratch - beginner to advanced</p>
         <p><i class="far fa-check-circle text-success me-2"></i> Modern best practices and techniques</p>
         <p><i class="far fa-check-circle text-success me-2"></i> Real-world project development</p>
       {% endfor %}
@@ -60,14 +60,19 @@
   <!-- Enrollment Info -->
   <div class="enroll p-4 border rounded" style="min-width: 280px;">
     <h3>This course includes:</h3>
-    <p><i class="far fa-video me-2"></i> 52 hours video</p>
-    <p><i class="far fa-newspaper me-2"></i> 75 articles</p>
-    <p><i class="far fa-cloud-download me-2"></i> Downloadable resources</p>
-    <p><i class="far fa-infinity me-2"></i> Full lifetime access</p>
-    <p><i class="far fa-mobile-alt me-2"></i> Access on mobile and TV</p>
-    <p><i class="far fa-paperclip me-2"></i> Assignments</p>
-    <p><i class="far fa-trophy-alt me-2"></i> Certificate of completion</p>
+    <p> Hours of Video Content</p>
 
+    <p>75 Learning Articles</p>
+
+    <p>Downloadable Resources</p>
+
+    <p>Lifetime Access</p>
+
+    <p>Access on Mobile, Tablet & TV</p>
+
+    <p>Assignments & Practice Exercises</p>
+
+    <p>Certificate of Completion</p>
     <div class="enroll-btn mt-4 text-center">
       <a class="btn btn-primary btn-lg" href="#">Enroll Courses</a>
     </div>

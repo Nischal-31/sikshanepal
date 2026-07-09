@@ -193,3 +193,6 @@ class Command(BaseCommand):
                 f"Successfully generated recommendations for {len(ids)} courses."
             )
         )
+
+#Run
+#python manage.py build_content_reco
