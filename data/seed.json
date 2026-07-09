@@ -1,0 +1,151 @@
+{
+  "courses": [
+    {
+      "name": "BSc CSIT",
+      "description": "Bachelor in Computer Science and Information Technology",
+      "semesters": [
+        {
+          "number": 1,
+          "description": "First semester",
+          "subjects": [
+            {
+              "name": "Programming Fundamentals",
+              "code": "CSC101",
+              "credits": 3,
+              "description": "Introduction to programming using C",
+              "syllabus": {
+                "objectives": "Understand basic programming logic, variables, loops, functions"
+              },
+              "chapters": [
+                {
+                  "title": "Introduction to C",
+                  "description": "Basics of C language, compilation process",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Variables and Data Types",
+                      "description": "Covers int, float, char, and basic operators"
+                    },
+                    {
+                      "title": "Note 2 - Control Structures",
+                      "description": "if-else, switch, loops"
+                    }
+                  ]
+                },
+                {
+                  "title": "Functions and Arrays",
+                  "description": "Function definitions, arrays, pointers intro",
+                  "order": 2,
+                  "notes": [
+                    {
+                      "title": "Note 3 - Functions",
+                      "description": "Function declaration, definition, and calling"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - Hello World",
+                  "description": "First C program and compilation steps"
+                },
+                {
+                  "title": "Lab 2 - Loops",
+                  "description": "Practice with for, while, do-while loops"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023",
+                  "description": "End semester exam paper, TU"
+                },
+                {
+                  "year": 2022,
+                  "title": "Final Exam 2022",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            },
+            {
+              "name": "Digital Logic",
+              "code": "CSC102",
+              "credits": 3,
+              "description": "Fundamentals of digital circuits and logic gates",
+              "syllabus": {
+                "objectives": "Understand boolean algebra, logic gates, combinational circuits"
+              },
+              "chapters": [
+                {
+                  "title": "Number Systems",
+                  "description": "Binary, octal, hexadecimal conversions",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Number System Conversion",
+                      "description": "Methods for converting between number systems"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - Logic Gates",
+                  "description": "AND, OR, NOT gate implementation"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "description": "Second semester",
+          "subjects": [
+            {
+              "name": "Object Oriented Programming",
+              "code": "CSC201",
+              "credits": 3,
+              "description": "OOP concepts using Java",
+              "syllabus": {
+                "objectives": "Understand classes, objects, inheritance, polymorphism"
+              },
+              "chapters": [
+                {
+                  "title": "Classes and Objects",
+                  "description": "Basics of OOP in Java",
+                  "order": 1,
+                  "notes": [
+                    {
+                      "title": "Note 1 - Introduction to OOP",
+                      "description": "Encapsulation, abstraction basics"
+                    }
+                  ]
+                }
+              ],
+              "labs": [
+                {
+                  "title": "Lab 1 - Class Design",
+                  "description": "Designing a simple class in Java"
+                }
+              ],
+              "past_questions": [
+                {
+                  "year": 2023,
+                  "title": "Final Exam 2023",
+                  "description": "End semester exam paper, TU"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
