@@ -6,7 +6,6 @@
 
 <!-- Home -->
 
-
 <section id="home">
 	{% if user.is_authenticated %}
 	<h2>Welcome , {{ user.username }}! Empower Your Future with SikshaNepal</h2>
@@ -18,14 +17,22 @@
 
 	<div class="btn">
 		<a class="blue" href="#">Learn More</a>
-		{% if user.is_authenticated and user.is_admin_user %}
-        <a class="blue" href="{% url 'home' %}">
-        Admin Dashboard
-        </a>
-       {% endif %}
-		<a class="yellow" href="{% url 'course-list' %}">Visit Courses</a>
 
+		{% if user.is_admin_user %}
+        <a class="blue" href="{% url 'home' %}">
+            Admin Dashboard
+        </a>
+        {% endif %}
+
+		{% if user.is_instructor_user %}
+        <a class="blue" href="{% url 'home' %}">
+            Instructor Dashboard
+        </a>
+        {% endif %}
+
+		<a class="yellow" href="{% url 'course-list' %}">Visit Courses</a>
 	</div>
+
 	{% else %}
 	<h2>Welcome, Guest ! Empower Your Future with SikshaNepal</h2>
 	<p>
@@ -33,14 +40,13 @@
 		committed to helping you grow through hands-on learning, expert guidance, and real-world experience. Let’s shape
 		your future—one line of code at a time.
 	</p>
+
 	<div class="btn">
 		<a class="blue" href="#">Learn More</a>
 		<a class="yellow" href="{% url 'course-list' %}">Visit Courses</a>
 	</div>
 	{% endif %}
 </section>
-
-
 
 <!-- Courses -->
 

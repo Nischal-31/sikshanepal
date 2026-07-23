@@ -7,7 +7,7 @@ from backend.models import Chapter, Course, Semester, Subject
 from blog.forms import PostForm
 from blog.models import Post
 from contactenquiry.models import contactEnquiry
-from courses.views import is_admin
+from courses.views import is_admin, is_instructor
 from quiz.forms import QuizForm
 from quiz.models import Quiz
 from user.models import CustomUser
@@ -23,7 +23,9 @@ from backend.models import Course  # adjust if your Course model is elsewhere
 
 
 def dashboard_home(request):
-    if not request.user.is_authenticated or not request.user.is_admin_user:
+    if not request.user.is_authenticated or not (
+        request.user.is_admin_user or request.user.is_instructor_user
+    ):
         return HttpResponseForbidden("You do not have permission to access this page.")
 
     # ✅ Users dynamic (your CustomUser roles)
@@ -262,7 +264,7 @@ def dashboard_course_detail_view(request, course_id):
     return render(request, 'dashboard/dashboard_course_detail.html', {'course': course, 'semesters': filtered_semesters})
 
 def dashboard_course_create_view(request):
-    if not is_admin(request):
+    if not is_admin(request) and not is_instructor(request):
         return HttpResponseForbidden("You do not have permission to create courses.")
     if request.method == "POST":
         # Make sure to include token for authentication if your API requires it

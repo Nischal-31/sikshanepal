@@ -20,7 +20,7 @@ from rest_framework.pagination import PageNumberPagination
 from .serializers import ChangePasswordSerializer, ContactEnquirySerializer, FCMDeviceSerializer, LabSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, PostSerializer, UserSerializer,SubjectSerializer,SyllabusSerializer,ChapterSerializer,SemesterSerializer,CourseSerializer,NotesSerializer,PastQuestionsSerializer, UserProfileSerializer, UserUpdateSerializer      
 from django.urls import reverse
 from user.models import CustomUser
-from .permissions import IsAdminUser, IsAdminOrReadOnly
+from .permissions import IsAdminUser, IsAdminOrReadOnly, IsInstructorUser
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -288,7 +288,16 @@ def change_password(request):
 #-------------------------COURSE---------------------------------------------------------------------------------------------------
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated,IsAdminUser]) 
+@permission_classes([IsAuthenticated,IsAdminUser])  # Only Admin and Instructor can create courses
+def courseCreate(request):
+    serializer = CourseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated,IsInstructorUser])  # Only Admin and Instructor can create courses
 def courseCreate(request):
     serializer = CourseSerializer(data=request.data)
     if serializer.is_valid():
@@ -342,6 +351,7 @@ def courseUpdate(request, pk):
 
     serializer = CourseSerializer(course)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated,IsAdminUser])

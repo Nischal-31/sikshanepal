@@ -12,6 +12,9 @@ from sikshanepal.firebase import send_course_notification
 def is_admin(request):
     return request.user.is_authenticated and request.user.user_type == 'admin'
 
+def is_instructor(request):
+    return request.user.is_authenticated and request.user.user_type == 'instructor'
+
 #-------------------------------------------------------------------------------------------------------------------
 #                       COURSE VIEWS
 #-------------------------------------------------------------------------------------------------------------------

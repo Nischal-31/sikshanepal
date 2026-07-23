@@ -8,6 +8,14 @@ class IsAdminUser(permissions.BasePermission):
         print(f"User Type: {request.user.user_type}") 
         return request.user.is_authenticated and request.user.is_admin_user  # No parentheses
 
+class IsInstructorUser(permissions.BasePermission):
+    """
+    Custom permission to grant access only to Instructor users.
+    """
+    def has_permission(self, request, view):
+        print(f"User Type: {request.user.user_type}")
+        return request.user.is_authenticated and request.user.is_instructor_user  # No parentheses    
+
 class IsNormalUser(permissions.BasePermission):
     """
     Custom permission to grant access only to Normal users.
