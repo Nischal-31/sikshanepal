@@ -51,7 +51,7 @@ See `.env.example` for the full list. Required:
 | Variable | Description |
 |---|---|
 | `DEBUG` | `False` in production |
-| `SECRET_KEY` | Django secret key (rotate before going live) |
+| `SECRET_KEY` | Django secret key |
 | `ALLOWED_HOSTS` | EC2 public IP / domain, comma-separated |
 | `DB_NAME` / `DB_USER` / `DB_PASSWORD` | Postgres credentials |
 | `DB_HOST` | `db` (the Compose service name — not `localhost`) |
@@ -62,7 +62,7 @@ See `.env.example` for the full list. Required:
 
 ## Deployment
 
-Deployment is fully automated via GitHub Actions on every push to `main`:
+Deployment is fully automated via GitHub Actions on every push to `master`:
 
 1. Runs the build and pushes a new image to Docker Hub, tagged `latest` and with the commit SHA.
 2. SSHs into the EC2 instance and runs `docker compose pull && docker compose up -d` to roll out the new image.
