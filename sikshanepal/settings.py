@@ -66,9 +66,6 @@ INSTALLED_APPS = [
 
 ]
 
-ESEWA_MERCHANT_ID = "EPAYTEST"  # or your merchant code
-ESEWA_SECRET_KEY = "8gBm/:&EnhH.1/q"  # UAT secret key example
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -79,7 +76,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000','http://54.87.184.71']
 
 SITE_ID = 3
 
@@ -188,7 +185,9 @@ AUTH_USER_MODEL = 'user.CustomUser'
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [ BASE_DIR /"static"]
+STATICFILES_DIRS = [ BASE_DIR /"static"]#For development, static files are here
+
+STATIC_ROOT = BASE_DIR / 'staticfiles' #For porduction, collect static files here
 
 MEDIA_URL = '/media/'
 
