@@ -76,7 +76,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000','http://54.87.184.71']
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') 
 
 SITE_ID = 3
 
