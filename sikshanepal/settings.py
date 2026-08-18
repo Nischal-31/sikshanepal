@@ -100,12 +100,13 @@ SOCIALACCOUNT_PROVIDERS = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 
@@ -183,16 +184,36 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'user.CustomUser'
 
-STATIC_URL = '/static/'
+# ============================================================
+# STATIC FILES
+# ============================================================
 
-STATICFILES_DIRS = [ BASE_DIR /"static"]#For development, static files are here
+STATIC_URL = "/static/"
 
-STATIC_ROOT = BASE_DIR / 'staticfiles' #For porduction, collect static files here
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
-MEDIA_URL = '/media/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
+# WhiteNoise production storage
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+
+# ============================================================
+# MEDIA FILES
+# ============================================================
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = 'bootstrap5'

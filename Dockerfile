@@ -1,28 +1,56 @@
 FROM python:3.12-slim
 
-# Prevent Python from writing .pyc files & buffering stdout/stderr
+# ============================================================
+# PYTHON
+# ============================================================
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+# ============================================================
+# WORKDIR
+# ============================================================
 
 WORKDIR /app
 
-# System deps needed for psycopg2 / Pillow etc.
+# ============================================================
+# SYSTEM DEPENDENCIES
+# ============================================================
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python deps first (better layer caching)
+# ============================================================
+# PYTHON DEPENDENCIES
+# ============================================================
+
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
+# ============================================================
+# APPLICATION
+# ============================================================
+
 COPY . .
 
-# Collect static files (safe to run even if empty at build time,
-# STATIC_ROOT must be set in settings.py)
-RUN python manage.py collectstatic --noinput || true
+# ============================================================
+# STATIC FILES
+# ============================================================
+
+RUN python manage.py collectstatic --noinput
+
+# ============================================================
+# PORT
+# ============================================================
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# ============================================================
+# PRODUCTION SERVER
+# ============================================================
+
+CMD ["gunicorn", "sikshanepal.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120"]
