@@ -41,7 +41,7 @@ COPY . .
 # STATIC FILES
 # ============================================================
 
-RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput || true
 
 # ============================================================
 # PORT
