@@ -18,19 +18,41 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))  # This loads the .env file
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# ============================================================
+# SECURITY
+# ============================================================
+
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-# ALLOWED_HOSTS should include your server's IP address or domain name
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    ''
+).split(',')
 
-# Application definition
+
+# ============================================================
+# HTTPS / REVERSE PROXY
+# ============================================================
+
+# The reverse proxy/load balancer terminates HTTPS and forwards
+# the original protocol to Django through X-Forwarded-Proto.
+SECURE_PROXY_SSL_HEADER = (
+    'HTTP_X_FORWARDED_PROTO',
+    'https',
+)
+
+# Trust the forwarded host from the reverse proxy.
+USE_X_FORWARDED_HOST = True
+
+
+# ============================================================
+# APPLICATION DEFINITION
+# ============================================================
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,18 +64,18 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'crispy_bootstrap5',
-    'widget_tweaks',  # For additional form styling
-    
+    'widget_tweaks',
+
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
-    
+
     'rest_framework',
     'rest_framework.authtoken',
-    
+
     'user',
     'courses',
     'blog',
@@ -63,8 +85,12 @@ INSTALLED_APPS = [
     'dashboard',
     'quiz',
     'analytics',
-
 ]
+
+
+# ============================================================
+# DJANGO REST FRAMEWORK
+# ============================================================
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -72,18 +98,20 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Or your custom permission class
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') 
+
+# ============================================================
+# DJANGO SITES / ALLAUTH
+# ============================================================
 
 SITE_ID = 3
 
-
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',  # Default backend
-    'allauth.account.auth_backends.AuthenticationBackend',  # Allauth backend for social login
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -98,6 +126,11 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+
+# ============================================================
+# MIDDLEWARE
+# ============================================================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -111,12 +144,18 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
+
 ROOT_URLCONF = 'sikshanepal.urls'
+
+
+# ============================================================
+# TEMPLATES
+# ============================================================
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR,"templates"],
+        'DIRS': [BASE_DIR, "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,52 +163,58 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
-                'django.template.context_processors.request',
             ],
         },
     },
 ]
 
+
 WSGI_APPLICATION = 'sikshanepal.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# ============================================================
+# DATABASE
+# ============================================================
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),# database name
-        'USER': os.getenv('DB_USER'),  # your DB user
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # your DB password
-        'HOST': os.getenv('DB_HOST', 'localhost'),  # or your DB server IP
-        'PORT': os.getenv('DB_PORT', '5432'),      # default PostgreSQL port
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# ============================================================
+# PASSWORD VALIDATION
+# ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+            'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+            'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+            'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+            'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# ============================================================
+# INTERNATIONALIZATION
+# ============================================================
 
 LANGUAGE_CODE = 'en-us'
 
@@ -180,10 +225,12 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# ============================================================
+# AUTH USER
+# ============================================================
 
 AUTH_USER_MODEL = 'user.CustomUser'
+
 
 # ============================================================
 # STATIC FILES
@@ -198,7 +245,6 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# WhiteNoise production storage
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -216,41 +262,75 @@ STORAGES = {
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+
+# ============================================================
+# CRISPY FORMS
+# ============================================================
+
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+# ============================================================
+# DEFAULT PRIMARY KEY
+# ============================================================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST='smtp.gmail.com'
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
+
+# ============================================================
+# EMAIL
+# ============================================================
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 
+# ============================================================
+# LOGIN / LOGOUT
+# ============================================================
+
 LOGIN_URL = '/user/login/'
-LOGIN_REDIRECT_URL = 'index' 
-LOGOUT_REDIRECT_URL = 'index'  
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 
-# settings.py
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # or other backend like cache or file
-SESSION_COOKIE_AGE = 60 * 60 * 24  # 1 day
+# ============================================================
+# SESSION
+# ============================================================
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+SESSION_COOKIE_AGE = 60 * 60 * 24
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# Disable frame blocking (for development only)
-X_FRAME_OPTIONS = 'SAMEORIGIN'  # or 'ALLOWALL' (not recommended for production)
+
+# ============================================================
+# SECURITY HEADERS
+# ============================================================
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 
-# settings.py
-from . import firebase   # this will run firebase.py once
+# ============================================================
+# FIREBASE
+# ============================================================
+
+from . import firebase
+
+
+# ============================================================
+# CUSTOM APPLICATION SETTINGS
+# ============================================================
 
 BACKEND_BASE_URL = "http://127.0.0.1:8000"
+
 RECO_SERVICE_TOKEN = "3b4ff08d866be63b779a2fafabede5de47eb2bd4"
