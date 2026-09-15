@@ -53,10 +53,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t sikshanepal-preview:${{ github.sha }} .
-
   discord-success:
     name: Discord Success Notification
     needs: preview-qa
