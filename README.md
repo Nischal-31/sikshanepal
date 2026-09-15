@@ -125,3 +125,4 @@ sikshanepal/
 - The app was originally developed against SQLite (`db.sqlite3`); production `settings.py` must read database credentials from environment variables so it connects to the Postgres container instead.
 - Firebase credentials (`sikshanepal/firebase.py` / `config/firebase`) are treated as secrets — not committed to git, provided via environment variables or mounted at runtime instead.
 - `env/` (local virtualenv) and `db.sqlite3` are excluded from the Docker build via `.dockerignore`.
+# CI/CD Demo

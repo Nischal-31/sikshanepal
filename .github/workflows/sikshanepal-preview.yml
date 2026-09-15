@@ -1,0 +1,46 @@
+name: SikshaNepal Preview CI
+
+on:
+  pull_request:
+    branches:
+      - preview
+
+permissions:
+  contents: read
+
+jobs:
+  quality-check:
+    name: Django Quality & Security Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Django system check
+        run: |
+          python manage.py check
+
+      - name: Run Django tests
+        run: |
+          python manage.py test
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t sikshanepal-ci .
