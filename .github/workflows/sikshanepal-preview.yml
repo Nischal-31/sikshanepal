@@ -1,4 +1,4 @@
-name: SikshaNepal Preview CI
+name: SikshaNepal Preview QA
 
 on:
   pull_request:
@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  quality-check:
-    name: Django Quality & Security Checks
+  preview-qa:
+    name: Preview QA Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
+          cache: pip
 
       - name: Install dependencies
         run: |
@@ -32,7 +32,7 @@ jobs:
         run: |
           python manage.py check
 
-      - name: Run Django tests
+      - name: Run tests
         run: |
           python manage.py test
 
@@ -43,4 +43,38 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t sikshanepal-ci .
+          docker build -t sikshanepal-preview:${{ github.sha }} .
+
+  discord-success:
+    name: Discord Success Notification
+    needs: preview-qa
+    if: success()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d '{
+              "content": "SikshaNepal Preview QA - PASSED\n\nPR: #${{ github.event.pull_request.number }}\nBranch: ${{ github.head_ref }} → ${{ github.base_ref }}\nCommit: ${{ github.event.pull_request.head.sha }}\nDeveloper: ${{ github.event.pull_request.user.login }}\nStatus: Preview checks passed"
+            }' \
+            "$DISCORD_WEBHOOK_URL"
+
+  discord-failure:
+    name: Discord Failure Notification
+    needs: preview-qa
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d '{
+              "content": "SikshaNepal Preview QA - FAILED\n\nPR: #${{ github.event.pull_request.number }}\nBranch: ${{ github.head_ref }} → ${{ github.base_ref }}\nCommit: ${{ github.event.pull_request.head.sha }}\nDeveloper: ${{ github.event.pull_request.user.login }}\nStatus: Preview blocked - please check GitHub Actions"
+            }' \
+            "$DISCORD_WEBHOOK_URL"

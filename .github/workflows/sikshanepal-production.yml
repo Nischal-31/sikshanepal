@@ -1,0 +1,80 @@
+name: SikshaNepal Production CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  production-checks:
+    name: Production Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Django system check
+        run: |
+          python manage.py check
+
+      - name: Run tests
+        run: |
+          python manage.py test
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build production Docker image
+        run: |
+          docker build -t sikshanepal-production:${{ github.sha }} .
+
+  discord-success:
+    name: Discord Production Success
+    needs: production-checks
+    if: success()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d '{
+              "content": "SikshaNepal Production CI - PASSED\n\nPR: #${{ github.event.pull_request.number }}\nBranch: ${{ github.head_ref }} → ${{ github.base_ref }}\nCommit: ${{ github.event.pull_request.head.sha }}\nDeveloper: ${{ github.event.pull_request.user.login }}\nStatus: Production checks passed - ready to merge"
+            }' \
+            "$DISCORD_WEBHOOK_URL"
+
+  discord-failure:
+    name: Discord Production Failure
+    needs: production-checks
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d '{
+              "content": "SikshaNepal Production CI - FAILED\n\nPR: #${{ github.event.pull_request.number }}\nBranch: ${{ github.head_ref }} → ${{ github.base_ref }}\nCommit: ${{ github.event.pull_request.head.sha }}\nDeveloper: ${{ github.event.pull_request.user.login }}\nStatus: Production merge blocked - please check GitHub Actions"
+            }' \
+            "$DISCORD_WEBHOOK_URL"
