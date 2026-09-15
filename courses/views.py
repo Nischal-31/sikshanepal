@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from analytics.models import AlsoViewedCourse, SimilarCourse, UserEvent
 from analytics.utils import log_event
 from backend.models import Chapter, Semester, Subject
-from sikshanepal.firebase import send_course_notification 
 
 def is_admin(request):
     return request.user.is_authenticated and request.user.user_type == 'admin'
@@ -136,15 +135,6 @@ def course_create_view(request):
         if response.status_code == 201:
             # Send FCM notification for new course
             course_name = response.json().get("name")
-            try:
-                send_course_notification(
-                    title="🎓 New Course Added!",
-                    body=f"{course_name} is now available.",
-                )
-                print(f"[DEBUG] Notification sent for course: {course_name}")
-            except Exception as e:
-                print(f"[ERROR] Failed to send course notification: {e}")
-
             return redirect("course-list")
         
     return render(request, "courses/course_create.html")
