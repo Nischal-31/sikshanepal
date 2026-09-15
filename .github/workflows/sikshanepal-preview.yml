@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  deployments: read
-  statuses: read
 
 jobs:
   preview-qa:
@@ -55,35 +53,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  vercel-preview:
-    name: Wait for Vercel Preview
-    needs: preview-qa
-    if: success()
-    runs-on: ubuntu-latest
-
-    outputs:
-      deployment_url: ${{ steps.deployment.outputs.deployment-url }}
-
-    steps:
-      - name: Wait for Vercel Preview Deployment
-        id: deployment
-        uses: vercel/wait-for-deployment-action@v1
-        with:
-          environment: preview
-          sha: ${{ github.event.pull_request.head.sha }}
-          timeout: 600
-          check-interval: 10
-
-      - name: Show Preview URL
-        run: |
-          echo "Vercel Preview URL:"
-          echo "${{ steps.deployment.outputs.deployment-url }}"
-
   discord-success:
     name: Discord Success Notification
-    needs:
-      - preview-qa
-      - vercel-preview
+    needs: preview-qa
     if: success()
     runs-on: ubuntu-latest
 
@@ -91,35 +63,26 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          PREVIEW_URL: ${{ needs.vercel-preview.outputs.deployment_url }}
         run: |
           curl -H "Content-Type: application/json" \
             -d '{
-              "content": "✅ **SikshaNepal Preview QA - PASSED**\n\n📌 **PR:** #${{ github.event.pull_request.number }}\n🌿 **Branch:** `${{ github.head_ref }}` → `${{ github.base_ref }}`\n👤 **Developer:** ${{ github.event.pull_request.user.login }}\n🔖 **Commit:** `${{ github.event.pull_request.head.sha }}`\n\n🌐 **Preview URL:** '"$PREVIEW_URL"'\n🔗 **Pull Request:** https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}\n\n🟢 **Status:** Preview checks passed — ready for QA."
+              "content": "✅ **SikshaNepal Preview QA - PASSED**\n\n📌 **PR:** #${{ github.event.pull_request.number }}\n🌿 **Branch:** `${{ github.head_ref }}` → `${{ github.base_ref }}`\n👤 **Developer:** ${{ github.event.pull_request.user.login }}\n🔖 **Commit:** `${{ github.event.pull_request.head.sha }}`\n\n🌐 **Preview URL:** https://sikshanepal.vercel.app\n🔗 **Pull Request:** https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}\n\n🟢 **Status:** Preview checks passed — ready for QA."
             }' \
             "$DISCORD_WEBHOOK_URL"
 
   discord-failure:
     name: Discord Failure Notification
-    needs:
-      - preview-qa
-      - vercel-preview
-    if: >-
-      always() &&
-      (
-        needs.preview-qa.result == 'failure' ||
-        needs.vercel-preview.result == 'failure'
-      )
+    needs: preview-qa
+    if: failure()
     runs-on: ubuntu-latest
 
     steps:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          PREVIEW_URL: ${{ needs.vercel-preview.outputs.deployment_url }}
         run: |
           curl -H "Content-Type: application/json" \
             -d '{
-              "content": "❌ **SikshaNepal Preview QA - FAILED**\n\n📌 **PR:** #${{ github.event.pull_request.number }}\n🌿 **Branch:** `${{ github.head_ref }}` → `${{ github.base_ref }}`\n👤 **Developer:** ${{ github.event.pull_request.user.login }}\n🔖 **Commit:** `${{ github.event.pull_request.head.sha }}`\n\n🌐 **Preview URL:** '"${PREVIEW_URL:-Not available}"'\n🔗 **Pull Request:** https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}\n🔗 **Actions:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n🔴 **Status:** Preview blocked. Please check GitHub Actions."
+              "content": "❌ **SikshaNepal Preview QA - FAILED**\n\n📌 **PR:** #${{ github.event.pull_request.number }}\n🌿 **Branch:** `${{ github.head_ref }}` → `${{ github.base_ref }}`\n👤 **Developer:** ${{ github.event.pull_request.user.login }}\n🔖 **Commit:** `${{ github.event.pull_request.head.sha }}`\n\n🌐 **Preview URL:** https://sikshanepal.vercel.app\n🔗 **Pull Request:** https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}\n🔗 **Actions:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n🔴 **Status:** Preview blocked. Please check GitHub Actions."
             }' \
             "$DISCORD_WEBHOOK_URL"

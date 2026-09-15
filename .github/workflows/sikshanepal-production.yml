@@ -13,9 +13,21 @@ jobs:
     name: Production Checks
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: ${{ secrets.DEBUG }}
+      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+      CSRF_TRUSTED_ORIGINS: ${{ secrets.CSRF_TRUSTED_ORIGINS }}
+      BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
+      EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+      EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -54,7 +66,7 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
             -d '{
-              "content": "SikshaNepal Production CI - PASSED\n\nPR: #${{ github.event.pull_request.number }}\nBranch: ${{ github.head_ref }} → ${{ github.base_ref }}\nCommit: ${{ github.event.pull_request.head.sha }}\nDeveloper: ${{ github.event.pull_request.user.login }}\nStatus: Production checks passed - ready to merge"
+              "content": "🚀 **SikshaNepal Production CI - PASSED**\n\n📌 **PR:** #${{ github.event.pull_request.number }}\n🌿 **Branch:** `${{ github.head_ref }}` → `${{ github.base_ref }}`\n👤 **Developer:** ${{ github.event.pull_request.user.login }}\n🔖 **Commit:** `${{ github.event.pull_request.head.sha }}`\n\n🌐 **Production:** https://sikshanepal.com\n🔗 **Pull Request:** https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}\n\n🟢 **Status:** Production checks passed — ready to merge."
             }' \
             "$DISCORD_WEBHOOK_URL"
 
@@ -71,6 +83,6 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
             -d '{
-              "content": "SikshaNepal Production CI - FAILED\n\nPR: #${{ github.event.pull_request.number }}\nBranch: ${{ github.head_ref }} → ${{ github.base_ref }}\nCommit: ${{ github.event.pull_request.head.sha }}\nDeveloper: ${{ github.event.pull_request.user.login }}\nStatus: Production merge blocked - please check GitHub Actions"
+              "content": "❌ **SikshaNepal Production CI - FAILED**\n\n📌 **PR:** #${{ github.event.pull_request.number }}\n🌿 **Branch:** `${{ github.head_ref }}` → `${{ github.base_ref }}`\n👤 **Developer:** ${{ github.event.pull_request.user.login }}\n🔖 **Commit:** `${{ github.event.pull_request.head.sha }}`\n\n🌐 **Production:** https://sikshanepal.com\n🔗 **Pull Request:** https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}\n🔗 **Actions:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n🔴 **Status:** Production merge blocked — please check GitHub Actions."
             }' \
             "$DISCORD_WEBHOOK_URL"
