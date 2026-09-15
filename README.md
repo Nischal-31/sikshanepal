@@ -2,7 +2,7 @@
 
 A centralized e-learning platform built with Django, containerized with Docker, and deployed to AWS EC2 via an automated CI/CD pipeline.
 
-## Tech Stack for SikshaNepal
+## Tech Stack for SikshaNepal Web App
 
 - **Backend:** Django + Django REST Framework
 - **Database:** PostgreSQL (Docker container)
@@ -12,6 +12,7 @@ A centralized e-learning platform built with Django, containerized with Docker, 
 - **CI/CD:** GitHub Actions
 - **Image registry:** Docker Hub
 - **Hosting:** AWS EC2
+
 
 ## Architecture
 
